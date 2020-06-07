@@ -1,0 +1,32 @@
+{
+    "manifest_version": 2,
+    "name": "yourkirito",
+    "description": "mykirito automatic script",
+    "version": "1.0",
+    "browser_action": {
+        "default_icon": "icon.png"
+    },
+    "permissions": [
+        "activeTab"
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://mykirito.com/*"
+            ],
+            "js": [
+                "mykirito.js"
+            ],
+            "css": [
+                "style.css"
+            ],
+            "run_at": "document_end"
+        }
+    ]
+}
