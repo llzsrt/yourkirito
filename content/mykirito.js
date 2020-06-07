@@ -24,7 +24,7 @@ export class MyKirito {
         this.loadIsPause();
         this.loadIsBusy();
         this.loadIsBusy();
-        this.loadIsHuntMode();
+        this.loadIsHunterMode();
         this.loadHuntCount();
         this.loadPreyId();
         this.loadPreyName();
@@ -46,11 +46,11 @@ export class MyKirito {
         this.preyName = localStorage.getItem('scriptPreyName');
     }
 
-    saveIsHuntMode() {
+    saveIsHunterMode() {
         localStorage.setItem('scriptIsHunterMode', this.isHunterMode)
     }
 
-    loadIsHuntMode() {
+    loadIsHunterMode() {
         this.isHunterMode = localStorage.getItem('scriptIsHunterMode') === 'true';
     }
 
@@ -111,7 +111,7 @@ export class MyKirito {
         return localStorage.getItem('scriptTempSecond');
     }
 
-    saveDefaultAction() {
+    saveDefaultDuel() {
         localStorage.setItem('scriptDuel', this.duel);
     }
 

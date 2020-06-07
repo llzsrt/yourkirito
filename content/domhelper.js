@@ -100,15 +100,15 @@ export class DomHelper {
         this.hunterButton = this.addButton('hunter-wrapper', 'button-hunter', '自動攻擊');
         this.setHunterButtonStyle();
         this.hunterButton.addEventListener('click', () => {
-            if (self.isHunterMode) {
+            if (self.myKirito.isHunterMode) {
                 self.myKirito.unlock();
-                self.isHunterMode = false;
+                self.myKirito.isHunterMode = false;
                 self.myKirito.saveIsHunterMode();
             } else {
                 const tempSecond = self.myKirito.getTempSecond();
                 self.myKirito.loadNextHuntSecond(tempSecond);
 
-                self.isHunterMode = true;
+                self.myKirito.isHunterMode = true;
                 self.myKirito.saveIsHunterMode();
             }
             self.setHunterButtonStyle();
@@ -119,7 +119,7 @@ export class DomHelper {
             this.duelButtons.push(button);
             button.setAttribute('class', DUEL[duel] === this.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
             button.addEventListener('click', () => {
-                self.myKirito.duel = self.DUEL[duel];
+                self.myKirito.duel = DUEL[duel];
                 self.myKirito.saveDefaultDuel();
                 self.setToolsButtonStyle();
             });
@@ -129,17 +129,17 @@ export class DomHelper {
 
     setToolsButtonStyle() {
         this.actionButtons.forEach(button => {
-            button.setAttribute('class', ACTION[button.textContent] === this.action ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.setAttribute('class', ACTION[button.textContent] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary');
         });
         this.duelButtons.forEach(button => {
-            button.setAttribute('class', DUEL[button.textContent] === this.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.setAttribute('class', DUEL[button.textContent] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
         })
     }
 
 
     setPauseButtonStyle() {
-        this.pauseButton.setAttribute('class', !this.isPause ? 'btn btn-info active' : 'btn btn-secondary');
-        if (this.isPause) {
+        this.pauseButton.setAttribute('class', !this.myKirito.isPause ? 'btn btn-info active' : 'btn btn-secondary');
+        if (this.myKirito.isPause) {
             this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
         } else {
             this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
@@ -161,12 +161,12 @@ export class DomHelper {
     }
 
     checkPrey() {
-        if (!this.preyId || this.preyId === 'null' || this.preyId === '') {
+        if (!this.myKirito.preyId || this.myKirito.preyId === 'null' || this.myKirito.preyId === '') {
             document.getElementById('hunter-wrapper').setAttribute('class', 'hidden');
             this.preyNameBlock.innerHTML = '無攻擊目標';
         } else {
             document.getElementById('hunter-wrapper').setAttribute('class', 'text-right');
-            this.preyNameBlock.innerHTML = `當前攻擊目標: <a href="/profile/${this.preyId}">${this.preyName}</a>`;
+            this.preyNameBlock.innerHTML = `當前攻擊目標: <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a>`;
         }
     }
 
@@ -195,7 +195,7 @@ export class DomHelper {
         }
         const title = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > h3');
         const button = document.createElement('button');
-        const isPrey = !!this.preyId && this.preyId !== '' && location.href.includes(this.preyId);
+        const isPrey = !!self.myKirito.preyId && self.myKirito.preyId !== '' && location.href.includes(self.myKirito.preyId);
         button.setAttribute('type', 'button');
         button.setAttribute('id', 'button-prey');
         button.setAttribute('class', 'sc-AxgMl llLWDd');
@@ -203,7 +203,7 @@ export class DomHelper {
         title.textContent = '';
         title.appendChild(button);
         button.addEventListener('click', () => {
-            const isPrey = !!this.preyId && this.preyId !== '' && location.href.includes(this.preyId);
+            const isPrey = !!self.myKirito.preyId && self.myKirito.preyId !== '' && location.href.includes(self.myKirito.preyId);
             if (isPrey) {
                 self.myKirito.preyId = '';
                 self.myKirito.preyName = '';
@@ -221,7 +221,7 @@ export class DomHelper {
     }
 
     setHunterButtonStyle() {
-        if (this.isHunterMode) {
+        if (this.myKirito.isHunterMode) {
             this.hunterButton.textContent = '停止';
             this.hunterButton.setAttribute('class', 'btn btn-danger active');
         } else {
