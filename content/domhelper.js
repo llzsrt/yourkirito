@@ -1,7 +1,10 @@
 import { ACTION, DUEL } from './constant.js';
+import { MyKirito } from './mykirito.js';
 import { sleep } from './utils.js';
 
 export class DomHelper {
+
+    myKirito;
 
     buttons = {}
     links = {}
@@ -68,8 +71,8 @@ export class DomHelper {
             this.actionButtons.push(button);
             button.setAttribute('class', ACTION[action] === this.action ? 'btn btn-secondary active' : 'btn btn-secondary');
             button.addEventListener('click', () => {
-                self.action = self.ACTION[action];
-                localStorage.setItem('scriptAction', self.ACTION[action]);
+                self.myKirito.action = ACTION[action];
+                self.myKirito.saveDefaultAction();
                 self.setToolsButtonStyle();
             });
         }
@@ -77,16 +80,15 @@ export class DomHelper {
         this.pauseButton = this.addButton('button-group', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
         this.setPauseButtonStyle();
         this.pauseButton.addEventListener('click', () => {
-            if (!self.isPause) {
-                self.isPause = true;
+            if (!self.myKirito.isPause) {
+                self.myKirito.isPause = true;
+                self.myKirito.saveIsPause();
                 localStorage.setItem('scriptIsPause', 'true');
             } else {
-                self.isPause = false;
-                localStorage.setItem('scriptIsPause', 'false');
-                const scriptDateTime = localStorage.getItem('scriptDateTime');
-                const scriptNextTimeDoSomething = localStorage.getItem('scriptNextTimeDoSomething');
-                this.nextTimeDoSomething = parseInt(scriptNextTimeDoSomething ? scriptNextTimeDoSomething : 0) + parseInt(scriptDateTime ? scriptDateTime : 0) - parseInt(+(new Date()) / 1000);
-
+                self.myKirito.isPause = false;
+                self.myKirito.saveIsPause();
+                const tempSecond = self.myKirito.getTempSecond();
+                self.myKirito.loadNextActionSecond(tempSecond);
             }
             self.setPauseButtonStyle();
         });
@@ -98,16 +100,15 @@ export class DomHelper {
         this.setHunterButtonStyle();
         this.hunterButton.addEventListener('click', () => {
             if (self.isHunterMode) {
-                localStorage.setItem('scriptIsHunterMode', 'false');
-                localStorage.setItem('scriptIsBusy', 'false');
+                self.myKirito.unlock();
                 self.isHunterMode = false;
-                self.isBusy = false;
+                self.myKirito.saveIsHunterMode();
             } else {
-                const scriptDateTime = localStorage.getItem('scriptDateTime');
-                const scriptNextTimeHunt = localStorage.getItem('scriptNextTimeHunt');
-                this.nextTimeHunt = parseInt(scriptNextTimeHunt ? scriptNextTimeHunt : 0) + parseInt(scriptDateTime ? scriptDateTime : 0) - parseInt(+(new Date()) / 1000);
-                localStorage.setItem('scriptIsHunterMode', 'true');
+                const tempSecond = self.myKirito.getTempSecond();
+                self.myKirito.loadNextHuntSecond(tempSecond);
+
                 self.isHunterMode = true;
+                self.myKirito.saveIsHunterMode();
             }
             self.setHunterButtonStyle();
         });
@@ -117,8 +118,8 @@ export class DomHelper {
             this.duelButtons.push(button);
             button.setAttribute('class', DUEL[duel] === this.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
             button.addEventListener('click', () => {
-                self.duel = self.DUEL[duel];
-                localStorage.setItem('scriptDuel', DUEL[duel]);
+                self.myKirito.duel = self.DUEL[duel];
+                self.myKirito.saveDefaultDuel();
                 self.setToolsButtonStyle();
             });
         }
@@ -203,17 +204,17 @@ export class DomHelper {
         button.addEventListener('click', () => {
             const isPrey = !!this.preyId && this.preyId !== '' && location.href.includes(this.preyId);
             if (isPrey) {
-                self.preyId = '';
-                self.preyName = '';
+                self.myKirito.preyId = '';
+                self.myKirito.preyName = '';
                 button.textContent = '設為攻擊目標';
             } else {
-                self.preyId = location.href.split('/').pop();
-                self.preyName = !!tempName1 ? tempName1.textContent : tempName2.textContent;
+                self.myKirito.preyId = location.href.split('/').pop();
+                self.myKirito.preyName = !!tempName1 ? tempName1.textContent : tempName2.textContent;
                 button.textContent = '移除目標';
             }
 
-            localStorage.setItem('scriptPreyId', self.preyId);
-            localStorage.setItem('scriptPreyName', self.preyName);
+            self.myKirito.savePreyId();
+            self.myKirito.savePreyName();
             self.checkPrey();
         });
     }

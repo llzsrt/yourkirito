@@ -4,8 +4,8 @@ import { sleep, random } from './utils.js';
 import { ACTION_NAME, DUEL_NAME } from './constant.js';
 
 export function main() {
-    const domHelper = new DomHelper();
     const myKirito = new MyKirito();
+    const domHelper = new DomHelper(myKirito);
     endless(myKirito, domHelper);
 }
 
@@ -65,7 +65,7 @@ function hunt(mykirito, domHelper) {
         const tempResult = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
         if (!!tempResult && (tempResult.textContent.includes(DUEL_NAME[4]) || tempResult.textContent.includes(DUEL_NAME[3]) || tempResult.textContent.includes(DUEL_NAME[2]) || tempResult.textContent.includes(DUEL_NAME[1]))) {
             console.log(tempResult.textContent);
-            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? 1800 : 0);
+            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraCd : 0);
             mykirito.unlock();
         } else {
             mykirito.huntCount += 20;

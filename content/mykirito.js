@@ -12,6 +12,8 @@ export class MyKirito {
     isBusy = false;
     isDoingSomething = false;
     isPause = false;
+    extraCd = 0;
+
 
     constructor() {
         const tempSecond = this.getTempSecond();
