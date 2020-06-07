@@ -17,7 +17,8 @@ export class DomHelper {
 
     oldUrl = '';
 
-    constructor() {
+    constructor(myKirito) {
+        this.myKirito = myKirito;
         this.loadLinks();
         this.loadButtons();
         this.injectionTools();
