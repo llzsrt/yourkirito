@@ -70,7 +70,7 @@ export class DomHelper {
         for (let action in ACTION) {
             const button = this.addButton('button-group', `button-${action}`, action);
             this.actionButtons.push(button);
-            button.setAttribute('class', ACTION[action] === this.action ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.setAttribute('class', ACTION[action] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary');
             button.addEventListener('click', () => {
                 self.myKirito.action = ACTION[action];
                 self.myKirito.saveDefaultAction();
@@ -117,7 +117,7 @@ export class DomHelper {
         for (let duel in DUEL) {
             const button = this.addButton('duel-group', `button-${duel}`, duel);
             this.duelButtons.push(button);
-            button.setAttribute('class', DUEL[duel] === this.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.setAttribute('class', DUEL[duel] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
             button.addEventListener('click', () => {
                 self.myKirito.duel = DUEL[duel];
                 self.myKirito.saveDefaultDuel();
