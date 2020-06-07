@@ -35,7 +35,7 @@ function action(mykirito, domHelper) {
 function hunt(mykirito, domHelper) {
     setTimeout(async () => {
         if (mykirito.huntCount > 180) {
-            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? 1800 : 0);
+            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraCd : 0);
             mykirito.unlock();
             return;
         }
@@ -55,7 +55,7 @@ function hunt(mykirito, domHelper) {
         else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
         } else {
-            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? 1800 : 0);
+            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraCd : 0);
             mykirito.unlock();
             return;
         }
