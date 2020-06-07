@@ -9,6 +9,9 @@
     "permissions": [
         "activeTab"
     ],
+    "web_accessible_resources": [
+        "content/*"
+    ],
     "background": {
         "scripts": [
             "background.js"
@@ -21,7 +24,7 @@
                 "*://mykirito.com/*"
             ],
             "js": [
-                "mykirito.js"
+                "content.js"
             ],
             "css": [
                 "style.css"
