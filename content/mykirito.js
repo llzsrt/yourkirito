@@ -12,7 +12,9 @@ export class MyKirito {
     isBusy = false;
     isDoingSomething = false;
     isPause = false;
-    extraCd = 0;
+    actionCd = 100;
+    huntCd = 200;
+    extraHuntCd = 0;
 
 
     constructor() {

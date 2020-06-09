@@ -27,7 +27,7 @@ function action(mykirito, domHelper) {
             domHelper.buttons[ACTION_NAME[mykirito.action]].click();
             console.log(ACTION_NAME[mykirito.action]);
         }
-        mykirito.nextActionSecond = 104 + random(mykirito.randomDelay);
+        mykirito.nextActionSecond = mykirito.actionCd + random(mykirito.randomDelay);
         mykirito.unlock();
     }, 500);
 }
@@ -35,7 +35,7 @@ function action(mykirito, domHelper) {
 function hunt(mykirito, domHelper) {
     setTimeout(async () => {
         if (mykirito.huntCount > 180) {
-            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraCd : 0);
+            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraHuntCd : 0);
             mykirito.unlock();
             return;
         }
@@ -55,7 +55,7 @@ function hunt(mykirito, domHelper) {
         else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
         } else {
-            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraCd : 0);
+            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraHuntCd : 0);
             mykirito.unlock();
             return;
         }
@@ -65,7 +65,7 @@ function hunt(mykirito, domHelper) {
         const tempResult = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
         if (!!tempResult && (tempResult.textContent.includes(DUEL_NAME[4]) || tempResult.textContent.includes(DUEL_NAME[3]) || tempResult.textContent.includes(DUEL_NAME[2]) || tempResult.textContent.includes(DUEL_NAME[1]))) {
             console.log(tempResult.textContent);
-            mykirito.nextHuntSecond = 300 + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraCd : 0);
+            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraHuntCd : 0);
             mykirito.unlock();
         } else {
             mykirito.huntCount += 20;
