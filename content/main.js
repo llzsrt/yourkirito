@@ -173,7 +173,7 @@ function waitCaptcha(myKirito, domHelper) {
                 myKirito.syncTimer();
                 endless(myKirito, domHelper);
             } else if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
-                if (!myKirito.isPause) {
+                if (myKirito.isHunterMode) {
                     myKirito.lock();
                     hunt(myKirito, domHelper);
                 }
