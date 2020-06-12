@@ -9,9 +9,6 @@
     "permissions": [
         "activeTab"
     ],
-    "web_accessible_resources": [
-        "dist/**/*"
-    ],
     "background": {
         "scripts": [
             "background.js"

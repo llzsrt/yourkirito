@@ -3,7 +3,7 @@ import { DomHelper } from './dom-helper';
 import { sleep, random } from './utils';
 import { ACTION_NAME, DUEL_NAME } from './constant';
 
-export function main() {
+function main() {
     const myKirito = new MyKirito();
     const domHelper = new DomHelper(myKirito);
     endless(myKirito, domHelper);
@@ -187,3 +187,5 @@ function waitCaptcha(myKirito, domHelper) {
         }
     }, 1000);
 }
+
+main();
