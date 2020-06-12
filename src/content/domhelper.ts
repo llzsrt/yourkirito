@@ -81,13 +81,13 @@ export class DomHelper {
         this.pauseButton = this.addButton('button-group', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
         this.setPauseButtonStyle();
         this.pauseButton.addEventListener('click', () => {
-            if (!self.myKirito.isPause) {
-                self.myKirito.isPause = true;
-                self.myKirito.saveIsPause();
-                localStorage.setItem('scriptIsPause', 'true');
+            if (!self.myKirito.isActionPause) {
+                self.myKirito.isActionPause = true;
+                self.myKirito.saveIsActionPause();
+                localStorage.setItem('scriptIsActionPause', 'true');
             } else {
-                self.myKirito.isPause = false;
-                self.myKirito.saveIsPause();
+                self.myKirito.isActionPause = false;
+                self.myKirito.saveIsActionPause();
                 const tempSecond = self.myKirito.getTempSecond();
                 self.myKirito.loadNextActionSecond(tempSecond);
             }
@@ -100,16 +100,16 @@ export class DomHelper {
         this.hunterButton = this.addButton('hunter-wrapper', 'button-hunter', '自動攻擊');
         this.setHunterButtonStyle();
         this.hunterButton.addEventListener('click', () => {
-            if (self.myKirito.isHunterMode) {
+            if (!self.myKirito.isHuntPause) {
                 self.myKirito.unlock();
-                self.myKirito.isHunterMode = false;
-                self.myKirito.saveIsHunterMode();
+                self.myKirito.isHuntPause = true;
+                self.myKirito.saveIsHuntPause();
             } else {
                 const tempSecond = self.myKirito.getTempSecond();
                 self.myKirito.loadNextHuntSecond(tempSecond);
 
-                self.myKirito.isHunterMode = true;
-                self.myKirito.saveIsHunterMode();
+                self.myKirito.isHuntPause = false;
+                self.myKirito.saveIsHuntPause();
             }
             self.setHunterButtonStyle();
         });
@@ -138,8 +138,8 @@ export class DomHelper {
 
 
     setPauseButtonStyle() {
-        this.pauseButton.setAttribute('class', !this.myKirito.isPause ? 'btn btn-info active' : 'btn btn-secondary');
-        if (this.myKirito.isPause) {
+        this.pauseButton.setAttribute('class', !this.myKirito.isActionPause ? 'btn btn-info active' : 'btn btn-secondary');
+        if (this.myKirito.isActionPause) {
             this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
         } else {
             this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
@@ -221,7 +221,7 @@ export class DomHelper {
     }
 
     setHunterButtonStyle() {
-        if (this.myKirito.isHunterMode) {
+        if (!this.myKirito.isHuntPause) {
             this.hunterButton.textContent = '停止';
             this.hunterButton.setAttribute('class', 'btn btn-danger active');
         } else {

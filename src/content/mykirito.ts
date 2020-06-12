@@ -1,7 +1,6 @@
 import { getNowSecond } from './utils'
 
 export class MyKirito {
-    isDead = false;
     preyId = '';
     preyName = '';
     duel = 1;
@@ -10,13 +9,13 @@ export class MyKirito {
     nextActionSecond = 0;
     nextHuntSecond = 0;
     huntCount = 0;
-    isHunterMode = false;
     isBusy = false;
-    isDoingSomething = false;
-    isPause = false;
+    isDead = false;
+    isHuntPause = true;
+    isActionPause = false;
     actionCd = 100;
     huntCd = 200;
-    extraHuntCd = 0;
+    extraMercilesslyCd = 0;
 
 
     constructor() {
@@ -25,10 +24,10 @@ export class MyKirito {
         this.loadNextHuntSecond(tempSecond);
         this.loadDefaultAction();
         this.loadDefaultDuel();
-        this.loadIsPause();
+        this.loadIsActionPause();
         this.loadIsBusy();
         this.loadIsBusy();
-        this.loadIsHunterMode();
+        this.loadIsHuntPause();
         this.loadHuntCount();
         this.loadPreyId();
         this.loadPreyName();
@@ -50,12 +49,12 @@ export class MyKirito {
         this.preyName = localStorage.getItem('scriptPreyName');
     }
 
-    saveIsHunterMode() {
-        localStorage.setItem('scriptIsHunterMode', this.isHunterMode.toString());
+    saveIsHuntPause() {
+        localStorage.setItem('scriptIsHuntPause', this.isHuntPause.toString());
     }
 
-    loadIsHunterMode() {
-        this.isHunterMode = localStorage.getItem('scriptIsHunterMode') === 'true';
+    loadIsHuntPause() {
+        this.isHuntPause = localStorage.getItem('scriptIsHuntPause') === 'true';
     }
 
     saveHuntCount() {
@@ -81,12 +80,12 @@ export class MyKirito {
         this.isBusy = localStorage.getItem('scriptIsBusy') === 'true';
     }
 
-    saveIsPause() {
-        localStorage.setItem('scriptIsPause', this.isPause.toString());
+    saveIsActionPause() {
+        localStorage.setItem('scriptIsActionPause', this.isActionPause.toString());
     }
 
-    loadIsPause() {
-        this.isPause = localStorage.getItem('scriptIsPause') === 'true';
+    loadIsActionPause() {
+        this.isActionPause = localStorage.getItem('scriptIsActionPause') === 'true';
     }
 
     saveNextHuntSecond() {

@@ -35,7 +35,7 @@ function action(mykirito, domHelper) {
 function hunt(mykirito, domHelper) {
     setTimeout(async () => {
         if (mykirito.huntCount > 180) {
-            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraHuntCd : 0);
+            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraMercilesslyCd : 0);
             mykirito.unlock();
             return;
         }
@@ -55,7 +55,7 @@ function hunt(mykirito, domHelper) {
         else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
         } else {
-            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraHuntCd : 0);
+            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraMercilesslyCd : 0);
             mykirito.unlock();
             return;
         }
@@ -65,7 +65,7 @@ function hunt(mykirito, domHelper) {
         const tempResult = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
         if (!!tempResult && (tempResult.textContent.includes(DUEL_NAME[4]) || tempResult.textContent.includes(DUEL_NAME[3]) || tempResult.textContent.includes(DUEL_NAME[2]) || tempResult.textContent.includes(DUEL_NAME[1]))) {
             console.log(tempResult.textContent);
-            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraHuntCd : 0);
+            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraMercilesslyCd : 0);
             mykirito.unlock();
         } else {
             mykirito.huntCount += 20;
@@ -81,7 +81,7 @@ function hunt(mykirito, domHelper) {
 function endless(myKirito, domHelper) {
     setTimeout(async () => {
         if (document.querySelector('div > iframe')) {
-            if (myKirito.isHunterMode || !(location.href.includes(`/profile/${myKirito.preyId}`))) {
+            if (!myKirito.isHuntPause || !(location.href.includes(`/profile/${myKirito.preyId}`))) {
                 myKirito.nextActionSecond = 0;
                 waitCaptcha(myKirito, domHelper);
                 return;
@@ -105,7 +105,7 @@ function endless(myKirito, domHelper) {
 
         if (!myKirito.isBusy) {
 
-            if (myKirito.nextHuntSecond <= 0 && myKirito.isHunterMode && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
+            if (myKirito.nextHuntSecond <= 0 && !myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
                 if (!(location.href.includes(`/profile/${myKirito.preyId}`))) {
                     location.replace(`/profile/${myKirito.preyId}`);
                 } else {
@@ -113,7 +113,7 @@ function endless(myKirito, domHelper) {
                     hunt(myKirito, domHelper);
                 }
             }
-            else if (myKirito.nextActionSecond <= 0 && !myKirito.isPause) {
+            else if (myKirito.nextActionSecond <= 0 && !myKirito.isActionPause) {
                 if (!(domHelper.links['我的桐人'].className.includes('active'))) {
                     domHelper.links['我的桐人'].click();
                 }
@@ -126,7 +126,7 @@ function endless(myKirito, domHelper) {
             myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
             myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
 
-            if (!myKirito.isPause) {
+            if (!myKirito.isActionPause) {
                 if (myKirito.nextActionSecond > 0) {
                     domHelper.messageBlock.textContent = `${myKirito.nextActionSecond} 秒後${ACTION_NAME[myKirito.action]}`;
                 } else {
@@ -137,7 +137,7 @@ function endless(myKirito, domHelper) {
             }
 
 
-            if (myKirito.isHunterMode && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
+            if (!myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
                 if (myKirito.nextHuntSecond > 0) {
                     domHelper.messageBlock.textContent += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
                 } else {
@@ -166,14 +166,14 @@ function waitCaptcha(myKirito, domHelper) {
             }
 
             if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
-                if (!myKirito.isPause) {
+                if (!myKirito.isActionPause) {
                     myKirito.lock();
                     action(myKirito, domHelper);
                 }
                 myKirito.syncTimer();
                 endless(myKirito, domHelper);
             } else if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
-                if (myKirito.isHunterMode) {
+                if (!myKirito.isHuntPause) {
                     myKirito.lock();
                     hunt(myKirito, domHelper);
                 }
