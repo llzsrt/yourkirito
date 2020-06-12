@@ -11,6 +11,7 @@ export class MyKirito {
     huntCount = 0;
     isBusy = false;
     isDead = false;
+    isPreyDead = false;
     isHuntPause = true;
     isActionPause = false;
     actionCd = 100;

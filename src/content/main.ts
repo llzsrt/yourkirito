@@ -9,7 +9,7 @@ function main() {
     endless(myKirito, domHelper);
 }
 
-function action(mykirito, domHelper) {
+function action(myKirito, domHelper) {
     setTimeout(async () => {
         domHelper.loadButtons();
         if (domHelper.buttons['OK']) {
@@ -22,59 +22,72 @@ function action(mykirito, domHelper) {
             console.log('領取樓層獎勵');
         }
 
-        if (ACTION_NAME[mykirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[mykirito.action]].disabled)) {
+        if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
             await sleep(500);
-            domHelper.buttons[ACTION_NAME[mykirito.action]].click();
-            console.log(ACTION_NAME[mykirito.action]);
+            domHelper.buttons[ACTION_NAME[myKirito.action]].click();
+            console.log(ACTION_NAME[myKirito.action]);
         }
-        mykirito.nextActionSecond = mykirito.actionCd + random(mykirito.randomDelay);
-        mykirito.unlock();
+        myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
+        myKirito.unlock();
     }, 500);
 }
 
-function hunt(mykirito, domHelper) {
+function hunt(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
-        if (mykirito.huntCount > 180) {
-            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraMercilesslyCd : 0);
-            mykirito.unlock();
+        const tempStatus = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(2)');
+        if (!!tempStatus && tempStatus.textContent.trim() === '此玩家目前是死亡狀態') {
+            myKirito.isPreyDead = true;
+            myKirito.nextHuntSecond = 0;
+            myKirito.isHuntPause = true;
+            myKirito.saveIsHuntPause();
+            domHelper.setHunterButtonStyle();
+            myKirito.unlock();
             return;
         }
+
+        if (myKirito.huntCount > 180) {
+            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
+            myKirito.unlock();
+            return;
+        }
+
         const tempName1 = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
         const tempName2 = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td');
         if ((!tempName1 || tempName1.textContent === '') && (!tempName2 || tempName2.textContent === '')) {
             await sleep(100);
-            mykirito.huntCount++;
-            hunt(mykirito, domHelper);
+            myKirito.huntCount++;
+            hunt(myKirito, domHelper);
             return;
         }
         domHelper.loadButtons();
 
-        if (DUEL_NAME[mykirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[mykirito.duel]].disabled)) {
-            domHelper.buttons[DUEL_NAME[mykirito.duel]].click();
+        if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
+            domHelper.buttons[DUEL_NAME[myKirito.duel]].click();
         }
         else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
         } else {
-            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraMercilesslyCd : 0);
-            mykirito.unlock();
+            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
+            myKirito.unlock();
             return;
         }
 
-        await sleep(1000);
+        await sleep(2000);
 
         const tempResult = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
+        
         if (!!tempResult && (tempResult.textContent.includes(DUEL_NAME[4]) || tempResult.textContent.includes(DUEL_NAME[3]) || tempResult.textContent.includes(DUEL_NAME[2]) || tempResult.textContent.includes(DUEL_NAME[1]))) {
             console.log(tempResult.textContent);
-            mykirito.nextHuntSecond = mykirito.huntCd + random(mykirito.randomDelay) + (mykirito.duel == 4 ? mykirito.extraMercilesslyCd : 0);
-            mykirito.unlock();
+            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
+            myKirito.unlock();
         } else {
-            mykirito.huntCount += 20;
-            mykirito.saveHuntCount();
-            mykirito.unlock();
+            myKirito.huntCount += 20;
+            myKirito.saveHuntCount();
+            myKirito.unlock();
             location.reload();
         }
-        mykirito.huntCount = 0;
-        mykirito.saveHuntCount();
+        myKirito.huntCount = 0;
+        myKirito.saveHuntCount();
     }, 500);
 }
 
@@ -125,7 +138,7 @@ function endless(myKirito, domHelper) {
         if (!myKirito.dead) {
             myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
             myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
-
+            
             if (!myKirito.isActionPause) {
                 if (myKirito.nextActionSecond > 0) {
                     domHelper.messageBlock.textContent = `${myKirito.nextActionSecond} 秒後${ACTION_NAME[myKirito.action]}`;
@@ -137,7 +150,9 @@ function endless(myKirito, domHelper) {
             }
 
 
-            if (!myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
+            if (!!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' && myKirito.isPreyDead) {
+                domHelper.messageBlock.textContent += `, 他死了`;
+            }else if (!myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
                 if (myKirito.nextHuntSecond > 0) {
                     domHelper.messageBlock.textContent += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
                 } else {
