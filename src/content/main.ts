@@ -6,6 +6,19 @@ import { ACTION_NAME, DUEL_NAME } from './constant';
 function main() {
     const myKirito = new MyKirito();
     const domHelper = new DomHelper(myKirito);
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        switch(message.event) {
+            case 'reset-action-cd':
+                myKirito.nextActionSecond = message.content;
+                myKirito.saveNextActionSecond();
+                break;
+            case 'reset-hunt-cd':
+                myKirito.nextHuntSecond = message.content;
+                myKirito.saveNextHuntSecond();
+                break;
+        }
+        sendResponse({ content: myKirito });
+    });
     endless(myKirito, domHelper);
 }
 
