@@ -1,5 +1,5 @@
 import { ACTION, DUEL } from './constant';
-import { MyKirito } from './mykirito';
+import { MyKirito } from './my-kirito';
 import { sleep } from './utils';
 
 export class DomHelper {

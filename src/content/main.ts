@@ -1,5 +1,5 @@
-import { MyKirito } from './mykirito';
-import { DomHelper } from './domhelper';
+import { MyKirito } from './my-kirito';
+import { DomHelper } from './dom-helper';
 import { sleep, random } from './utils';
 import { ACTION_NAME, DUEL_NAME } from './constant';
 
