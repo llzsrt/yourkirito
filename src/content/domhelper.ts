@@ -1,6 +1,6 @@
-import { ACTION, DUEL } from './constant.js';
-import { MyKirito } from './mykirito.js';
-import { sleep } from './utils.js';
+import { ACTION, DUEL } from './constant';
+import { MyKirito } from './mykirito';
+import { sleep } from './utils';
 
 export class DomHelper {
 
@@ -17,7 +17,7 @@ export class DomHelper {
 
     oldUrl = '';
 
-    constructor(myKirito) {
+    constructor(myKirito: MyKirito) {
         this.myKirito = myKirito;
         this.loadLinks();
         this.loadButtons();

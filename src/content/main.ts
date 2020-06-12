@@ -1,7 +1,7 @@
-import { MyKirito } from './mykirito.js';
-import { DomHelper } from './domhelper.js';
-import { sleep, random } from './utils.js';
-import { ACTION_NAME, DUEL_NAME } from './constant.js';
+import { MyKirito } from './mykirito';
+import { DomHelper } from './domhelper';
+import { sleep, random } from './utils';
+import { ACTION_NAME, DUEL_NAME } from './constant';
 
 export function main() {
     const myKirito = new MyKirito();

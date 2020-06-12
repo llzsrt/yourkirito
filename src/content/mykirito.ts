@@ -1,3 +1,5 @@
+import { getNowSecond } from './utils'
+
 export class MyKirito {
     isDead = false;
     preyId = '';
@@ -49,7 +51,7 @@ export class MyKirito {
     }
 
     saveIsHunterMode() {
-        localStorage.setItem('scriptIsHunterMode', this.isHunterMode)
+        localStorage.setItem('scriptIsHunterMode', this.isHunterMode.toString());
     }
 
     loadIsHunterMode() {
@@ -57,12 +59,12 @@ export class MyKirito {
     }
 
     saveHuntCount() {
-        localStorage.setItem('scriptHuntCount', this.huntCount);
+        localStorage.setItem('scriptHuntCount', this.huntCount.toString());
     }
 
     loadHuntCount() {
         const scriptHuntCount = localStorage.getItem('scriptHuntCount');
-        this.huntCount = parseInt(scriptHuntCount ? scriptHuntCount : 0);
+        this.huntCount = parseInt(scriptHuntCount ? scriptHuntCount : '0');
     }
 
     lock() {
@@ -80,7 +82,7 @@ export class MyKirito {
     }
 
     saveIsPause() {
-        localStorage.setItem('scriptIsPause', this.isPause);
+        localStorage.setItem('scriptIsPause', this.isPause.toString());
     }
 
     loadIsPause() {
@@ -88,25 +90,25 @@ export class MyKirito {
     }
 
     saveNextHuntSecond() {
-        localStorage.setItem('scriptNextHuntSecond', this.nextHuntSecond);
+        localStorage.setItem('scriptNextHuntSecond', this.nextHuntSecond.toString());
     }
 
     loadNextHuntSecond(tempSecond) {
         const scriptNextHuntSecond = localStorage.getItem('scriptNextHuntSecond');
-        this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : 0) + parseInt(tempSecond ? tempSecond : 0) - parseInt(+(new Date()) / 1000);
+        this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveNextActionSecond() {
-        localStorage.setItem('scriptNextActionSecond', this.nextActionSecond);
+        localStorage.setItem('scriptNextActionSecond', this.nextActionSecond.toString());
     }
 
     loadNextActionSecond(tempSecond) {
         const scriptNextActionSecond = localStorage.getItem('scriptNextActionSecond');
-        this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : 0) + parseInt(tempSecond ? tempSecond : 0) - parseInt(+(new Date()) / 1000);
+        this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveTempSecond() {
-        localStorage.setItem('scriptTempSecond', parseInt(+(new Date()) / 1000));
+        localStorage.setItem('scriptTempSecond', getNowSecond().toString());
     }
 
     getTempSecond() {
@@ -114,7 +116,7 @@ export class MyKirito {
     }
 
     saveDefaultDuel() {
-        localStorage.setItem('scriptDuel', this.duel);
+        localStorage.setItem('scriptDuel', this.duel.toString());
     }
 
     loadDefaultDuel() {
@@ -123,7 +125,7 @@ export class MyKirito {
     }
 
     saveDefaultAction() {
-        localStorage.setItem('scriptAction', this.action);
+        localStorage.setItem('scriptAction', this.action.toString());
     }
 
     loadDefaultAction() {
@@ -135,7 +137,7 @@ export class MyKirito {
         const scriptTempSecond = localStorage.getItem('scriptTempSecond');
         const scriptNextActionSecond = localStorage.getItem('scriptNextActionSecond');
         const scriptNextHuntSecond = localStorage.getItem('scriptNextHuntSecond');
-        this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : 0) + parseInt(scriptTempSecond ? scriptTempSecond : 0) - parseInt(+(new Date()) / 1000);
-        this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : 0) + parseInt(scriptTempSecond ? scriptTempSecond : 0) - parseInt(+(new Date()) / 1000);
+        this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : '0') + parseInt(scriptTempSecond ? scriptTempSecond : '0') - getNowSecond();
+        this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : '0') + parseInt(scriptTempSecond ? scriptTempSecond : '0') - getNowSecond();
     }
 }

@@ -5,3 +5,7 @@ export function random(x) {
 export async function sleep(ms = 0) {
     return new Promise(r => setTimeout(r, ms));
 };
+
+export function getNowSecond() {
+    return Math.ceil(+(new Date()) / 1000);
+}

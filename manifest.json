@@ -10,7 +10,7 @@
         "activeTab"
     ],
     "web_accessible_resources": [
-        "content/*"
+        "dist/**/*"
     ],
     "background": {
         "scripts": [
