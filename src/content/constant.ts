@@ -31,3 +31,7 @@ export const DUEL_NAME = {
     3: '決一死戰',
     4: '我要超渡你'
 }
+
+export const SCRIPT_STATUS = {
+    
+}

@@ -39,10 +39,12 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.isPreyDead = true;
             myKirito.nextHuntSecond = 0;
             myKirito.isHuntPause = true;
+            myKirito.unlock();
             myKirito.saveIsHuntPause();
             domHelper.setHunterButtonStyle();
-            myKirito.unlock();
             return;
+        } else {
+            myKirito.isPreyDead = false;
         }
 
         if (myKirito.huntCount > 180) {
