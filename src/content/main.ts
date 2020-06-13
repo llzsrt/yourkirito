@@ -37,38 +37,50 @@ function main() {
     endless(myKirito, domHelper);
 }
 
-function actionWork(myKirito, domHelper) {
+function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
         domHelper.loadButtons();
+
+        // 檢查暱稱欄位
+        const tempName = await domHelper.waitForElement('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
+        // 若超過10秒仍未顯示暱稱，重新整理
+        if (!tempName) {
+            myKirito.unlock();
+            location.reload();
+        }
+
+        // 有OK可以按就按OK
         if (domHelper.buttons['OK']) {
             domHelper.buttons['OK'].click();
+            await sleep(500);
         }
 
         if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled)) {
-            await sleep(500);
             domHelper.buttons['領取獎勵'].click();
             console.log('領取樓層獎勵');
+            await sleep(500);
         }
 
+        // 按下該按的按鈕
         if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
-            await sleep(500);
             domHelper.buttons[ACTION_NAME[myKirito.action]].click();
             console.log(ACTION_NAME[myKirito.action]);
         }
+
+        const tempResult = await domHelper.waitForElement('#root > div > div > div:nth-child(5) > div > div', '行動成功');
+        
         myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
         myKirito.unlock();
+
+        // 如果沒有行動成功，重整一下看看自已是不是死了
+        if (!!tempResult) {
+            location.reload();
+        }
     }, 500);
 }
 
 function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
-
-        // 若重新整理超過3次仍未能完成對戰，放棄本次對戰
-        if (myKirito.huntReloadCount > 3) {
-            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
-            myKirito.unlock();
-            return;
-        }
 
         // 檢查暱稱欄位
         const tempName = await domHelper.waitForElement(
@@ -78,8 +90,6 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         );
         // 若超過10秒仍未顯示對手暱稱，重新整理
         if (!tempName) {
-            myKirito.huntReloadCount += 1;
-            myKirito.saveHuntReloadCount();
             myKirito.unlock();
             location.reload();
             return;
@@ -120,13 +130,9 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.unlock();
         } else {
             // 若未超過10秒仍未出現對戰結果，重新整理
-            myKirito.huntReloadCount += 1;
-            myKirito.saveHuntReloadCount();
             myKirito.unlock();
             location.reload();
         }
-        myKirito.huntReloadCount = 0;
-        myKirito.saveHuntReloadCount();
     }, 500);
 }
 
