@@ -1,7 +1,7 @@
 import { MyKirito } from './my-kirito';
 import { DomHelper } from './dom-helper';
 import { sleep, random } from './utils';
-import { ACTION_NAME, DUEL_NAME } from './constant';
+import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS } from './constant';
 
 function main() {
     const myKirito = new MyKirito();
@@ -37,7 +37,7 @@ function main() {
     endless(myKirito, domHelper);
 }
 
-function action(myKirito, domHelper) {
+function actionWork(myKirito, domHelper) {
     setTimeout(async () => {
         domHelper.loadButtons();
         if (domHelper.buttons['OK']) {
@@ -60,7 +60,7 @@ function action(myKirito, domHelper) {
     }, 500);
 }
 
-function hunt(myKirito: MyKirito, domHelper: DomHelper) {
+function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
 
         // 若重新整理超過3次仍未能完成對戰，放棄本次對戰
@@ -130,7 +130,29 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
     }, 500);
 }
 
-function endless(myKirito, domHelper) {
+function action(myKirito: MyKirito, domHelper: DomHelper) {
+    domHelper.loadLinks();
+    if (!(domHelper.links['我的桐人'].className.includes('active'))) {
+        domHelper.links['我的桐人'].click();
+    }
+    myKirito.lock();
+    myKirito.scriptStatus = SCRIPT_STATUS.Action;
+    myKirito.saveScriptStatus();
+    actionWork(myKirito, domHelper);
+}
+
+function hunt(myKirito: MyKirito, domHelper: DomHelper) {
+    if (!(location.href.includes(`/profile/${myKirito.preyId}`))) {
+        location.replace(`/profile/${myKirito.preyId}`);
+    } else {
+        myKirito.lock();
+        myKirito.scriptStatus = SCRIPT_STATUS.Hunt;
+        myKirito.saveScriptStatus();
+        huntWork(myKirito, domHelper);
+    }
+}
+
+function endless(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
         if (document.querySelector('div > iframe')) {
             if (!myKirito.isHuntPause || !(location.href.includes(`/profile/${myKirito.preyId}`))) {
@@ -150,31 +172,33 @@ function endless(myKirito, domHelper) {
 
         const tempDead = document.querySelector('#root > div > div')
         if (!!tempDead && tempDead.textContent === '你的角色死亡了，請進行轉生') {
-            myKirito.dead = true;
+            myKirito.isDead = true;
         } else {
-            myKirito.dead = false;
+            myKirito.isDead = false;
         }
 
         if (!myKirito.isBusy) {
 
             if (myKirito.nextHuntSecond <= 0 && !myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
-                if (!(location.href.includes(`/profile/${myKirito.preyId}`))) {
-                    location.replace(`/profile/${myKirito.preyId}`);
-                } else {
-                    myKirito.lock();
-                    hunt(myKirito, domHelper);
-                }
+                hunt(myKirito, domHelper);
             }
             else if (myKirito.nextActionSecond <= 0 && !myKirito.isActionPause) {
-                if (!(domHelper.links['我的桐人'].className.includes('active'))) {
-                    domHelper.links['我的桐人'].click();
-                }
-                myKirito.lock();
                 action(myKirito, domHelper);
+            }
+        } else {
+            switch(myKirito.scriptStatus) {
+                case SCRIPT_STATUS.Action:
+                    action(myKirito, domHelper);
+                    break;
+                case SCRIPT_STATUS.Hunt:
+                    hunt(myKirito, domHelper);
+                    break;
+                default:
+                    myKirito.unlock();
             }
         }
 
-        if (!myKirito.dead) {
+        if (!myKirito.isDead) {
             myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
             myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
 
@@ -222,14 +246,14 @@ function waitCaptcha(myKirito, domHelper) {
             if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
                 if (!myKirito.isActionPause) {
                     myKirito.lock();
-                    action(myKirito, domHelper);
+                    actionWork(myKirito, domHelper);
                 }
                 myKirito.syncTimer();
                 endless(myKirito, domHelper);
             } else if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
                 if (!myKirito.isHuntPause) {
                     myKirito.lock();
-                    hunt(myKirito, domHelper);
+                    huntWork(myKirito, domHelper);
                 }
                 myKirito.syncTimer();
                 endless(myKirito, domHelper);

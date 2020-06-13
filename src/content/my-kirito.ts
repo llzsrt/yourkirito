@@ -1,4 +1,5 @@
-import { getNowSecond } from './utils'
+import { SCRIPT_STATUS } from './constant';
+import { getNowSecond } from './utils';
 
 export class MyKirito {
     preyId = '';
@@ -19,6 +20,7 @@ export class MyKirito {
     extraMercilesslyCd = 0;
     token = '';
     profileViewType = '';
+    scriptStatus = SCRIPT_STATUS.Normal;
 
 
     constructor() {
@@ -39,6 +41,16 @@ export class MyKirito {
         this.loadHuntCd();
         this.loadToken();
         this.loadProfileViewType();
+        this.loadScriptStatus();
+    }
+
+    saveScriptStatus() {
+        localStorage.setItem('scriptStatus', this.scriptStatus.toString());
+    }
+
+    loadScriptStatus() {
+        const scriptStatus = localStorage.getItem('scriptStatus');
+        this.scriptStatus = parseInt(scriptStatus ? scriptStatus : '0');
     }
 
     loadProfileViewType() {
@@ -117,6 +129,8 @@ export class MyKirito {
     unlock() {
         this.isBusy = false;
         localStorage.setItem('scriptIsBusy', 'false');
+        this.scriptStatus = SCRIPT_STATUS.Normal;
+        this.saveScriptStatus();
     }
 
     loadIsBusy() {

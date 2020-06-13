@@ -33,5 +33,7 @@ export const DUEL_NAME = {
 }
 
 export const SCRIPT_STATUS = {
-    
+    Normal: 0,
+    Action: 1,
+    Hunt: 2
 }

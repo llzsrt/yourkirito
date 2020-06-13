@@ -4,18 +4,18 @@ import { sleep } from './utils';
 
 export class DomHelper {
 
-    myKirito;
+    myKirito: MyKirito;
 
-    buttons = {}
-    links = {}
-    actionButtons = [];
-    duelButtons = [];
-    messageBlock;
-    hunterButton;
-    pauseButton;
-    preyNameBlock;
+    buttons: any = {}
+    links: any = {}
+    actionButtons: Element[] = [];
+    duelButtons: Element[] = [];
+    messageBlock: Element;
+    hunterButton: Element;
+    pauseButton: Element;
+    preyNameBlock: Element;
 
-    oldUrl = '';
+    oldUrl: string = '';
 
     constructor(myKirito: MyKirito) {
         this.myKirito = myKirito;
