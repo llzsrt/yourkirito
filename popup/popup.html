@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="zh-tw">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
-    <div class="input-group mb-3">
-        <input type="number" class="form-control" value="0" id="input-resetActionCd">
-        <div class="input-group-append">
-            <button class="btn btn-secondary" type="button" id="button-resetActionCd">重置行動CD</button>
+    <div class="card border-right-0 border-left-0">
+        <a data-toggle="collapse" data-target="#script-parameter">
+            <div class="card-header">
+                即時參數調整
+            </div>
+        </a>
+
+        <div id="script-parameter" class="collapse">
+            <div class="card-body">
+                
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text text-left">行動CD:</span>
+                    </div>
+                    <input type="number" class="form-control" value="0" id="input-resetActionCd">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button" id="button-resetActionCd">調整</button>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text text-left">攻擊CD:</span>
+                    </div>
+                    <input type="number" class="form-control" value="0" id="input-resetHuntCd">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button" id="button-resetHuntCd">調整</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="input-group">
-        <input type="number" class="form-control" value="0" id="input-resetHuntCd">
-        <div class="input-group-append">
-            <button class="btn btn-secondary" type="button" id="button-resetHuntCd">重置攻擊CD</button>
-        </div>
-    </div>
+
+    <script src="jquery.min.js"></script>
     <script src="bootstrap.bundle.min.js"></script>
     <script src="popup.js"></script>
 </body>
+
 </html>

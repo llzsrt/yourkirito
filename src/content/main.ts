@@ -8,6 +8,9 @@ function main() {
     const domHelper = new DomHelper(myKirito);
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         switch(message.event) {
+            case 'sync':
+                sendResponse({myKirito});
+                break;
             case 'reset-action-cd':
                 myKirito.nextActionSecond = message.content;
                 myKirito.saveNextActionSecond();
