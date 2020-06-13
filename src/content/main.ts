@@ -124,7 +124,7 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
 
         // 檢查驗證
         domHelper.loadButtons();
-        if (document.querySelector('div > iframe') && DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
+        if (document.querySelector('div > iframe') && DUEL_NAME[1] in domHelper.buttons && domHelper.buttons[DUEL_NAME[1]].disabled) {
             myKirito.isHuntWaitCaptcha = true;
             myKirito.saveIsHuntWaitCaptcha();
             myKirito.unlock();
@@ -248,7 +248,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             if (myKirito.isHuntPause || !myKirito.preyId) {
                 domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
             } else if (myKirito.isHuntWaitCaptcha) {
-                domHelper.messageBlock.textContent = ', 等待驗證後攻擊';
+                domHelper.messageBlock.textContent += ', 等待驗證後攻擊';
 
                 domHelper.loadButtons();
                 if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
