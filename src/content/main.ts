@@ -117,6 +117,9 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.isPreyDead = false;
         }
 
+        // 有時候驗證好像會比較慢出來，等1秒看看= =
+        await sleep(1000);
+
         // 檢查驗證
         domHelper.loadButtons();
         if (document.querySelector('div > iframe') && DUEL_NAME[1] in domHelper.buttons && domHelper.buttons[DUEL_NAME[1]].disabled) {
