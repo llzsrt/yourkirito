@@ -77,7 +77,7 @@ export class DomHelper {
                 self.setToolsButtonStyle();
             });
         }
-        
+
         this.pauseButton = this.addButton('button-group', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
         this.setPauseButtonStyle();
         this.pauseButton.addEventListener('click', () => {
@@ -230,4 +230,20 @@ export class DomHelper {
         }
     }
 
+    async waitForElement(selector: string, value?: string, timeout?: number): Promise<string>
+    async waitForElement(element: Element, value?: string, timeout?: number): Promise<string>
+    async waitForElement(target: any, value: string = '', timeout: number = 10): Promise<string> {
+        if (timeout < 1) {
+            return null;
+        }
+        if (typeof (target) === 'string') {
+            target = document.querySelector(target);
+        }
+        if (!!target && target.textContent.includes(value)) {
+            return target.textContent;
+        } else {
+            await sleep(1000);
+            return await this.waitForElement(target, value, timeout - 1);
+        }
+    }
 }

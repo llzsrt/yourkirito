@@ -62,8 +62,32 @@ function action(myKirito, domHelper) {
 
 function hunt(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
-        const tempStatus = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(2)');
-        if (!!tempStatus && tempStatus.textContent.trim() === '此玩家目前是死亡狀態') {
+
+        // 若重新整理超過3次仍未能完成對戰，放棄本次對戰
+        if (myKirito.huntReloadCount > 3) {
+            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
+            myKirito.unlock();
+            return;
+        }
+
+        // 檢查暱稱欄位
+        const tempName = await domHelper.waitForElement(
+            myKirito.profileViewType === 'detail' ? 
+            '#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)' : 
+            '#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
+        );
+        // 若超過10秒仍未顯示對手暱稱，重新整理
+        if (!tempName) {
+            myKirito.huntReloadCount += 1;
+            myKirito.saveHuntReloadCount();
+            myKirito.unlock();
+            location.reload();
+            return;
+        }
+
+        // 檢查對手死了沒
+        const tempStatus = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(2)');
+        if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
             myKirito.isPreyDead = true;
             myKirito.nextHuntSecond = 0;
             myKirito.isHuntPause = true;
@@ -75,20 +99,6 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.isPreyDead = false;
         }
 
-        if (myKirito.huntCount > 180) {
-            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
-            myKirito.unlock();
-            return;
-        }
-
-        const tempName1 = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
-        const tempName2 = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td');
-        if ((!tempName1 || tempName1.textContent === '') && (!tempName2 || tempName2.textContent === '')) {
-            await sleep(100);
-            myKirito.huntCount++;
-            hunt(myKirito, domHelper);
-            return;
-        }
         domHelper.loadButtons();
 
         if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
@@ -96,28 +106,23 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
         }
         else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
-        } else {
-            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
-            myKirito.unlock();
-            return;
         }
 
-        await sleep(2000);
-
-        const tempResult = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
-        
-        if (!!tempResult && (tempResult.textContent.includes(DUEL_NAME[4]) || tempResult.textContent.includes(DUEL_NAME[3]) || tempResult.textContent.includes(DUEL_NAME[2]) || tempResult.textContent.includes(DUEL_NAME[1]))) {
-            console.log(tempResult.textContent);
+        // 檢查對戰結果
+        const tempResult = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
+        if (!!tempResult && (tempResult.includes(DUEL_NAME[4]) || tempResult.includes(DUEL_NAME[3]) || tempResult.includes(DUEL_NAME[2]) || tempResult.includes(DUEL_NAME[1]))) {
+            console.log(tempResult);
             myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
             myKirito.unlock();
         } else {
-            myKirito.huntCount += 20;
-            myKirito.saveHuntCount();
+            // 若未超過10秒仍未出現對戰結果，重新整理
+            myKirito.huntReloadCount += 1;
+            myKirito.saveHuntReloadCount();
             myKirito.unlock();
             location.reload();
         }
-        myKirito.huntCount = 0;
-        myKirito.saveHuntCount();
+        myKirito.huntReloadCount = 0;
+        myKirito.saveHuntReloadCount();
     }, 500);
 }
 

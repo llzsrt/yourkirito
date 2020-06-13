@@ -8,7 +8,7 @@ export class MyKirito {
     randomDelay = 25;
     nextActionSecond = 0;
     nextHuntSecond = 0;
-    huntCount = 0;
+    huntReloadCount = 0;
     isBusy = false;
     isDead = false;
     isPreyDead = false;
@@ -17,6 +17,8 @@ export class MyKirito {
     actionCd = 100;
     huntCd = 200;
     extraMercilesslyCd = 0;
+    token = '';
+    profileViewType = '';
 
 
     constructor() {
@@ -29,12 +31,22 @@ export class MyKirito {
         this.loadIsBusy();
         this.loadIsBusy();
         this.loadIsHuntPause();
-        this.loadHuntCount();
+        this.loadHuntReloadCount();
         this.loadPreyId();
         this.loadPreyName();
         this.loadRandomDelay();
         this.loadActionCd();
         this.loadHuntCd();
+        this.loadToken();
+        this.loadProfileViewType();
+    }
+
+    loadProfileViewType() {
+        this.profileViewType = localStorage.getItem('profileViewType');
+    }
+
+    loadToken() {
+        this.token = localStorage.getItem('token');
     }
 
     saveHuntCd() {
@@ -88,13 +100,13 @@ export class MyKirito {
         this.isHuntPause = localStorage.getItem('scriptIsHuntPause') === 'true';
     }
 
-    saveHuntCount() {
-        localStorage.setItem('scriptHuntCount', this.huntCount.toString());
+    saveHuntReloadCount() {
+        localStorage.setItem('scripthuntReloadCount', this.huntReloadCount.toString());
     }
 
-    loadHuntCount() {
-        const scriptHuntCount = localStorage.getItem('scriptHuntCount');
-        this.huntCount = parseInt(scriptHuntCount ? scriptHuntCount : '0');
+    loadHuntReloadCount() {
+        const scripthuntReloadCount = localStorage.getItem('scripthuntReloadCount');
+        this.huntReloadCount = parseInt(scripthuntReloadCount ? scripthuntReloadCount : '0');
     }
 
     lock() {
