@@ -1,13 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const randomDelayButton = document.getElementById('button-randomDelay');
-        const randomDelayInput = document.getElementById('input-randomDelay');
-        const actionCdButton = document.getElementById('button-actionCd');
-        const actionCdInput = document.getElementById('input-actionCd');
-        const huntCdButton = document.getElementById('button-huntCd');
-        const huntCdInput = document.getElementById('input-huntCd');
-        const resetActionCdButton = document.getElementById('button-reset-actionCd');
-        const resetHuntCdButton = document.getElementById('button-reset-huntCd');
+        const buttonRandomDelay = document.getElementById('button-randomDelay');
+        const inputRandomDelay = document.getElementById('input-randomDelay');
+        const buttonActionCd = document.getElementById('button-actionCd');
+        const inputActionCd = document.getElementById('input-actionCd');
+        const buttonHuntCd = document.getElementById('button-huntCd');
+        const inputHuntCd = document.getElementById('input-huntCd');
+        const buttonResetActionCd = document.getElementById('button-reset-actionCd');
+        const buttonResetHuntCd = document.getElementById('button-reset-huntCd');
+
+        const buttonBasicActionCd = document.getElementById('button-basic-actionCd');
+        const inputBasicActionCd = document.getElementById('input-basic-actionCd');
+        const buttonBasicHuntCd = document.getElementById('button-basic-huntCd');
+        const inputBasicHuntCd = document.getElementById('input-basic-huntCd');
         
         let myKirito=null;
         chrome.tabs.sendMessage(
@@ -17,43 +22,66 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (response) => {
                 myKirito = response.myKirito;
-                randomDelayInput.value = myKirito.randomDelay;
-                actionCdInput.value = myKirito.nextActionSecond;
-                huntCdInput.value = myKirito.nextHuntSecond;
+                inputRandomDelay.value = myKirito.randomDelay;
+                inputBasicActionCd.value = myKirito.actionCd;
+                inputBasicHuntCd.value = myKirito.huntCd;
+                inputActionCd.value = myKirito.nextActionSecond;
+                inputHuntCd.value = myKirito.nextHuntSecond;
             }
         );
 
-        randomDelayButton.addEventListener('click', () => {
+        buttonRandomDelay.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
                     event: 'set-random-delay',
-                    content: +(randomDelayInput.value)
+                    content: +(inputRandomDelay.value)
                 }
             );
         });
 
-        actionCdButton.addEventListener('click', () => {
+
+        buttonBasicActionCd.addEventListener('click', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-basic-action-cd',
+                    content: +(inputBasicActionCd.value)
+                }
+            );
+        });
+
+        buttonBasicHuntCd.addEventListener('click', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-basic-hunt-cd',
+                    content: +(inputBasicHuntCd.value)
+                }
+            );
+        });
+
+        buttonActionCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
                     event: 'set-action-cd',
-                    content: +(actionCdInput.value)
+                    content: +(inputActionCd.value)
                 }
             );
         });
 
-        huntCdButton.addEventListener('click', () => {
+        buttonHuntCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
                     event: 'set-hunt-cd',
-                    content: +(huntCdInput.value)
+                    content: +(inputHuntCd.value)
                 }
             );
         });
 
-        resetActionCdButton.addEventListener('click', () => {
+        buttonResetActionCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
@@ -63,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
 
-        resetHuntCdButton.addEventListener('click', () => {
+        buttonResetHuntCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {

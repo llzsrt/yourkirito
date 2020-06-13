@@ -15,6 +15,14 @@ function main() {
                 myKirito.randomDelay = message.content;
                 myKirito.saveRandomDelay();
                 break;
+            case 'set-basic-action-cd':
+                myKirito.actionCd = message.content;
+                myKirito.saveActionCd();
+                break;
+            case 'set-basic-hunt-cd':
+                myKirito.huntCd = message.content;
+                myKirito.saveHuntCd();
+                break;
             case 'set-action-cd':
                 myKirito.nextActionSecond = message.content;
                 myKirito.saveNextActionSecond();

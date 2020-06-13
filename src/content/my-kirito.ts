@@ -33,6 +33,26 @@ export class MyKirito {
         this.loadPreyId();
         this.loadPreyName();
         this.loadRandomDelay();
+        this.loadActionCd();
+        this.loadHuntCd();
+    }
+
+    saveHuntCd() {
+        localStorage.setItem('scriptHuntCd', this.huntCd.toString());
+    }
+
+    loadHuntCd() {
+        const scriptHuntCd = localStorage.getItem('scriptHuntCd');
+        this.huntCd = parseInt(scriptHuntCd ? scriptHuntCd : '200');
+    }
+
+    saveActionCd() {
+        localStorage.setItem('scriptActionCd', this.actionCd.toString());
+    }
+
+    loadActionCd() {
+        const scriptActionCd = localStorage.getItem('scriptActionCd');
+        this.actionCd = parseInt(scriptActionCd ? scriptActionCd : '100');
     }
 
     saveRandomDelay() {
