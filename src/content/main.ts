@@ -129,10 +129,14 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             return;
         }
 
+        let duelType = '';
+
         if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
             domHelper.buttons[DUEL_NAME[myKirito.duel]].click();
+            duelType = DUEL_NAME[myKirito.duel];
         } else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
+            duelType = DUEL_NAME[2];
         } else {
             // 沒按鈕能按則放棄本次對戰
             myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
@@ -141,13 +145,13 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         }
 
         // 檢查對戰結果
-        const tempResult = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(3) > div > div');
+        const tempResult = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(3) > div > div', duelType);
         if (!!tempResult && (tempResult.includes(DUEL_NAME[4]) || tempResult.includes(DUEL_NAME[3]) || tempResult.includes(DUEL_NAME[2]) || tempResult.includes(DUEL_NAME[1]))) {
             console.log(tempResult);
             myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
             myKirito.unlock();
         } else {
-            // 若未超過10秒仍未出現對戰結果，重新整理
+            // 若未超過10秒仍未出現應有的對戰結果，重新整理
             myKirito.unlock();
             location.reload();
         }
@@ -283,5 +287,10 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
         }
     }, 1000);
 }
+
+async function getProfile(token: string) {
+
+}
+
 
 main();
