@@ -25,8 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (response) => {
                 myKirito = response.myKirito;
-                
-                imgAvatar.src = myKirito.profileAvatar;
+
+                if (!myKirito.profileAvatar) {
+                    imgAvatar.hidden = true;
+                } else {
+                    imgAvatar.src = myKirito.profileAvatar;
+                }
                 blockName.textContent = myKirito.profileName;
 
                 inputRandomDelay.value = myKirito.randomDelay;
