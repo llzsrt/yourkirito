@@ -230,7 +230,7 @@ export class DomHelper {
         }
     }
 
-    async waitForElement(selector: string, value: string = '', timeout: number = 10): Promise<string> {
+    async waitForElement(selector: string, value: string = '', timeout: number = 10000): Promise<string> {
         if (timeout < 1) {
             return null;
         }
@@ -238,8 +238,8 @@ export class DomHelper {
         if (!!target && target.textContent.includes(value)) {
             return target.textContent;
         } else {
-            await sleep(1000);
-            return await this.waitForElement(selector, value, timeout - 1);
+            await sleep(500);
+            return await this.waitForElement(selector, value, timeout - 500);
         }
     }
 }
