@@ -84,11 +84,6 @@ function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
         myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
         myKirito.unlock();
         myKirito.saveIsActionWaitCaptcha();
-
-        const tempResult = await domHelper.waitForElement('#root > div > div > div:nth-child(5) > div > div', '死亡');
-        if (!!tempResult) {
-            location.reload();
-        }
     }, 500);
 }
 
@@ -98,8 +93,8 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         // 檢查暱稱欄位
         const tempName = await domHelper.waitForElement(
             myKirito.profileViewType === 'detail' ?
-                '#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)' :
-                '#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
+                'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
+                'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
         );
         // 若超過10秒仍未顯示對手暱稱，重新整理
         if (!tempName) {
@@ -244,7 +239,6 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 }
             }
 
-
             if (myKirito.isHuntPause || !myKirito.preyId) {
                 domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
             } else if (myKirito.isHuntWaitCaptcha) {
@@ -268,6 +262,19 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.saveNextHuntSecond();
         } else {
             domHelper.messageBlock.textContent = '死掉了';
+        }
+
+        if (location.pathname === '/') {
+            const tempName = await domHelper.waitForElement('table > tbody > tr:nth-child(1) > td:nth-child(2)');
+            const tempAvatarUrl = document.querySelector('picture > img').attributes['src'].textContent;
+            if (!!tempName) {
+                myKirito.profileName = tempName;
+                myKirito.saveProfileName();
+            }
+            if (!!tempAvatarUrl) {
+                myKirito.profileAvatar = tempAvatarUrl;
+                myKirito.saveProfileAvatar();
+            }
         }
     }, 1000);
 }

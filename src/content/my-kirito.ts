@@ -24,6 +24,9 @@ export class MyKirito {
     profileViewType = '';
     scriptStatus = SCRIPT_STATUS.Normal;
 
+    profileAvatar = '';
+    profileName = '';
+
 
     constructor() {
         const tempSecond = this.getTempSecond();
@@ -46,6 +49,25 @@ export class MyKirito {
         this.loadScriptStatus();
         this.loadIsActionWaitCaptcha();
         this.loadIsHuntWaitCaptcha();
+        this.loadProfileName();
+        this.loadProfileAvatar();
+    }
+
+
+    saveProfileName() {
+        localStorage.setItem('scriptProfileName', this.profileName);
+    }
+
+    loadProfileName() {
+        this.profileName = localStorage.getItem('scriptProfileName');
+    }
+
+    saveProfileAvatar() {
+        localStorage.setItem('scriptProfileAvatar', this.profileAvatar);
+    }
+
+    loadProfileAvatar() {
+        this.profileAvatar = localStorage.getItem('scriptProfileAvatar');
     }
 
     saveIsActionWaitCaptcha() {

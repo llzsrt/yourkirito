@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const imgAvatar = document.getElementById('profile-avatar');
+        const blockName = document.getElementById('profile-name');
+
         const buttonRandomDelay = document.getElementById('button-randomDelay');
         const inputRandomDelay = document.getElementById('input-randomDelay');
         const buttonActionCd = document.getElementById('button-actionCd');
@@ -22,6 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (response) => {
                 myKirito = response.myKirito;
+                
+                imgAvatar.src = myKirito.profileAvatar;
+                blockName.textContent = myKirito.profileName;
+
                 inputRandomDelay.value = myKirito.randomDelay;
                 inputBasicActionCd.value = myKirito.actionCd;
                 inputBasicHuntCd.value = myKirito.huntCd;
