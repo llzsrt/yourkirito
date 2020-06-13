@@ -73,19 +73,22 @@ function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
         if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
             domHelper.buttons[ACTION_NAME[myKirito.action]].click();
             console.log(ACTION_NAME[myKirito.action]);
+        } else {
+            // 沒按鈕能按則放棄本次行動
+            myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
+            myKirito.unlock();
+            return;
         }
 
-        const tempResult = await domHelper.waitForElement('#root > div > div > div:nth-child(5) > div > div', '行動成功');
         
         myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
         myKirito.unlock();
+        myKirito.saveIsActionWaitCaptcha();
 
-        // 如果沒有行動成功，重整一下看看自已是不是死了
+        const tempResult = await domHelper.waitForElement('#root > div > div > div:nth-child(5) > div > div', '死亡');
         if (!!tempResult) {
             location.reload();
         }
-
-        myKirito.saveIsActionWaitCaptcha();
     }, 500);
 }
 
