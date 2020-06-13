@@ -231,7 +231,7 @@ export class DomHelper {
         peepButton.addEventListener('click', async () => {
             const data = await self.getProfile(self.myKirito.token, id);
             console.log(data);
-            const popup = window.open('', '', `top=0,left=${screen.width - 300},width=300,height=630`);
+            const popup = window.open('', '', `top=0,left=${screen.width - 300},width=300,height=650,location=no`);
             if (!popup) return console.error('Popup blocked! Please allow popups and try again.');
 
             const profile = data.profile;
@@ -304,39 +304,39 @@ export class DomHelper {
                                                 </tr>
                                                 <tr>
                                                     <th>HP</th>
-                                                    <td>${profile.hp}<span class="plus">${profile.rattrs.hp > 0 ? ` (+${profile.rattrs.hp})` : ''}</span></td>
+                                                    <td>${profile.hp + profile.rattrs.hp}<span class="plus">${profile.rattrs.hp > 0 ? ` (+${profile.rattrs.hp})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>攻擊</th>
-                                                    <td>${profile.atk}<span class="plus">${profile.rattrs.atk > 0 ? ` (+${profile.rattrs.atk})` : ''}</span></td>
+                                                    <td>${profile.atk + profile.rattrs.atk}<span class="plus">${profile.rattrs.atk > 0 ? ` (+${profile.rattrs.atk})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>防禦</th>
-                                                    <td>${profile.def}<span class="plus">${profile.rattrs.def > 0 ? ` (+${profile.rattrs.def})` : ''}</span></td>
+                                                    <td>${profile.def + profile.rattrs.def}<span class="plus">${profile.rattrs.def > 0 ? ` (+${profile.rattrs.def})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>體力</th>
-                                                    <td>${profile.stm}<span class="plus">${profile.rattrs.stm > 0 ? ` (+${profile.rattrs.stm})` : ''}</span></td>
+                                                    <td>${profile.stm + profile.rattrs.stm}<span class="plus">${profile.rattrs.stm > 0 ? ` (+${profile.rattrs.stm})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>敏捷</th>
-                                                    <td>${profile.agi}<span class="plus">${profile.rattrs.agi > 0 ? ` (+${profile.rattrs.agi})` : ''}</span></td>
+                                                    <td>${profile.agi + profile.rattrs.agi}<span class="plus">${profile.rattrs.agi > 0 ? ` (+${profile.rattrs.agi})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>反應速度</th>
-                                                    <td>${profile.spd}<span class="plus">${profile.rattrs.spd > 0 ? ` (+${profile.rattrs.spd})` : ''}</span></td>
+                                                    <td>${profile.spd + profile.rattrs.spd}<span class="plus">${profile.rattrs.spd > 0 ? ` (+${profile.rattrs.spd})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>技巧</th>
-                                                    <td>${profile.tec}<span class="plus">${profile.rattrs.tec > 0 ? ` (+${profile.rattrs.tec})` : ''}</span></td>
+                                                    <td>${profile.tec + profile.rattrs.tec}<span class="plus">${profile.rattrs.tec > 0 ? ` (+${profile.rattrs.tec})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>智力</th>
-                                                    <td>${profile.int}<span class="plus">${profile.rattrs.int > 0 ? ` (+${profile.rattrs.int})` : ''}</span></td>
+                                                    <td>${profile.int + profile.rattrs.int}<span class="plus">${profile.rattrs.int > 0 ? ` (+${profile.rattrs.int})` : ''}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <th>幸運</th>
-                                                    <td>${profile.lck}<span class="plus">${profile.rattrs.lck > 0 ? ` (+${profile.rattrs.lck})` : ''}</span></td>
+                                                    <td>${profile.lck + profile.rattrs.lck}<span class="plus">${profile.rattrs.lck > 0 ? ` (+${profile.rattrs.lck})` : ''}</span></td>
                                                 </tr>
                                             </tbody>
                                         </table>
