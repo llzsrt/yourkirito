@@ -61,6 +61,14 @@ function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
             await sleep(500);
         }
 
+        // 檢查驗證
+        if (document.querySelector('div > iframe') && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
+            myKirito.isActionWaitCaptcha = true;
+            myKirito.saveIsActionWaitCaptcha();
+            myKirito.unlock();
+            return;
+        }
+
         // 按下該按的按鈕
         if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
             domHelper.buttons[ACTION_NAME[myKirito.action]].click();
@@ -76,6 +84,8 @@ function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
         if (!!tempResult) {
             location.reload();
         }
+
+        myKirito.saveIsActionWaitCaptcha();
     }, 500);
 }
 
@@ -101,15 +111,22 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.isPreyDead = true;
             myKirito.nextHuntSecond = 0;
             myKirito.isHuntPause = true;
-            myKirito.unlock();
             myKirito.saveIsHuntPause();
             domHelper.setHunterButtonStyle();
+            myKirito.unlock();
             return;
         } else {
             myKirito.isPreyDead = false;
         }
 
+        // 檢查驗證
         domHelper.loadButtons();
+        if (document.querySelector('div > iframe') && DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
+            myKirito.isHuntWaitCaptcha = true;
+            myKirito.saveIsHuntWaitCaptcha();
+            myKirito.unlock();
+            return;
+        }
 
         if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
             domHelper.buttons[DUEL_NAME[myKirito.duel]].click();
@@ -133,6 +150,7 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.unlock();
             location.reload();
         }
+        myKirito.saveIsHuntWaitCaptcha();
     }, 500);
 }
 
@@ -160,13 +178,6 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
 
 function endless(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
-        if (document.querySelector('div > iframe')) {
-            if (!myKirito.isHuntPause || !(location.href.includes(`/profile/${myKirito.preyId}`))) {
-                myKirito.nextActionSecond = 0;
-                waitCaptcha(myKirito, domHelper);
-                return;
-            }
-        }
 
         endless(myKirito, domHelper);
 
@@ -185,10 +196,15 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
 
         if (!myKirito.isBusy) {
 
-            if (myKirito.nextHuntSecond <= 0 && !myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
+            if (myKirito.nextHuntSecond <= 0 && 
+                !myKirito.isHuntPause && 
+                !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' &&
+                !myKirito.isHuntWaitCaptcha) {
                 hunt(myKirito, domHelper);
             }
-            else if (myKirito.nextActionSecond <= 0 && !myKirito.isActionPause) {
+            else if (myKirito.nextActionSecond <= 0 && 
+                    !myKirito.isActionPause &&
+                    !myKirito.isActionWaitCaptcha) {
                 action(myKirito, domHelper);
             }
         } else {
@@ -208,20 +224,36 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
             myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
 
-            if (!myKirito.isActionPause) {
+            if (myKirito.isActionPause) {
+                domHelper.messageBlock.textContent = '普通行動已暫停';
+            } else if (myKirito.isActionWaitCaptcha) {
+                domHelper.messageBlock.textContent = '等待驗證後行動';
+
+                domHelper.loadButtons();
+                if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
+                    myKirito.isActionWaitCaptcha = false;
+                }
+            } else {
                 if (myKirito.nextActionSecond > 0) {
                     domHelper.messageBlock.textContent = `${myKirito.nextActionSecond} 秒後${ACTION_NAME[myKirito.action]}`;
                 } else {
                     domHelper.messageBlock.textContent = `正在${ACTION_NAME[myKirito.action]}`;
                 }
-            } else {
-                domHelper.messageBlock.textContent = '普通行動已暫停';
             }
 
 
-            if (!!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' && myKirito.isPreyDead) {
+            if (myKirito.isHuntPause || !myKirito.preyId) {
+                domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
+            } else if (myKirito.isHuntWaitCaptcha) {
+                domHelper.messageBlock.textContent = ', 等待驗證後攻擊';
+
+                domHelper.loadButtons();
+                if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
+                    myKirito.isHuntWaitCaptcha = false;
+                }
+            } else if (!!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' && myKirito.isPreyDead) {
                 domHelper.messageBlock.textContent += `, 他死了`;
-            } else if (!myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
+            } else {
                 if (myKirito.nextHuntSecond > 0) {
                     domHelper.messageBlock.textContent += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
                 } else {
@@ -233,41 +265,6 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.saveNextHuntSecond();
         } else {
             domHelper.messageBlock.textContent = '死掉了';
-        }
-    }, 1000);
-}
-
-function waitCaptcha(myKirito, domHelper) {
-    setTimeout(() => {
-
-        if (document.querySelector('div > iframe')) {
-            domHelper.messageBlock.textContent = '等待驗證';
-
-            domHelper.loadButtons();
-            if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled)) {
-                domHelper.buttons['領取獎勵'].click();
-                console.log('領取樓層獎勵');
-            }
-
-            if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
-                if (!myKirito.isActionPause) {
-                    myKirito.lock();
-                    actionWork(myKirito, domHelper);
-                }
-                myKirito.syncTimer();
-                endless(myKirito, domHelper);
-            } else if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
-                if (!myKirito.isHuntPause) {
-                    myKirito.lock();
-                    huntWork(myKirito, domHelper);
-                }
-                myKirito.syncTimer();
-                endless(myKirito, domHelper);
-            } else {
-                waitCaptcha(myKirito, domHelper);
-            }
-        } else {
-            endless(myKirito, domHelper);
         }
     }, 1000);
 }

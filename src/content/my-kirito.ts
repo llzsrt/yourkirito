@@ -13,8 +13,10 @@ export class MyKirito {
     isBusy = false;
     isDead = false;
     isPreyDead = false;
-    isHuntPause = true;
     isActionPause = false;
+    isHuntPause = true;
+    isActionWaitCaptcha = false;
+    isHuntWaitCaptcha = false;
     actionCd = 100;
     huntCd = 200;
     extraMercilesslyCd = 0;
@@ -42,6 +44,24 @@ export class MyKirito {
         this.loadToken();
         this.loadProfileViewType();
         this.loadScriptStatus();
+        this.loadIsActionWaitCaptcha();
+        this.loadIsHuntWaitCaptcha();
+    }
+
+    saveIsActionWaitCaptcha() {
+        localStorage.setItem('scriptIsActionWaitCaptcha', this.isActionWaitCaptcha.toString());
+    }
+
+    loadIsActionWaitCaptcha() {
+        this.isActionWaitCaptcha = localStorage.getItem('scriptIsActionWaitCaptcha') === 'true';
+    }
+
+    saveIsHuntWaitCaptcha() {
+        localStorage.setItem('scriptIsHuntWaitCaptcha', this.isHuntWaitCaptcha.toString());
+    }
+
+    loadIsHuntWaitCaptcha() {
+        this.isHuntWaitCaptcha = localStorage.getItem('scriptIsHuntWaitCaptcha') === 'true';
     }
 
     saveScriptStatus() {
