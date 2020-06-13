@@ -230,20 +230,16 @@ export class DomHelper {
         }
     }
 
-    async waitForElement(selector: string, value?: string, timeout?: number): Promise<string>
-    async waitForElement(element: Element, value?: string, timeout?: number): Promise<string>
-    async waitForElement(target: any, value: string = '', timeout: number = 10): Promise<string> {
+    async waitForElement(selector: string, value: string = '', timeout: number = 10): Promise<string> {
         if (timeout < 1) {
             return null;
         }
-        if (typeof (target) === 'string') {
-            target = document.querySelector(target);
-        }
+        const target = document.querySelector(selector);
         if (!!target && target.textContent.includes(value)) {
             return target.textContent;
         } else {
             await sleep(1000);
-            return await this.waitForElement(target, value, timeout - 1);
+            return await this.waitForElement(selector, value, timeout - 1);
         }
     }
 }
