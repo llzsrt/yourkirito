@@ -8,87 +8,89 @@
 </head>
 
 <body>
-    <div class="card border-right-0 border-left-0">
-        <a data-toggle="collapse" data-target="#script-parameter">
-            <div class="card-header">
-                參數設定
+    <div id="config">
+        <div class="card border-right-0 border-left-0">
+            <a data-toggle="collapse" data-target="#script-cd">
+                <div class="card-header">
+                    即時CD調整
+                </div>
+            </a>
+
+            <div id="script-cd" class="collapse" data-parent="#config">
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-left">行動CD:</span>
+                        </div>
+                        <input type="number" class="form-control" value="0" id="input-actionCd">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="button-actionCd">調整</button>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-left">攻擊CD:</span>
+                        </div>
+                        <input type="number" class="form-control" value="0" id="input-huntCd">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="button-huntCd">調整</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-group-append mx-auto">
+                            <button class="btn btn-secondary" type="button" id="button-reset-actionCd">重置行動CD</button>
+                        </div>
+                        <div class="input-group-append mx-auto">
+                            <button class="btn btn-secondary" type="button" id="button-reset-huntCd">重置攻擊CD</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </a>
+        </div>
 
-        <div id="script-parameter" class="collapse">
-            <div class="card-body">
-
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text text-left">隨機CD:</span>
-                    </div>
-                    <input type="number" class="form-control" value="0" id="input-randomDelay">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" id="button-randomDelay">設定</button>
-                    </div>
+        <div class="card border-right-0 border-left-0">
+            <a data-toggle="collapse" data-target="#script-parameter">
+                <div class="card-header">
+                    參數設定
                 </div>
+            </a>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text text-left">基礎行動CD:</span>
+            <div id="script-parameter" class="collapse" data-parent="#config">
+                <div class="card-body">
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-left">隨機CD:</span>
+                        </div>
+                        <input type="number" class="form-control" value="0" id="input-randomDelay">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="button-randomDelay">設定</button>
+                        </div>
                     </div>
-                    <input type="number" class="form-control" value="0" id="input-basic-actionCd">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" id="button-basic-actionCd">設定</button>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-left">基礎行動CD:</span>
+                        </div>
+                        <input type="number" class="form-control" value="0" id="input-basic-actionCd">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="button-basic-actionCd">設定</button>
+                        </div>
                     </div>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text text-left">基礎攻擊CD:</span>
-                    </div>
-                    <input type="number" class="form-control" value="0" id="input-basic-huntCd">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" id="button-basic-huntCd">設定</button>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-left">基礎攻擊CD:</span>
+                        </div>
+                        <input type="number" class="form-control" value="0" id="input-basic-huntCd">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="button-basic-huntCd">設定</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card border-right-0 border-left-0">
-        <a data-toggle="collapse" data-target="#script-cd">
-            <div class="card-header">
-                即時CD調整
-            </div>
-        </a>
-
-        <div id="script-cd" class="collapse">
-            <div class="card-body">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text text-left">行動CD:</span>
-                    </div>
-                    <input type="number" class="form-control" value="0" id="input-actionCd">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" id="button-actionCd">調整</button>
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text text-left">攻擊CD:</span>
-                    </div>
-                    <input type="number" class="form-control" value="0" id="input-huntCd">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" id="button-huntCd">調整</button>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <div class="input-group-append mx-auto">
-                        <button class="btn btn-secondary" type="button" id="button-reset-actionCd">重置行動CD</button>
-                    </div>
-                    <div class="input-group-append mx-auto">
-                        <button class="btn btn-secondary" type="button" id="button-reset-huntCd">重置攻擊CD</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="jquery.min.js"></script>
     <script src="bootstrap.bundle.min.js"></script>
     <script src="popup.js"></script>
