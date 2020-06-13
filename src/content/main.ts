@@ -235,7 +235,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 domHelper.messageBlock.textContent = '等待驗證後行動';
 
                 domHelper.loadButtons();
-                if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
+                if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) || !document.querySelector('div > iframe')) {
                     myKirito.isActionWaitCaptcha = false;
                 }
             } else {
@@ -256,7 +256,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 domHelper.messageBlock.textContent += ', 等待驗證後攻擊';
 
                 domHelper.loadButtons();
-                if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
+                if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe')) {
                     myKirito.isHuntWaitCaptcha = false;
                 }
             } else {
