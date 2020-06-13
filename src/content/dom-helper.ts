@@ -261,6 +261,9 @@ export class DomHelper {
                                             .plus{
                                                 color: #00b5b5;
                                             }
+                                            table {
+                                                width: 100%;
+                                            }
                                             th {
                                                 width: 35%;
                                                 background-color: rgba(255, 255, 255, 0.15);
