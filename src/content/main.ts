@@ -7,9 +7,9 @@ function main() {
     const myKirito = new MyKirito();
     const domHelper = new DomHelper(myKirito);
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        switch(message.event) {
+        switch (message.event) {
             case 'sync':
-                sendResponse({myKirito});
+                sendResponse({ myKirito });
                 break;
             case 'set-random-delay':
                 myKirito.randomDelay = message.content;
@@ -72,9 +72,9 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
 
         // 檢查暱稱欄位
         const tempName = await domHelper.waitForElement(
-            myKirito.profileViewType === 'detail' ? 
-            '#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)' : 
-            '#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
+            myKirito.profileViewType === 'detail' ?
+                '#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)' :
+                '#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
         );
         // 若超過10秒仍未顯示對手暱稱，重新整理
         if (!tempName) {
@@ -103,9 +103,13 @@ function hunt(myKirito: MyKirito, domHelper: DomHelper) {
 
         if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
             domHelper.buttons[DUEL_NAME[myKirito.duel]].click();
-        }
-        else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
+        } else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
+        } else {
+            // 沒按鈕能按則放棄本次對戰
+            myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
+            myKirito.unlock();
+            return;
         }
 
         // 檢查對戰結果
@@ -173,7 +177,7 @@ function endless(myKirito, domHelper) {
         if (!myKirito.dead) {
             myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
             myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
-            
+
             if (!myKirito.isActionPause) {
                 if (myKirito.nextActionSecond > 0) {
                     domHelper.messageBlock.textContent = `${myKirito.nextActionSecond} 秒後${ACTION_NAME[myKirito.action]}`;
@@ -187,7 +191,7 @@ function endless(myKirito, domHelper) {
 
             if (!!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' && myKirito.isPreyDead) {
                 domHelper.messageBlock.textContent += `, 他死了`;
-            }else if (!myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
+            } else if (!myKirito.isHuntPause && !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '') {
                 if (myKirito.nextHuntSecond > 0) {
                     domHelper.messageBlock.textContent += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
                 } else {
