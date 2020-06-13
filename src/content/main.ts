@@ -80,10 +80,9 @@ function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
             return;
         }
 
-        
+
         myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
         myKirito.unlock();
-        myKirito.saveIsActionWaitCaptcha();
     }, 500);
 }
 
@@ -117,8 +116,7 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.isPreyDead = false;
         }
 
-        // 有時候驗證好像會比較慢出來，等1秒看看= =
-        await sleep(1000);
+        await sleep(500);
 
         // 檢查驗證
         domHelper.loadButtons();
@@ -155,7 +153,6 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.unlock();
             location.reload();
         }
-        myKirito.saveIsHuntWaitCaptcha();
     }, 500);
 }
 
@@ -201,19 +198,18 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
 
         if (!myKirito.isBusy) {
 
-            if (myKirito.nextHuntSecond <= 0 && 
-                !myKirito.isHuntPause && 
+            if (myKirito.nextHuntSecond <= 0 &&
+                !myKirito.isHuntPause &&
                 !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' &&
                 !myKirito.isHuntWaitCaptcha) {
                 hunt(myKirito, domHelper);
-            }
-            else if (myKirito.nextActionSecond <= 0 && 
-                    !myKirito.isActionPause &&
-                    !myKirito.isActionWaitCaptcha) {
+            } else if (myKirito.nextActionSecond <= 0 &&
+                !myKirito.isActionPause &&
+                !myKirito.isActionWaitCaptcha) {
                 action(myKirito, domHelper);
             }
         } else {
-            switch(myKirito.scriptStatus) {
+            switch (myKirito.scriptStatus) {
                 case SCRIPT_STATUS.Action:
                     action(myKirito, domHelper);
                     break;
@@ -235,8 +231,9 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 domHelper.messageBlock.textContent = '等待驗證後行動';
 
                 domHelper.loadButtons();
-                if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) || !document.querySelector('div > iframe')) {
+                if (location.pathname === '/' && (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isActionWaitCaptcha = false;
+                    myKirito.saveIsActionWaitCaptcha();
                 }
             } else {
                 if (myKirito.nextActionSecond > 0) {
@@ -256,8 +253,9 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 domHelper.messageBlock.textContent += ', 等待驗證後攻擊';
 
                 domHelper.loadButtons();
-                if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe')) {
+                if (location.href.includes(`/profile/${myKirito.preyId}`) && (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isHuntWaitCaptcha = false;
+                    myKirito.saveIsHuntWaitCaptcha();
                 }
             } else {
                 if (myKirito.nextHuntSecond > 0) {
