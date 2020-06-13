@@ -240,7 +240,11 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             }
 
             if (myKirito.isHuntPause || !myKirito.preyId) {
-                domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
+                if (myKirito.isPreyDead) {
+                    domHelper.messageBlock.textContent += `, 他死了`;
+                } else {
+                    domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
+                }
             } else if (myKirito.isHuntWaitCaptcha) {
                 domHelper.messageBlock.textContent += ', 等待驗證後攻擊';
 
@@ -248,8 +252,6 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 if (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled)) {
                     myKirito.isHuntWaitCaptcha = false;
                 }
-            } else if (!!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' && myKirito.isPreyDead) {
-                domHelper.messageBlock.textContent += `, 他死了`;
             } else {
                 if (myKirito.nextHuntSecond > 0) {
                     domHelper.messageBlock.textContent += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
