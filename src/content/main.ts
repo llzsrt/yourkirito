@@ -11,11 +11,15 @@ function main() {
             case 'sync':
                 sendResponse({myKirito});
                 break;
-            case 'reset-action-cd':
+            case 'set-random-delay':
+                myKirito.randomDelay = message.content;
+                myKirito.saveRandomDelay();
+                break;
+            case 'set-action-cd':
                 myKirito.nextActionSecond = message.content;
                 myKirito.saveNextActionSecond();
                 break;
-            case 'reset-hunt-cd':
+            case 'set-hunt-cd':
                 myKirito.nextHuntSecond = message.content;
                 myKirito.saveNextHuntSecond();
                 break;

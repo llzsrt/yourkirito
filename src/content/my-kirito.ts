@@ -32,6 +32,16 @@ export class MyKirito {
         this.loadHuntCount();
         this.loadPreyId();
         this.loadPreyName();
+        this.loadRandomDelay();
+    }
+
+    saveRandomDelay() {
+        localStorage.setItem('scriptRandomDelay', this.randomDelay.toString());
+    }
+
+    loadRandomDelay() {
+        const scriptRandomDelay = localStorage.getItem('scriptRandomDelay');
+        this.randomDelay = parseInt(scriptRandomDelay ? scriptRandomDelay : '25');
     }
 
     savePreyId() {

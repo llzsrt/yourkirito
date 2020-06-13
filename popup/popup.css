@@ -1,5 +1,5 @@
 body {
-    min-width: 250px;
+    min-width: 280px;
     background-color: #3A3A3A;
 }
 
@@ -16,7 +16,7 @@ a {
 
 .card-header {
     background-color: rgba(0, 0, 0, 0.35);
-    border-bottom: 1px solid rgba(0,0,0,.35);
+    border-bottom: 1px solid rgba(0,0,0,.85);
 }
 
 .input-group {
