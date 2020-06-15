@@ -228,7 +228,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             if (myKirito.isActionPause) {
                 domHelper.messageBlock.textContent = '普通行動已暫停';
             } else if (myKirito.isActionWaitCaptcha) {
-                domHelper.messageBlock.textContent = '等待驗證後行動';
+                domHelper.messageBlock.innerHTML = '<a href="/">等待驗證後行動</a>';
 
                 if (location.pathname === '/' && (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isActionWaitCaptcha = false;
@@ -244,12 +244,12 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
 
             if (myKirito.isHuntPause || !myKirito.preyId) {
                 if (myKirito.isPreyDead) {
-                    domHelper.messageBlock.textContent += `, 他死了`;
+                    domHelper.messageBlock.innerHTML += `, <a href="profile/${myKirito.preyId}">他死了</a>`;
                 } else {
                     domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
                 }
             } else if (myKirito.isHuntWaitCaptcha) {
-                domHelper.messageBlock.textContent += ', 等待驗證後攻擊';
+                domHelper.messageBlock.innerHTML += `, <a href="profile/${myKirito.preyId}">等待驗證後攻擊</a>`;
 
                 if (location.href.includes(`/profile/${myKirito.preyId}`) && (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isHuntWaitCaptcha = false;

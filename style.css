@@ -38,7 +38,7 @@
     text-align: right !important;
 }
 
-.alert-info {
+.alert-info, .alert-info a {
     color: rgb(12, 84, 96);
     background-color: rgb(209, 236, 241);
     border-color: rgb(190, 229, 235);
