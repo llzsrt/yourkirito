@@ -41,55 +41,51 @@ function main() {
     endless(myKirito, domHelper);
 }
 
-function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
-    setTimeout(async () => {
-        domHelper.loadButtons();
+async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
+    domHelper.loadButtons();
 
-        // 檢查暱稱欄位
-        const tempName = await domHelper.waitForElement('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
-        // 若超過10秒仍未顯示暱稱，重新整理
-        if (!tempName) {
-            myKirito.unlock();
-            location.reload();
-        }
+    // 檢查暱稱欄位
+    const tempName = await domHelper.waitForElement('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
+    // 若超過10秒仍未顯示暱稱，重新整理
+    if (!tempName) {
+        myKirito.unlock();
+        location.reload();
+    }
 
-        // 有OK可以按就按OK
-        if (domHelper.buttons['OK']) {
-            domHelper.buttons['OK'].click();
-            await sleep(500);
-        }
+    // 有OK可以按就按OK
+    if (domHelper.buttons['OK']) {
+        domHelper.buttons['OK'].click();
+        await sleep(500);
+    }
 
-        // 檢查驗證
-        if (document.querySelector('div > iframe') && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
-            myKirito.isActionWaitCaptcha = true;
-            myKirito.saveIsActionWaitCaptcha();
-            myKirito.unlock();
-            return;
-        }
+    // 檢查驗證
+    if (document.querySelector('div > iframe') && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
+        myKirito.isActionWaitCaptcha = true;
+        myKirito.saveIsActionWaitCaptcha();
+        myKirito.unlock();
+        return;
+    }
 
-        // 按下該按的按鈕
-        if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
-            domHelper.buttons[ACTION_NAME[myKirito.action]].click();
-            console.log(ACTION_NAME[myKirito.action]);
-        } else {
-            // 沒按鈕能按則放棄本次行動
-            myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
-            myKirito.unlock();
-            return;
-        }
-
-
+    // 按下該按的按鈕
+    if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
+        domHelper.buttons[ACTION_NAME[myKirito.action]].click();
+        console.log(ACTION_NAME[myKirito.action]);
+    } else {
+        // 沒按鈕能按則放棄本次行動
         myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
         myKirito.unlock();
-    }, 500);
+        return;
+    }
+
+
+    myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
+    myKirito.unlock();
 }
 
-function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
-    setTimeout(async () => {
-
+async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         // 檢查暱稱欄位
         const tempName = await domHelper.waitForElement(
-            myKirito.profileViewType === 'detail' ?
+            myKirito.profileViewType === 'detail' || !myKirito.profileViewType ?
                 'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
                 'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
         );
@@ -151,35 +147,33 @@ function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.unlock();
             location.reload();
         }
-    }, 500);
 }
 
-function action(myKirito: MyKirito, domHelper: DomHelper) {
+async function action(myKirito: MyKirito, domHelper: DomHelper) {
     domHelper.loadLinks();
     if (!(domHelper.links['我的桐人'].className.includes('active'))) {
         domHelper.links['我的桐人'].click();
+    } else {
+        myKirito.lock();
+        myKirito.scriptStatus = SCRIPT_STATUS.Action;
+        myKirito.saveScriptStatus();
+        await actionWork(myKirito, domHelper);
     }
-    myKirito.lock();
-    myKirito.scriptStatus = SCRIPT_STATUS.Action;
-    myKirito.saveScriptStatus();
-    actionWork(myKirito, domHelper);
 }
 
-function hunt(myKirito: MyKirito, domHelper: DomHelper) {
+async function hunt(myKirito: MyKirito, domHelper: DomHelper) {
     if (!(location.href.includes(`/profile/${myKirito.preyId}`))) {
         location.replace(`/profile/${myKirito.preyId}`);
     } else {
         myKirito.lock();
         myKirito.scriptStatus = SCRIPT_STATUS.Hunt;
         myKirito.saveScriptStatus();
-        huntWork(myKirito, domHelper);
+        await huntWork(myKirito, domHelper);
     }
 }
 
 function endless(myKirito: MyKirito, domHelper: DomHelper) {
     setTimeout(async () => {
-
-        endless(myKirito, domHelper);
 
         domHelper.loadButtons();
 
@@ -202,24 +196,26 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 !myKirito.isHuntPause &&
                 !!myKirito.preyId && myKirito.preyId !== 'null' && myKirito.preyId !== '' &&
                 !myKirito.isHuntWaitCaptcha) {
-                hunt(myKirito, domHelper);
+                await hunt(myKirito, domHelper);
             } else if (myKirito.nextActionSecond <= 0 &&
                 !myKirito.isActionPause &&
                 !myKirito.isActionWaitCaptcha) {
-                action(myKirito, domHelper);
+                await action(myKirito, domHelper);
             }
         } else {
             switch (myKirito.scriptStatus) {
                 case SCRIPT_STATUS.Action:
-                    action(myKirito, domHelper);
+                    await action(myKirito, domHelper);
                     break;
                 case SCRIPT_STATUS.Hunt:
-                    hunt(myKirito, domHelper);
+                    await hunt(myKirito, domHelper);
                     break;
                 default:
                     myKirito.unlock();
             }
         }
+
+        endless(myKirito, domHelper);
 
         if (!myKirito.isDead) {
             myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
