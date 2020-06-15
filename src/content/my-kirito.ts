@@ -52,8 +52,16 @@ export class MyKirito {
         this.loadIsHuntWaitCaptcha();
         this.loadProfileName();
         this.loadProfileAvatar();
+        this.loadIsAutoReceiveAward();
     }
 
+    saveIsAutoReceiveAward() {
+        localStorage.setItem('scriptIsAutoReceiveAward', this.isAutoReceiveAward.toString());
+    }
+
+    loadIsAutoReceiveAward() {
+        this.isAutoReceiveAward = localStorage.getItem('scriptIsAutoReceiveAward') === 'true';
+    }
 
     saveProfileName() {
         localStorage.setItem('scriptProfileName', this.profileName);

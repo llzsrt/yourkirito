@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const imgAvatar = document.getElementById('profile-avatar');
         const blockName = document.getElementById('profile-name');
 
+        const switchReceiveAward = document.getElementById('switch-receiveAward');
+
         const buttonRandomDelay = document.getElementById('button-randomDelay');
         const inputRandomDelay = document.getElementById('input-randomDelay');
         const buttonActionCd = document.getElementById('button-actionCd');
@@ -33,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 blockName.textContent = myKirito.profileName;
 
+                switchReceiveAward.checked = myKirito.isAutoReceiveAward;
                 inputRandomDelay.value = myKirito.randomDelay;
                 inputBasicActionCd.value = myKirito.actionCd;
                 inputBasicHuntCd.value = myKirito.huntCd;
@@ -40,6 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 inputHuntCd.value = myKirito.nextHuntSecond;
             }
         );
+
+        switchReceiveAward.addEventListener('change', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-auto-receive-award',
+                    content: switchReceiveAward.checked
+                }
+            );
+        });
 
         buttonRandomDelay.addEventListener('click', () => {
             chrome.tabs.sendMessage(

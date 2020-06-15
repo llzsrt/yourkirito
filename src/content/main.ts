@@ -15,6 +15,10 @@ function main() {
                 myKirito.randomDelay = message.content;
                 myKirito.saveRandomDelay();
                 break;
+            case 'set-auto-receive-award':
+                myKirito.isAutoReceiveAward = message.content;
+                myKirito.saveIsAutoReceiveAward();
+                break;
             case 'set-basic-action-cd':
                 myKirito.actionCd = message.content;
                 myKirito.saveActionCd();
