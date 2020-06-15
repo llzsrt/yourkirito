@@ -38,10 +38,14 @@
     text-align: right !important;
 }
 
-.alert-info, .alert-info a {
+.alert-info {
     color: rgb(12, 84, 96);
     background-color: rgb(209, 236, 241);
     border-color: rgb(190, 229, 235);
+}
+
+.alert-info a, .alert-info a:hover {
+    color: rgb(12, 84, 96);
 }
 
 .alert {

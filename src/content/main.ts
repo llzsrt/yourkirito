@@ -226,7 +226,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
 
             if (myKirito.isActionPause) {
-                domHelper.messageBlock.textContent = '普通行動已暫停';
+                domHelper.messageBlock.innerHTML = '普通行動已暫停';
             } else if (myKirito.isActionWaitCaptcha) {
                 domHelper.messageBlock.innerHTML = '<a href="/">等待驗證後行動</a>';
 
@@ -236,9 +236,9 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 }
             } else {
                 if (myKirito.nextActionSecond > 0) {
-                    domHelper.messageBlock.textContent = `${myKirito.nextActionSecond} 秒後${ACTION_NAME[myKirito.action]}`;
+                    domHelper.messageBlock.innerHTML = `${myKirito.nextActionSecond} 秒後${ACTION_NAME[myKirito.action]}`;
                 } else {
-                    domHelper.messageBlock.textContent = `正在${ACTION_NAME[myKirito.action]}`;
+                    domHelper.messageBlock.innerHTML = `正在${ACTION_NAME[myKirito.action]}`;
                 }
             }
 
@@ -246,7 +246,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 if (myKirito.isPreyDead) {
                     domHelper.messageBlock.innerHTML += `, <a href="profile/${myKirito.preyId}">他死了</a>`;
                 } else {
-                    domHelper.messageBlock.textContent += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
+                    domHelper.messageBlock.innerHTML += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
                 }
             } else if (myKirito.isHuntWaitCaptcha) {
                 domHelper.messageBlock.innerHTML += `, <a href="profile/${myKirito.preyId}">等待驗證後攻擊</a>`;
@@ -257,9 +257,9 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 }
             } else {
                 if (myKirito.nextHuntSecond > 0) {
-                    domHelper.messageBlock.textContent += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
+                    domHelper.messageBlock.innerHTML += `, ${myKirito.nextHuntSecond} 秒後發起攻擊`;
                 } else {
-                    domHelper.messageBlock.textContent += `, 正在進行${DUEL_NAME[myKirito.duel]}`;
+                    domHelper.messageBlock.innerHTML += `, 正在進行${DUEL_NAME[myKirito.duel]}`;
                 }
             }
             myKirito.saveTempSecond();
