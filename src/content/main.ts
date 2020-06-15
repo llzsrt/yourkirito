@@ -55,12 +55,6 @@ function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
             await sleep(500);
         }
 
-        if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled)) {
-            domHelper.buttons['領取獎勵'].click();
-            console.log('領取樓層獎勵');
-            await sleep(500);
-        }
-
         // 檢查驗證
         if (document.querySelector('div > iframe') && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
             myKirito.isActionWaitCaptcha = true;
@@ -183,7 +177,9 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
 
         endless(myKirito, domHelper);
 
-        if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled)) {
+        domHelper.loadButtons();
+
+        if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled) && myKirito.isAutoReceiveAward) {
             await sleep(500);
             domHelper.buttons['領取獎勵'].click();
             console.log('領取樓層獎勵');
@@ -230,7 +226,6 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             } else if (myKirito.isActionWaitCaptcha) {
                 domHelper.messageBlock.textContent = '等待驗證後行動';
 
-                domHelper.loadButtons();
                 if (location.pathname === '/' && (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isActionWaitCaptcha = false;
                     myKirito.saveIsActionWaitCaptcha();
@@ -252,7 +247,6 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
             } else if (myKirito.isHuntWaitCaptcha) {
                 domHelper.messageBlock.textContent += ', 等待驗證後攻擊';
 
-                domHelper.loadButtons();
                 if (location.href.includes(`/profile/${myKirito.preyId}`) && (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isHuntWaitCaptcha = false;
                     myKirito.saveIsHuntWaitCaptcha();

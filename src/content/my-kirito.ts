@@ -17,6 +17,7 @@ export class MyKirito {
     isHuntPause = true;
     isActionWaitCaptcha = false;
     isHuntWaitCaptcha = false;
+    isAutoReceiveAward = false;
     actionCd = 100;
     huntCd = 200;
     extraMercilesslyCd = 0;
