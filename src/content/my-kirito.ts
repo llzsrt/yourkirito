@@ -18,7 +18,7 @@ export class MyKirito {
     isActionWaitCaptcha = false;
     isHuntWaitCaptcha = false;
     isAutoReceiveAward = false;
-    actionCd = 100;
+    actionCd = 80;
     huntCd = 200;
     extraMercilesslyCd = 0;
     token = '';
@@ -27,6 +27,8 @@ export class MyKirito {
 
     profileAvatar = '';
     profileName = '';
+
+    localStoragePrefix = 'your';
 
 
     constructor() {
@@ -56,52 +58,54 @@ export class MyKirito {
     }
 
     saveIsAutoReceiveAward() {
-        localStorage.setItem('scriptIsAutoReceiveAward', this.isAutoReceiveAward.toString());
+        localStorage.setItem(`${this.localStoragePrefix}IsAutoReceiveAward`, this.isAutoReceiveAward.toString());
     }
 
     loadIsAutoReceiveAward() {
-        this.isAutoReceiveAward = localStorage.getItem('scriptIsAutoReceiveAward') === 'true';
+        this.isAutoReceiveAward = localStorage.getItem(`${this.localStoragePrefix}IsAutoReceiveAward`) === 'true';
     }
 
     saveProfileName() {
-        localStorage.setItem('scriptProfileName', this.profileName);
+        localStorage.setItem(`${this.localStoragePrefix}ProfileName`, this.profileName);
     }
 
     loadProfileName() {
-        this.profileName = localStorage.getItem('scriptProfileName');
+        this.profileName = localStorage.getItem(`${this.localStoragePrefix}ProfileName`);
     }
 
     saveProfileAvatar() {
-        localStorage.setItem('scriptProfileAvatar', this.profileAvatar);
+        localStorage.setItem(`${this.localStoragePrefix}ProfileAvatar`, this.profileAvatar);
     }
 
     loadProfileAvatar() {
-        this.profileAvatar = localStorage.getItem('scriptProfileAvatar');
+        this.profileAvatar = localStorage.getItem(`${this.localStoragePrefix}ProfileAvatar`);
     }
 
     saveIsActionWaitCaptcha() {
-        localStorage.setItem('scriptIsActionWaitCaptcha', this.isActionWaitCaptcha.toString());
+        localStorage.setItem(`${this.localStoragePrefix}IsActionWaitCaptcha`, this.isActionWaitCaptcha.toString());
     }
 
     loadIsActionWaitCaptcha() {
-        this.isActionWaitCaptcha = localStorage.getItem('scriptIsActionWaitCaptcha') === 'true';
+        this.isActionWaitCaptcha = localStorage.getItem(`${this.localStoragePrefix}IsActionWaitCaptcha`) === 'true';
     }
 
     saveIsHuntWaitCaptcha() {
-        localStorage.setItem('scriptIsHuntWaitCaptcha', this.isHuntWaitCaptcha.toString());
+        localStorage.setItem(`${this.localStoragePrefix}IsHuntWaitCaptcha`, this.isHuntWaitCaptcha.toString());
     }
 
     loadIsHuntWaitCaptcha() {
-        this.isHuntWaitCaptcha = localStorage.getItem('scriptIsHuntWaitCaptcha') === 'true';
+        this.isHuntWaitCaptcha = localStorage.getItem(`${this.localStoragePrefix}IsHuntWaitCaptcha`) === 'true';
     }
 
     saveScriptStatus() {
-        localStorage.setItem('scriptStatus', this.scriptStatus.toString());
+        localStorage.setItem(`${this.localStoragePrefix}Status`, this.scriptStatus.toString());
     }
 
     loadScriptStatus() {
-        const scriptStatus = localStorage.getItem('scriptStatus');
-        this.scriptStatus = parseInt(scriptStatus ? scriptStatus : '0');
+        const scriptStatus = localStorage.getItem(`${this.localStoragePrefix}Status`);
+        if (!!scriptStatus) {
+            this.scriptStatus = parseInt(scriptStatus);
+        }
     }
 
     loadProfileViewType() {
@@ -113,137 +117,149 @@ export class MyKirito {
     }
 
     saveHuntCd() {
-        localStorage.setItem('scriptHuntCd', this.huntCd.toString());
+        localStorage.setItem(`${this.localStoragePrefix}HuntCd`, this.huntCd.toString());
     }
 
     loadHuntCd() {
-        const scriptHuntCd = localStorage.getItem('scriptHuntCd');
-        this.huntCd = parseInt(scriptHuntCd ? scriptHuntCd : '200');
+        const scriptHuntCd = localStorage.getItem(`${this.localStoragePrefix}HuntCd`);
+        if (!!scriptHuntCd) {
+            this.huntCd = parseInt(scriptHuntCd);
+        }
     }
 
     saveActionCd() {
-        localStorage.setItem('scriptActionCd', this.actionCd.toString());
+        localStorage.setItem(`${this.localStoragePrefix}ActionCd`, this.actionCd.toString());
     }
 
     loadActionCd() {
-        const scriptActionCd = localStorage.getItem('scriptActionCd');
-        this.actionCd = parseInt(scriptActionCd ? scriptActionCd : '100');
+        const scriptActionCd = localStorage.getItem(`${this.localStoragePrefix}ActionCd`);
+        if (!!scriptActionCd) {
+            this.actionCd = parseInt(scriptActionCd);
+        }
     }
 
     saveRandomDelay() {
-        localStorage.setItem('scriptRandomDelay', this.randomDelay.toString());
+        localStorage.setItem(`${this.localStoragePrefix}RandomDelay`, this.randomDelay.toString());
     }
 
     loadRandomDelay() {
-        const scriptRandomDelay = localStorage.getItem('scriptRandomDelay');
-        this.randomDelay = parseInt(scriptRandomDelay ? scriptRandomDelay : '25');
+        const scriptRandomDelay = localStorage.getItem(`${this.localStoragePrefix}RandomDelay`);
+        if (!!scriptRandomDelay) {
+            this.randomDelay = parseInt(scriptRandomDelay);
+        }
     }
 
     savePreyId() {
-        localStorage.setItem('scriptPreyId', this.preyId);
+        localStorage.setItem(`${this.localStoragePrefix}PreyId`, this.preyId);
     }
 
     loadPreyId() {
-        this.preyId = localStorage.getItem('scriptPreyId');
+        this.preyId = localStorage.getItem(`${this.localStoragePrefix}PreyId`);
     }
 
     savePreyName() {
-        localStorage.setItem('scriptPreyName', this.preyName);
+        localStorage.setItem(`${this.localStoragePrefix}PreyName`, this.preyName);
     }
 
     loadPreyName() {
-        this.preyName = localStorage.getItem('scriptPreyName');
+        this.preyName = localStorage.getItem(`${this.localStoragePrefix}PreyName`);
     }
 
     saveIsHuntPause() {
-        localStorage.setItem('scriptIsHuntPause', this.isHuntPause.toString());
+        localStorage.setItem(`${this.localStoragePrefix}IsHuntPause`, this.isHuntPause.toString());
     }
 
     loadIsHuntPause() {
-        this.isHuntPause = localStorage.getItem('scriptIsHuntPause') === 'true';
+        this.isHuntPause = localStorage.getItem(`${this.localStoragePrefix}IsHuntPause`) === 'true';
     }
 
     saveHuntReloadCount() {
-        localStorage.setItem('scripthuntReloadCount', this.huntReloadCount.toString());
+        localStorage.setItem(`${this.localStoragePrefix}huntReloadCount`, this.huntReloadCount.toString());
     }
 
     loadHuntReloadCount() {
-        const scripthuntReloadCount = localStorage.getItem('scripthuntReloadCount');
-        this.huntReloadCount = parseInt(scripthuntReloadCount ? scripthuntReloadCount : '0');
+        const scripthuntReloadCount = localStorage.getItem(`${this.localStoragePrefix}huntReloadCount`);
+        if (!!scripthuntReloadCount) {
+            this.huntReloadCount = parseInt(scripthuntReloadCount);
+        }
     }
 
     lock() {
         this.isBusy = true;
-        localStorage.setItem('scriptIsBusy', 'true');
+        localStorage.setItem(`${this.localStoragePrefix}IsBusy`, 'true');
     }
 
     unlock() {
         this.isBusy = false;
-        localStorage.setItem('scriptIsBusy', 'false');
+        localStorage.setItem(`${this.localStoragePrefix}IsBusy`, 'false');
         this.scriptStatus = SCRIPT_STATUS.Normal;
         this.saveScriptStatus();
     }
 
     loadIsBusy() {
-        this.isBusy = localStorage.getItem('scriptIsBusy') === 'true';
+        this.isBusy = localStorage.getItem(`${this.localStoragePrefix}IsBusy`) === 'true';
     }
 
     saveIsActionPause() {
-        localStorage.setItem('scriptIsActionPause', this.isActionPause.toString());
+        localStorage.setItem(`${this.localStoragePrefix}IsActionPause`, this.isActionPause.toString());
     }
 
     loadIsActionPause() {
-        this.isActionPause = localStorage.getItem('scriptIsActionPause') === 'true';
+        this.isActionPause = localStorage.getItem(`${this.localStoragePrefix}IsActionPause`) === 'true';
     }
 
     saveNextHuntSecond() {
-        localStorage.setItem('scriptNextHuntSecond', this.nextHuntSecond.toString());
+        localStorage.setItem(`${this.localStoragePrefix}NextHuntSecond`, this.nextHuntSecond.toString());
     }
 
     loadNextHuntSecond(tempSecond) {
-        const scriptNextHuntSecond = localStorage.getItem('scriptNextHuntSecond');
+        const scriptNextHuntSecond = localStorage.getItem(`${this.localStoragePrefix}NextHuntSecond`);
         this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveNextActionSecond() {
-        localStorage.setItem('scriptNextActionSecond', this.nextActionSecond.toString());
+        localStorage.setItem(`${this.localStoragePrefix}NextActionSecond`, this.nextActionSecond.toString());
     }
 
     loadNextActionSecond(tempSecond) {
-        const scriptNextActionSecond = localStorage.getItem('scriptNextActionSecond');
+        const scriptNextActionSecond = localStorage.getItem(`${this.localStoragePrefix}NextActionSecond`);
         this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveTempSecond() {
-        localStorage.setItem('scriptTempSecond', getNowSecond().toString());
+        localStorage.setItem(`${this.localStoragePrefix}TempSecond`, getNowSecond().toString());
     }
 
     getTempSecond() {
-        return localStorage.getItem('scriptTempSecond');
+        return localStorage.getItem(`${this.localStoragePrefix}TempSecond`);
     }
 
     saveDefaultDuel() {
-        localStorage.setItem('scriptDuel', this.duel.toString());
+        localStorage.setItem(`${this.localStoragePrefix}Duel`, this.duel.toString());
     }
 
     loadDefaultDuel() {
-        const tempDuel = parseInt(localStorage.getItem('scriptDuel'));
-        this.duel = !!tempDuel ? tempDuel : 1;
+        const scriptDuel = localStorage.getItem(`${this.localStoragePrefix}Duel`);
+        if (!!scriptDuel) {
+            this.duel = parseInt(scriptDuel);
+        }
     }
 
     saveDefaultAction() {
-        localStorage.setItem('scriptAction', this.action.toString());
+        localStorage.setItem(`${this.localStoragePrefix}Action`, this.action.toString());
     }
 
     loadDefaultAction() {
-        const action = parseInt(localStorage.getItem('scriptAction'));
-        this.action = !!action ? action : 5;
+        const scriptAction = localStorage.getItem(`${this.localStoragePrefix}Action`);
+        if (!!scriptAction) {
+            this.action = parseInt(scriptAction);
+        }
     }
 
     syncTimer() {
-        const scriptTempSecond = localStorage.getItem('scriptTempSecond');
-        const scriptNextActionSecond = localStorage.getItem('scriptNextActionSecond');
-        const scriptNextHuntSecond = localStorage.getItem('scriptNextHuntSecond');
+        const scriptTempSecond = localStorage.getItem(`${this.localStoragePrefix}TempSecond`);
+        const scriptNextActionSecond = localStorage.getItem(`${this.localStoragePrefix}NextActionSecond`);
+        const scriptNextHuntSecond = localStorage.getItem(`${this.localStoragePrefix}NextHuntSecond`);
         this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : '0') + parseInt(scriptTempSecond ? scriptTempSecond : '0') - getNowSecond();
         this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : '0') + parseInt(scriptTempSecond ? scriptTempSecond : '0') - getNowSecond();
     }
