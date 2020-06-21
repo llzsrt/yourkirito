@@ -175,21 +175,24 @@ export class DomHelper {
             this.oldUrl = location.href;
             // window.dispatchEvent(new Event('urlChange'));
             if (location.href.includes('profile')) {
-                this.injectionDuelButton();
+                this.injectionTitleButton();
             }
         }
         await sleep(50);
         this.watchUrl();
     }
 
-    async injectionDuelButton() {
+    async injectionTitleButton() {
         const self = this;
-        const tempName1 = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
-        const tempName2 = document.querySelector('#root > div > div:nth-child(1) > div:nth-child(1) > div > table:nth-child(2) > tbody > tr:nth-child(4) > td');
-        if ((!tempName1 || tempName1.textContent === '') && (!tempName2 || tempName2.textContent === '')) {
+        const tempName = await this.waitForElement(
+            this.myKirito.profileViewType === 'detail' || !this.myKirito.profileViewType ?
+                'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
+                'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
+        );
+        if ((!tempName || tempName === '')) {
             await sleep(50);
             if (location.href.includes('profile')) {
-                this.injectionDuelButton();
+                this.injectionTitleButton();
             }
             return;
         }
@@ -210,7 +213,7 @@ export class DomHelper {
                 button.textContent = '設為攻擊目標';
             } else {
                 self.myKirito.preyId = location.href.split('/').pop();
-                self.myKirito.preyName = !!tempName1 ? tempName1.textContent : tempName2.textContent;
+                self.myKirito.preyName = tempName;
                 button.textContent = '移除目標';
             }
 
