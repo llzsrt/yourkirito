@@ -13,17 +13,6 @@ function main() {
                     sendResponse({ myKirito: data });
                 });
                 return true;
-            case 'reset':
-                localStorage.clear();
-                const newMyKirito = new MyKirito();
-                myKirito.saveTempToken();
-                myKirito.saveProfile();
-                newMyKirito.token = myKirito.token;
-                newMyKirito.profile = myKirito.profile;
-                myKirito = newMyKirito;
-                sendResponse({ myKirito: newMyKirito });
-                location.reload();
-                break;
             case 'set-random-delay':
                 myKirito.randomDelay = message.content;
                 myKirito.saveRandomDelay();

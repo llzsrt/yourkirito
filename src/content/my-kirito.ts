@@ -51,7 +51,6 @@ export class MyKirito {
         this.loadScriptStatus();
         this.loadIsActionWaitCaptcha();
         this.loadIsHuntWaitCaptcha();
-        this.loadProfile();
         this.loadIsAutoReceiveAward();
     }
 
@@ -61,18 +60,6 @@ export class MyKirito {
 
     loadIsAutoReceiveAward() {
         this.isAutoReceiveAward = localStorage.getItem(`${this.localStoragePrefix}IsAutoReceiveAward`) === 'true';
-    }
-
-    saveProfile() {
-        localStorage.setItem(`${this.localStoragePrefix}Profile`, JSON.stringify(this.profile));
-    }
-
-    loadProfile() {
-        const scriptProfile = localStorage.getItem(`${this.localStoragePrefix}Profile`);
-        if (!!scriptProfile) {
-            this.profile = JSON.parse(scriptProfile);
-        }
-        localStorage.removeItem(`${this.localStoragePrefix}Profile`);
     }
 
     saveIsActionWaitCaptcha() {
@@ -106,18 +93,10 @@ export class MyKirito {
         this.profileViewType = localStorage.getItem('profileViewType');
     }
 
-    saveTempToken() {
-        localStorage.setItem('tempToken', this.token);
-    }
-
     loadToken() {
         const token = localStorage.getItem('token');
-        const tempToken = localStorage.getItem('tempToken');
         if (!!token) {
             this.token = token;
-        } else if (!!tempToken) {
-            this.token = tempToken;
-            localStorage.removeItem('tempToken');
         }
     }
 
