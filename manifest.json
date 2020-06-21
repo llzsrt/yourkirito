@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "yourkirito",
     "description": "網頁遊戲 mykirito 的輔助工具",
-    "version": "1.3.4",
+    "version": "1.4.0",
     "page_action": {
         "default_icon": "icon.png",
         "default_popup": "popup/popup.html"
