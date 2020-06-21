@@ -13,7 +13,7 @@ export class MyKirito {
     isBusy = false;
     isDead = false;
     isPreyDead = false;
-    isActionPause = false;
+    isActionPause = true;
     isHuntPause = true;
     isActionWaitCaptcha = false;
     isHuntWaitCaptcha = false;
@@ -175,7 +175,10 @@ export class MyKirito {
     }
 
     loadIsHuntPause() {
-        this.isHuntPause = localStorage.getItem(`${this.localStoragePrefix}IsHuntPause`) === 'true';
+        const scriptIsHuntPause = localStorage.getItem(`${this.localStoragePrefix}IsHuntPause`);
+        if (!!scriptIsHuntPause) {
+            this.isHuntPause = scriptIsHuntPause === 'true';
+        }
     }
 
     saveHuntReloadCount() {
@@ -210,7 +213,10 @@ export class MyKirito {
     }
 
     loadIsActionPause() {
-        this.isActionPause = localStorage.getItem(`${this.localStoragePrefix}IsActionPause`) === 'true';
+        const scriptIsActionPause = localStorage.getItem(`${this.localStoragePrefix}IsActionPause`);
+        if (!!scriptIsActionPause) {
+            this.isActionPause = scriptIsActionPause === 'true';
+        }
     }
 
     saveNextHuntSecond() {
