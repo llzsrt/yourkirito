@@ -13,6 +13,12 @@ function main() {
                     sendResponse({ myKirito: data });
                 });
                 return true;
+            case 'reset':
+                localStorage.clear();
+                myKirito = new MyKirito();
+                sendResponse({ myKirito });
+                location.reload();
+                break;
             case 'set-random-delay':
                 myKirito.randomDelay = message.content;
                 myKirito.saveRandomDelay();

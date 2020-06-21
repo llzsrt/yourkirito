@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputBasicActionCd = document.getElementById('input-basic-actionCd');
         const buttonBasicHuntCd = document.getElementById('button-basic-huntCd');
         const inputBasicHuntCd = document.getElementById('input-basic-huntCd');
+        
+        const buttonReset = document.getElementById('button-reset');
 
         let myKirito=null;
 
@@ -59,6 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 init(myKirito);
             }
         );
+
+        buttonReset.addEventListener('click', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'reset'
+                },
+                (response) => {
+                    myKirito = response.myKirito;
+                    init(myKirito);
+                }
+            );
+        });
 
         switchReceiveAward.addEventListener('change', () => {
             chrome.tabs.sendMessage(
