@@ -21,12 +21,11 @@ export class MyKirito {
     actionCd = 80;
     huntCd = 200;
     extraMercilesslyCd = 0;
-    token = '';
+    token = null;
     profileViewType = '';
     scriptStatus = SCRIPT_STATUS.Normal;
 
-    profileAvatar = '';
-    profileName = '';
+    profile = null;
 
     localStoragePrefix = 'your';
 
@@ -52,8 +51,7 @@ export class MyKirito {
         this.loadScriptStatus();
         this.loadIsActionWaitCaptcha();
         this.loadIsHuntWaitCaptcha();
-        this.loadProfileName();
-        this.loadProfileAvatar();
+        this.loadProfile();
         this.loadIsAutoReceiveAward();
     }
 
@@ -65,20 +63,16 @@ export class MyKirito {
         this.isAutoReceiveAward = localStorage.getItem(`${this.localStoragePrefix}IsAutoReceiveAward`) === 'true';
     }
 
-    saveProfileName() {
-        localStorage.setItem(`${this.localStoragePrefix}ProfileName`, this.profileName);
+    saveProfile() {
+        localStorage.setItem(`${this.localStoragePrefix}Profile`, JSON.stringify(this.profile));
     }
 
-    loadProfileName() {
-        this.profileName = localStorage.getItem(`${this.localStoragePrefix}ProfileName`);
-    }
-
-    saveProfileAvatar() {
-        localStorage.setItem(`${this.localStoragePrefix}ProfileAvatar`, this.profileAvatar);
-    }
-
-    loadProfileAvatar() {
-        this.profileAvatar = localStorage.getItem(`${this.localStoragePrefix}ProfileAvatar`);
+    loadProfile() {
+        const scriptProfile = localStorage.getItem(`${this.localStoragePrefix}Profile`);
+        if (!!scriptProfile) {
+            this.profile = JSON.parse(scriptProfile);
+        }
+        localStorage.removeItem(`${this.localStoragePrefix}Profile`);
     }
 
     saveIsActionWaitCaptcha() {
@@ -112,8 +106,19 @@ export class MyKirito {
         this.profileViewType = localStorage.getItem('profileViewType');
     }
 
+    saveTempToken() {
+        localStorage.setItem('tempToken', this.token);
+    }
+
     loadToken() {
-        this.token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
+        const tempToken = localStorage.getItem('tempToken');
+        if (!!token) {
+            this.token = token;
+        } else if (!!tempToken) {
+            this.token = tempToken;
+            localStorage.removeItem('tempToken');
+        }
     }
 
     saveHuntCd() {

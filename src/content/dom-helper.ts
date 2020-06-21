@@ -232,124 +232,126 @@ export class DomHelper {
 
         const id = location.href.split('/').pop();
         peepButton.addEventListener('click', async () => {
-            const data = await self.getProfile(self.myKirito.token, id);
-            console.log(data);
-            const popup = window.open('', '', `top=0,left=${screen.width - 300},width=300,height=650,location=no`);
-            if (!popup) return console.error('Popup blocked! Please allow popups and try again.');
-
-            const profile = data.profile;
-            popup.document.write(`<!DOCTYPE html>
-                                    <html>
-
-                                    <head>
-                                        <meta charset='utf-8'>
-                                        <title>${profile.nickname} </title>
-                                        <base target="_blank">
-                                        <style> 
-                                            body {
-                                                background-color: #3A3A3A;
-                                                color: #FFFFFF;
-                                                font-family: 'Noto Sans TC', 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-                                            }
-                                            .avatar-wapper {
-                                                text-align: center;
-                                                margin: 0 0 2rem 0;
-                                            }
-                                            .avatar {
-                                                vertical-align: middle;
-                                                width: 180px;
-                                                height: 180px;
-                                                border-radius: 50%;
-                                            }
-                                            .plus{
-                                                color: #00b5b5;
-                                            }
-                                            table {
-                                                width: 100%;
-                                            }
-                                            th {
-                                                width: 35%;
-                                                background-color: rgba(255, 255, 255, 0.15);
-                                                text-align: center;
-                                                padding: 4px 8px;
-                                            }
-                                            td {
-                                                text-align: left;
-                                                padding: 4px 8px;
-                                            }
-                                        </style>
-                                    </head>
-
-                                    <body>
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <div class="avatar-wapper">
-                                                            <picture>
-                                                                <img class="avatar" src="https://storage.googleapis.com/kirito-1585904519813.appspot.com/avatars/${profile.avatar}.png">
-                                                            </picture>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>等級</th>
-                                                    <td>${profile.lv}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>暱稱</th>
-                                                    <td>${profile.nickname}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>角色</th>
-                                                    <td>${profile.character}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>稱號</th>
-                                                    <td>${profile.title}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>HP</th>
-                                                    <td>${profile.hp + profile.rattrs.hp}<span class="plus">${profile.rattrs.hp > 0 ? ` (+${profile.rattrs.hp})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>攻擊</th>
-                                                    <td>${profile.atk + profile.rattrs.atk}<span class="plus">${profile.rattrs.atk > 0 ? ` (+${profile.rattrs.atk})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>防禦</th>
-                                                    <td>${profile.def + profile.rattrs.def}<span class="plus">${profile.rattrs.def > 0 ? ` (+${profile.rattrs.def})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>體力</th>
-                                                    <td>${profile.stm + profile.rattrs.stm}<span class="plus">${profile.rattrs.stm > 0 ? ` (+${profile.rattrs.stm})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>敏捷</th>
-                                                    <td>${profile.agi + profile.rattrs.agi}<span class="plus">${profile.rattrs.agi > 0 ? ` (+${profile.rattrs.agi})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>反應速度</th>
-                                                    <td>${profile.spd + profile.rattrs.spd}<span class="plus">${profile.rattrs.spd > 0 ? ` (+${profile.rattrs.spd})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>技巧</th>
-                                                    <td>${profile.tec + profile.rattrs.tec}<span class="plus">${profile.rattrs.tec > 0 ? ` (+${profile.rattrs.tec})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>智力</th>
-                                                    <td>${profile.int + profile.rattrs.int}<span class="plus">${profile.rattrs.int > 0 ? ` (+${profile.rattrs.int})` : ''}</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>幸運</th>
-                                                    <td>${profile.lck + profile.rattrs.lck}<span class="plus">${profile.rattrs.lck > 0 ? ` (+${profile.rattrs.lck})` : ''}</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </body>
-
-                                    </html>`
-            );
+            if (!!self.myKirito.token) {
+                const data = await self.getProfile(self.myKirito.token, id);
+                console.log(data);
+                const popup = window.open('', '', `top=0,left=${screen.width - 300},width=300,height=650,location=no`);
+                if (!popup) return console.error('Popup blocked! Please allow popups and try again.');
+    
+                const profile = data.profile;
+                popup.document.write(`<!DOCTYPE html>
+                                        <html>
+    
+                                        <head>
+                                            <meta charset='utf-8'>
+                                            <title>${profile.nickname} </title>
+                                            <base target="_blank">
+                                            <style> 
+                                                body {
+                                                    background-color: #3A3A3A;
+                                                    color: #FFFFFF;
+                                                    font-family: 'Noto Sans TC', 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+                                                }
+                                                .avatar-wapper {
+                                                    text-align: center;
+                                                    margin: 0 0 2rem 0;
+                                                }
+                                                .avatar {
+                                                    vertical-align: middle;
+                                                    width: 180px;
+                                                    height: 180px;
+                                                    border-radius: 50%;
+                                                }
+                                                .plus{
+                                                    color: #00b5b5;
+                                                }
+                                                table {
+                                                    width: 100%;
+                                                }
+                                                th {
+                                                    width: 35%;
+                                                    background-color: rgba(255, 255, 255, 0.15);
+                                                    text-align: center;
+                                                    padding: 4px 8px;
+                                                }
+                                                td {
+                                                    text-align: left;
+                                                    padding: 4px 8px;
+                                                }
+                                            </style>
+                                        </head>
+    
+                                        <body>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <div class="avatar-wapper">
+                                                                <picture>
+                                                                    <img class="avatar" src="https://storage.googleapis.com/kirito-1585904519813.appspot.com/avatars/${profile.avatar}.png">
+                                                                </picture>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>等級</th>
+                                                        <td>${profile.lv}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>暱稱</th>
+                                                        <td>${profile.nickname}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>角色</th>
+                                                        <td>${profile.character}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>稱號</th>
+                                                        <td>${profile.title}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>HP</th>
+                                                        <td>${profile.hp + profile.rattrs.hp}<span class="plus">${profile.rattrs.hp > 0 ? ` (+${profile.rattrs.hp})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>攻擊</th>
+                                                        <td>${profile.atk + profile.rattrs.atk}<span class="plus">${profile.rattrs.atk > 0 ? ` (+${profile.rattrs.atk})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>防禦</th>
+                                                        <td>${profile.def + profile.rattrs.def}<span class="plus">${profile.rattrs.def > 0 ? ` (+${profile.rattrs.def})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>體力</th>
+                                                        <td>${profile.stm + profile.rattrs.stm}<span class="plus">${profile.rattrs.stm > 0 ? ` (+${profile.rattrs.stm})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>敏捷</th>
+                                                        <td>${profile.agi + profile.rattrs.agi}<span class="plus">${profile.rattrs.agi > 0 ? ` (+${profile.rattrs.agi})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>反應速度</th>
+                                                        <td>${profile.spd + profile.rattrs.spd}<span class="plus">${profile.rattrs.spd > 0 ? ` (+${profile.rattrs.spd})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>技巧</th>
+                                                        <td>${profile.tec + profile.rattrs.tec}<span class="plus">${profile.rattrs.tec > 0 ? ` (+${profile.rattrs.tec})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>智力</th>
+                                                        <td>${profile.int + profile.rattrs.int}<span class="plus">${profile.rattrs.int > 0 ? ` (+${profile.rattrs.int})` : ''}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>幸運</th>
+                                                        <td>${profile.lck + profile.rattrs.lck}<span class="plus">${profile.rattrs.lck > 0 ? ` (+${profile.rattrs.lck})` : ''}</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </body>
+    
+                                        </html>`
+                );
+            }
         });
     }
 

@@ -4,15 +4,24 @@ import { sleep, random } from './utils';
 import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS } from './constant';
 
 function main() {
-    const myKirito = new MyKirito();
+    let myKirito = new MyKirito();
     const domHelper = new DomHelper(myKirito);
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         switch (message.event) {
             case 'sync':
-                sendResponse({ myKirito });
-                break;
+                syncProfile(myKirito).then(data => {
+                    sendResponse({ myKirito: data });
+                });
+                return true;
             case 'reset':
+                const newMyKirito = new MyKirito();
                 localStorage.clear();
+                myKirito.saveTempToken();
+                myKirito.saveProfile();
+                newMyKirito.token = myKirito.token;
+                newMyKirito.profile = myKirito.profile;
+                sendResponse({ myKirito: newMyKirito });
+                location.reload();
                 break;
             case 'set-random-delay':
                 myKirito.randomDelay = message.content;
@@ -267,20 +276,15 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
         } else {
             domHelper.messageBlock.textContent = '死掉了';
         }
-
-        if (location.pathname === '/') {
-            const tempName = await domHelper.waitForElement('table > tbody > tr:nth-child(1) > td:nth-child(2)');
-            const tempAvatarUrl = document.querySelector('picture > img').attributes['src'].textContent;
-            if (!!tempName) {
-                myKirito.profileName = tempName;
-                myKirito.saveProfileName();
-            }
-            if (!!tempAvatarUrl) {
-                myKirito.profileAvatar = tempAvatarUrl;
-                myKirito.saveProfileAvatar();
-            }
-        }
     }, 1000);
+}
+
+async function syncProfile(myKirito: MyKirito) {
+    if (!!myKirito.token) {
+        const profile = await getSelfProfile(myKirito.token);
+        myKirito.profile = profile;
+    }
+    return myKirito;
 }
 
 async function getSelfProfile(token: string) {

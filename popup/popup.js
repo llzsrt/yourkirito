@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const blockLoading = document.getElementById('loading');
+
         const imgAvatar = document.getElementById('profile-avatar');
         const blockName = document.getElementById('profile-name');
+        const blockTitle = document.getElementById('profile-title');
+        const blockInfo = document.getElementById('profile-info');
 
         const switchReceiveAward = document.getElementById('switch-receiveAward');
 
@@ -22,6 +26,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttonReset = document.getElementById('button-reset');
 
         let myKirito=null;
+
+        function init(myKirito) {
+            blockLoading.hidden = true;
+
+            if (!myKirito.profile.avatar) {
+                imgAvatar.hidden = true;
+            } else {
+                imgAvatar.hidden = false;
+                imgAvatar.src = `https://storage.googleapis.com/kirito-1585904519813.appspot.com/avatars/${myKirito.profile.avatar}.png`;
+            }
+            blockName.textContent = myKirito.profile.nickname;
+            blockTitle.textContent = myKirito.profile.title;
+            blockInfo.innerHTML = `
+                        <div class="mb-2">目前樓層 <span class="badge badge-secondary mr-3">${myKirito.profile.floor}</span>  成就點數 <span class="badge badge-secondary">${myKirito.profile.achievementPoints}</span></div>
+                        <div class="mb-2">行動次數 <span class="badge badge-secondary mr-3">${myKirito.profile.actionCount}</span> 挑戰次數 <span class="badge badge-secondary">${myKirito.profile.challengeCount}</span></div>
+                `;
+
+            switchReceiveAward.checked = myKirito.isAutoReceiveAward;
+            inputRandomDelay.value = myKirito.randomDelay;
+            inputBasicActionCd.value = myKirito.actionCd;
+            inputBasicHuntCd.value = myKirito.huntCd;
+            inputActionCd.value = myKirito.nextActionSecond;
+            inputHuntCd.value = myKirito.nextHuntSecond;
+        }
+
         chrome.tabs.sendMessage(
             tabs[0].id,
             {
@@ -29,20 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             (response) => {
                 myKirito = response.myKirito;
-
-                if (!myKirito.profileAvatar) {
-                    imgAvatar.hidden = true;
-                } else {
-                    imgAvatar.src = myKirito.profileAvatar;
-                }
-                blockName.textContent = myKirito.profileName;
-
-                switchReceiveAward.checked = myKirito.isAutoReceiveAward;
-                inputRandomDelay.value = myKirito.randomDelay;
-                inputBasicActionCd.value = myKirito.actionCd;
-                inputBasicHuntCd.value = myKirito.huntCd;
-                inputActionCd.value = myKirito.nextActionSecond;
-                inputHuntCd.value = myKirito.nextHuntSecond;
+                init(myKirito);
             }
         );
 
@@ -51,6 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabs[0].id,
                 {
                     event: 'reset'
+                },
+                (response) => {
+                    myKirito = response.myKirito;
+                    init(myKirito);
                 }
             );
         });
