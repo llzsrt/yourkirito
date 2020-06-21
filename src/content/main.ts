@@ -14,12 +14,13 @@ function main() {
                 });
                 return true;
             case 'reset':
-                const newMyKirito = new MyKirito();
                 localStorage.clear();
                 myKirito.saveTempToken();
                 myKirito.saveProfile();
+                const newMyKirito = new MyKirito();
                 newMyKirito.token = myKirito.token;
                 newMyKirito.profile = myKirito.profile;
+                myKirito = newMyKirito;
                 sendResponse({ myKirito: newMyKirito });
                 location.reload();
                 break;
