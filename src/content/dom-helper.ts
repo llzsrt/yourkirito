@@ -232,6 +232,7 @@ export class DomHelper {
 
         const id = location.href.split('/').pop();
         peepButton.addEventListener('click', async () => {
+            self.myKirito.loadToken();
             if (!!self.myKirito.token) {
                 const data = await self.getProfile(self.myKirito.token, id);
                 console.log(data);

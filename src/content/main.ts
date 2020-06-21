@@ -270,6 +270,7 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
 }
 
 async function syncProfile(myKirito: MyKirito) {
+    myKirito.loadToken();
     if (!!myKirito.token) {
         const profile = await getSelfProfile(myKirito.token);
         myKirito.profile = profile;
