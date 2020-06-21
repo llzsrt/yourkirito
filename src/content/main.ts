@@ -15,9 +15,9 @@ function main() {
                 return true;
             case 'reset':
                 localStorage.clear();
+                const newMyKirito = new MyKirito();
                 myKirito.saveTempToken();
                 myKirito.saveProfile();
-                const newMyKirito = new MyKirito();
                 newMyKirito.token = myKirito.token;
                 newMyKirito.profile = myKirito.profile;
                 myKirito = newMyKirito;
