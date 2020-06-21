@@ -11,6 +11,9 @@ function main() {
             case 'sync':
                 sendResponse({ myKirito });
                 break;
+            case 'reset':
+                localStorage.clear();
+                break;
             case 'set-random-delay':
                 myKirito.randomDelay = message.content;
                 myKirito.saveRandomDelay();
