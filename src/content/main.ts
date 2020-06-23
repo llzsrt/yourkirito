@@ -125,6 +125,15 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         myKirito.isPreyDead = false;
     }
 
+    const tempCdMessage = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)');
+    // 檢查是否在冷卻
+    if (!!tempCdMessage && tempCdMessage.includes('冷卻倒數')) {
+        const tempCd = parseInt( tempCdMessage.substring(5).split(' ')[0]);
+        myKirito.nextHuntSecond = tempCd + random(myKirito.randomDelay);
+        myKirito.unlock();
+        return;
+    }
+
     domHelper.loadButtons();
 
     // 有OK可以按就按OK
