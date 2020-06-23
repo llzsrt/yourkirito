@@ -19,7 +19,7 @@ export class Worker {
 
         document.addEventListener('urlChange', (event: CustomEvent) => {
             if (event.detail.current.includes('profile')) {
-                this.duelTools.injectionTitleButton();
+                this.duelTools.injectionTitleButtons();
             }
         });
     }

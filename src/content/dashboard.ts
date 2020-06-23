@@ -5,12 +5,12 @@ import { addButton } from "./utils";
 
 export class Dashboard {
 
-    actionButtons: Element[] = [];
-    actionPauseButton: Element;
+    actionButtons: HTMLElement[] = [];
+    actionPauseButton: HTMLElement;
     duelButtonWrapper: HTMLElement;
-    duelButtons: Element[] = [];
-    duelPauseButton: Element;
-    messageBlock: Element;
+    duelButtons: HTMLElement[] = [];
+    duelPauseButton: HTMLElement;
+    messageBlock: HTMLElement;
 
     constructor(
         private myKirito: MyKirito,
@@ -23,26 +23,25 @@ export class Dashboard {
     injectionDashboard() {
         const self = this;
         const toolsWrapper = document.createElement('div');
-        toolsWrapper.setAttribute('id', 'tools-wrapper');
+        toolsWrapper.id = 'tools-wrapper';
 
         this.duelButtonWrapper = document.createElement('div');
-        this.duelButtonWrapper.setAttribute('id', 'duel-wrapper');
+        this.duelButtonWrapper.id = 'duel-wrapper';
 
         const buttonGroup = document.createElement('div');
-        buttonGroup.setAttribute('class', 'btn-group');
-        buttonGroup.setAttribute('id', 'button-group');
+        buttonGroup.className = 'btn-group';
+        buttonGroup.id = 'button-group';
 
         const duelButtonGroup = document.createElement('div');
-        duelButtonGroup.setAttribute('class', 'btn-group');
-        duelButtonGroup.setAttribute('id', 'duel-group');
+        duelButtonGroup.className = 'btn-group';
+        duelButtonGroup.id = 'duel-group';
 
         const statusBar = document.createElement('div');
-        statusBar.setAttribute('class', 'alert alert-info text-right');
-        statusBar.setAttribute('id', 'status-bar');
-        const messageBlock = document.createElement('div');
-        messageBlock.setAttribute('id', 'message-block');
-        statusBar.appendChild(messageBlock);
-        this.messageBlock = messageBlock;
+        statusBar.className = 'alert alert-info text-right';
+        statusBar.id = 'status-bar';
+        this.messageBlock = document.createElement('div');
+        this.messageBlock.id = 'message-block';
+        statusBar.appendChild(this.messageBlock);
 
         document.getElementById('root').appendChild(toolsWrapper);
         toolsWrapper.appendChild(this.duelButtonWrapper);
@@ -52,11 +51,11 @@ export class Dashboard {
         for (let action in ACTION) {
             const button = addButton('button-group', `button-${action}`, action);
             this.actionButtons.push(button);
-            button.setAttribute('class', ACTION[action] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.className = ACTION[action] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary';
             button.addEventListener('click', () => {
                 self.myKirito.action = ACTION[action];
                 self.myKirito.saveDefaultAction();
-                self.updateToolsButtonStyle();
+                self.updateButtonsStyle();
             });
         }
 
@@ -96,26 +95,26 @@ export class Dashboard {
         for (let duel in DUEL) {
             const button = addButton('duel-group', `button-${duel}`, duel);
             this.duelButtons.push(button);
-            button.setAttribute('class', DUEL[duel] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.className = DUEL[duel] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary';
             button.addEventListener('click', () => {
                 self.myKirito.duel = DUEL[duel];
                 self.myKirito.saveDefaultDuel();
-                self.updateToolsButtonStyle();
+                self.updateButtonsStyle();
             });
         }
     }
 
-    updateToolsButtonStyle() {
+    updateButtonsStyle() {
         this.actionButtons.forEach(button => {
-            button.setAttribute('class', ACTION[button.textContent] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.className = ACTION[button.textContent] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary';
         });
         this.duelButtons.forEach(button => {
-            button.setAttribute('class', DUEL[button.textContent] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
+            button.className = DUEL[button.textContent] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary';
         })
     }
 
     updateActionPauseButtonStyle() {
-        this.actionPauseButton.setAttribute('class', !this.myKirito.isActionPause ? 'btn btn-info active' : 'btn btn-secondary');
+        this.actionPauseButton.className = !this.myKirito.isActionPause ? 'btn btn-info active' : 'btn btn-secondary';
         if (this.myKirito.isActionPause) {
             this.actionPauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
         } else {
@@ -126,10 +125,10 @@ export class Dashboard {
     updateDuelPauseButtonStyle() {
         if (!this.myKirito.isDuelPause) {
             this.duelPauseButton.textContent = '停止';
-            this.duelPauseButton.setAttribute('class', 'btn btn-danger active');
+            this.duelPauseButton.className = 'btn btn-danger active';
         } else {
             this.duelPauseButton.textContent = '自動攻擊';
-            this.duelPauseButton.setAttribute('class', 'btn btn-danger');
+            this.duelPauseButton.className = 'btn btn-danger';
         }
     }
 

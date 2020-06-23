@@ -13,11 +13,11 @@ export class DuelTools {
         private domHelper: DomHelper
     ) {
         if (location.href.includes('profile')) {
-            this.injectionTitleButton();
+            this.injectionTitleButtons();
         }
     }
 
-    async injectionTitleButton() {
+    async injectionTitleButtons() {
         const self = this;
         const id = location.href.split('/').pop();
         const tempName = await this.domHelper.waitForText(
@@ -28,7 +28,7 @@ export class DuelTools {
         if ((!tempName)) {
             await sleep(50);
             if (location.href.includes('profile')) {
-                this.injectionTitleButton();
+                this.injectionTitleButtons();
             }
             return;
         }
