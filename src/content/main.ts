@@ -46,6 +46,7 @@ function main() {
         }
         sendResponse({ content: myKirito });
     });
+    updateMessageBlock(myKirito, domHelper);
     endless(myKirito, domHelper);
 }
 
@@ -63,18 +64,17 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
     // 有OK可以按就按OK
     if (domHelper.buttons['OK']) {
         domHelper.buttons['OK'].click();
-        await sleep(500);
     }
 
     let checkCaptchaCount = 0;
 
     while (checkCaptchaCount < 10) {
         checkCaptchaCount++;
-        await sleep(500);
         // 按下該按的按鈕
         if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
             domHelper.buttons[ACTION_NAME[myKirito.action]].click();
             console.log(ACTION_NAME[myKirito.action]);
+            break;
         } else {
             // 檢查驗證
             if (document.querySelector('div > iframe') && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
@@ -84,8 +84,9 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
                 return;
             }
         }
+        await sleep(500);
     }
-    
+
     // 若按鈕為disable，且重試10次仍沒有出現驗證框，放棄本次行動
     if (checkCaptchaCount >= 10) {
         myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
@@ -129,7 +130,6 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
     // 有OK可以按就按OK
     if (domHelper.buttons['OK']) {
         domHelper.buttons['OK'].click();
-        await sleep(500);
     }
 
     let checkCaptchaCount = 0;
@@ -137,13 +137,14 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
 
     while (checkCaptchaCount < 10) {
         checkCaptchaCount++;
-        await sleep(500);
         if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
             domHelper.buttons[DUEL_NAME[myKirito.duel]].click();
             duelType = DUEL_NAME[myKirito.duel];
+            break;
         } else if (DUEL_NAME[2] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[2]].disabled)) {
             domHelper.buttons[DUEL_NAME[2]].click();
             duelType = DUEL_NAME[2];
+            break;
         } else {
             // 檢查驗證
             if (document.querySelector('div > iframe') && DUEL_NAME[1] in domHelper.buttons && domHelper.buttons[DUEL_NAME[1]].disabled) {
@@ -153,6 +154,7 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
                 return;
             }
         }
+        await sleep(500);
     }
 
     // 若按鈕為disable，且重試10次仍沒有出現驗證框，放棄本次攻擊
@@ -198,27 +200,10 @@ async function hunt(myKirito: MyKirito, domHelper: DomHelper) {
     }
 }
 
-async function endless(myKirito: MyKirito, domHelper: DomHelper) {
-
-    await sleep(1000);
-    endless(myKirito, domHelper);
-
-    domHelper.loadButtons();
-
-    if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled) && myKirito.isAutoReceiveAward) {
-        await sleep(500);
-        domHelper.buttons['領取獎勵'].click();
-        console.log('領取樓層獎勵');
-    }
-
-    const tempDead = document.querySelector('#root > div > div')
-    if (!!tempDead && tempDead.textContent === '你的角色死亡了，請進行轉生') {
-        myKirito.isDead = true;
+function updateMessageBlock(myKirito: MyKirito, domHelper: DomHelper) {
+    if (myKirito.isDead) {
+        domHelper.messageBlock.textContent = '死掉了';
     } else {
-        myKirito.isDead = false;
-    }
-
-    if (!myKirito.isDead) {
         if (myKirito.isActionPause) {
             domHelper.messageBlock.innerHTML = '普通行動已暫停';
         } else if (myKirito.isActionWaitCaptcha) {
@@ -234,7 +219,6 @@ async function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 domHelper.messageBlock.innerHTML = `正在${ACTION_NAME[myKirito.action]}`;
             }
         }
-
         if (myKirito.isHuntPause || !myKirito.preyId) {
             if (myKirito.isPreyDead) {
                 domHelper.messageBlock.innerHTML += `, <a href="/profile/${myKirito.preyId}">他死了</a>`;
@@ -254,9 +238,35 @@ async function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 domHelper.messageBlock.innerHTML += `, 正在進行${DUEL_NAME[myKirito.duel]}`;
             }
         }
-    } else {
-        domHelper.messageBlock.textContent = '死掉了';
     }
+}
+
+async function endless(myKirito: MyKirito, domHelper: DomHelper) {
+
+    await sleep(1000);
+    endless(myKirito, domHelper);
+
+    domHelper.loadButtons();
+
+    if ('領取獎勵' in domHelper.buttons && !(domHelper.buttons['領取獎勵'].disabled) && myKirito.isAutoReceiveAward) {
+        domHelper.buttons['領取獎勵'].click();
+        console.log('領取樓層獎勵');
+        await sleep(500);
+    }
+
+    const tempDead = document.querySelector('#root > div > div')
+    if (!!tempDead && tempDead.textContent === '你的角色死亡了，請進行轉生') {
+        myKirito.isDead = true;
+    } else {
+        myKirito.isDead = false;
+    }
+
+    myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
+    myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
+    myKirito.saveTempSecond();
+    myKirito.saveNextActionSecond();
+    myKirito.saveNextHuntSecond();
+    updateMessageBlock(myKirito, domHelper);
 
     if (!myKirito.isBusy) {
         if (myKirito.nextHuntSecond <= 0 &&
@@ -281,12 +291,6 @@ async function endless(myKirito: MyKirito, domHelper: DomHelper) {
                 myKirito.unlock();
         }
     }
-
-    myKirito.nextActionSecond = myKirito.nextActionSecond > 0 ? myKirito.nextActionSecond - 1 : 0;
-    myKirito.nextHuntSecond = myKirito.nextHuntSecond > 0 ? myKirito.nextHuntSecond - 1 : 0;
-    myKirito.saveTempSecond();
-    myKirito.saveNextActionSecond();
-    myKirito.saveNextHuntSecond();
 }
 
 async function syncProfile(myKirito: MyKirito) {

@@ -1,6 +1,6 @@
 {
     "name": "yourkirito",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "description": "mykirito script",
     "scripts": {
         "build": "webpack --mode production",
