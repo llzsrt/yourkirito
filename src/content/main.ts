@@ -1,3 +1,4 @@
+import { DuelTools } from './duel-tools';
 import { Worker } from './worker';
 import { MyKirito } from './my-kirito';
 import { DomHelper } from './dom-helper';
@@ -5,7 +6,6 @@ import { DomHelper } from './dom-helper';
 const myKirito = new MyKirito();
 const domHelper = new DomHelper(myKirito);
 const worker = new Worker(myKirito, domHelper);
-
 worker.endless();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -37,17 +37,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             myKirito.actionCd = message.content;
             myKirito.saveActionCd();
             break;
-        case 'set-basic-hunt-cd':
-            myKirito.huntCd = message.content;
-            myKirito.saveHuntCd();
+        case 'set-basic-duel-cd':
+            myKirito.duelCd = message.content;
+            myKirito.saveDuelCd();
             break;
         case 'set-action-cd':
             myKirito.nextActionSecond = message.content;
             myKirito.saveNextActionSecond();
             break;
-        case 'set-hunt-cd':
-            myKirito.nextHuntSecond = message.content;
-            myKirito.saveNextHuntSecond();
+        case 'set-duel-cd':
+            myKirito.nextDuelSecond = message.content;
+            myKirito.saveNextDuelSecond();
             break;
     }
 });

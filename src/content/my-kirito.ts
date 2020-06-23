@@ -9,18 +9,18 @@ export class MyKirito {
     action = 5;
     randomDelay = 25;
     nextActionSecond = 0;
-    nextHuntSecond = 0;
-    huntReloadCount = 0;
+    nextDuelSecond = 0;
+    duelReloadCount = 0;
     isBusy = false;
     isDead = false;
     isPreyDead = false;
     isActionPause = true;
-    isHuntPause = true;
+    isDuelPause = true;
     isActionWaitCaptcha = false;
-    isHuntWaitCaptcha = false;
+    isDuelWaitCaptcha = false;
     isAutoReceiveAward = false;
     actionCd = 80;
-    huntCd = 200;
+    duelCd = 200;
     extraMercilesslyCd = 0;
     token = null;
     profileViewType = '';
@@ -34,24 +34,24 @@ export class MyKirito {
     constructor() {
         const tempSecond = this.getTempSecond();
         this.loadNextActionSecond(tempSecond);
-        this.loadNextHuntSecond(tempSecond);
+        this.loadNextDuelSecond(tempSecond);
         this.loadDefaultAction();
         this.loadDefaultDuel();
         this.loadIsActionPause();
         this.loadIsBusy();
         this.loadIsBusy();
-        this.loadIsHuntPause();
-        this.loadHuntReloadCount();
+        this.loadIsDuelPause();
+        this.loadDuelReloadCount();
         this.loadPreyId();
         this.loadPreyName();
         this.loadRandomDelay();
         this.loadActionCd();
-        this.loadHuntCd();
+        this.loadDuelCd();
         this.loadToken();
         this.loadProfileViewType();
         this.loadScriptStatus();
         this.loadIsActionWaitCaptcha();
-        this.loadIsHuntWaitCaptcha();
+        this.loadIsDuelWaitCaptcha();
         this.loadIsAutoReceiveAward();
     }
 
@@ -71,12 +71,12 @@ export class MyKirito {
         this.isActionWaitCaptcha = localStorage.getItem(`${this.localStoragePrefix}IsActionWaitCaptcha`) === 'true';
     }
 
-    saveIsHuntWaitCaptcha() {
-        localStorage.setItem(`${this.localStoragePrefix}IsHuntWaitCaptcha`, this.isHuntWaitCaptcha.toString());
+    saveIsDuelWaitCaptcha() {
+        localStorage.setItem(`${this.localStoragePrefix}IsDuelWaitCaptcha`, this.isDuelWaitCaptcha.toString());
     }
 
-    loadIsHuntWaitCaptcha() {
-        this.isHuntWaitCaptcha = localStorage.getItem(`${this.localStoragePrefix}IsHuntWaitCaptcha`) === 'true';
+    loadIsDuelWaitCaptcha() {
+        this.isDuelWaitCaptcha = localStorage.getItem(`${this.localStoragePrefix}IsDuelWaitCaptcha`) === 'true';
     }
 
     saveScriptStatus() {
@@ -101,14 +101,14 @@ export class MyKirito {
         }
     }
 
-    saveHuntCd() {
-        localStorage.setItem(`${this.localStoragePrefix}HuntCd`, this.huntCd.toString());
+    saveDuelCd() {
+        localStorage.setItem(`${this.localStoragePrefix}DuelCd`, this.duelCd.toString());
     }
 
-    loadHuntCd() {
-        const scriptHuntCd = localStorage.getItem(`${this.localStoragePrefix}HuntCd`);
-        if (!!scriptHuntCd) {
-            this.huntCd = parseInt(scriptHuntCd);
+    loadDuelCd() {
+        const scriptDuelCd = localStorage.getItem(`${this.localStoragePrefix}DuelCd`);
+        if (!!scriptDuelCd) {
+            this.duelCd = parseInt(scriptDuelCd);
         }
     }
 
@@ -150,25 +150,25 @@ export class MyKirito {
         this.preyName = localStorage.getItem(`${this.localStoragePrefix}PreyName`);
     }
 
-    saveIsHuntPause() {
-        localStorage.setItem(`${this.localStoragePrefix}IsHuntPause`, this.isHuntPause.toString());
+    saveIsDuelPause() {
+        localStorage.setItem(`${this.localStoragePrefix}IsDuelPause`, this.isDuelPause.toString());
     }
 
-    loadIsHuntPause() {
-        const scriptIsHuntPause = localStorage.getItem(`${this.localStoragePrefix}IsHuntPause`);
-        if (!!scriptIsHuntPause) {
-            this.isHuntPause = scriptIsHuntPause === 'true';
+    loadIsDuelPause() {
+        const scriptIsDuelPause = localStorage.getItem(`${this.localStoragePrefix}IsDuelPause`);
+        if (!!scriptIsDuelPause) {
+            this.isDuelPause = scriptIsDuelPause === 'true';
         }
     }
 
-    saveHuntReloadCount() {
-        localStorage.setItem(`${this.localStoragePrefix}huntReloadCount`, this.huntReloadCount.toString());
+    saveDuelReloadCount() {
+        localStorage.setItem(`${this.localStoragePrefix}duelReloadCount`, this.duelReloadCount.toString());
     }
 
-    loadHuntReloadCount() {
-        const scripthuntReloadCount = localStorage.getItem(`${this.localStoragePrefix}huntReloadCount`);
-        if (!!scripthuntReloadCount) {
-            this.huntReloadCount = parseInt(scripthuntReloadCount);
+    loadDuelReloadCount() {
+        const scriptduelReloadCount = localStorage.getItem(`${this.localStoragePrefix}duelReloadCount`);
+        if (!!scriptduelReloadCount) {
+            this.duelReloadCount = parseInt(scriptduelReloadCount);
         }
     }
 
@@ -199,13 +199,13 @@ export class MyKirito {
         }
     }
 
-    saveNextHuntSecond() {
-        localStorage.setItem(`${this.localStoragePrefix}NextHuntSecond`, this.nextHuntSecond.toString());
+    saveNextDuelSecond() {
+        localStorage.setItem(`${this.localStoragePrefix}NextDuelSecond`, this.nextDuelSecond.toString());
     }
 
-    loadNextHuntSecond(tempSecond) {
-        const scriptNextHuntSecond = localStorage.getItem(`${this.localStoragePrefix}NextHuntSecond`);
-        this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
+    loadNextDuelSecond(tempSecond) {
+        const scriptNextDuelSecond = localStorage.getItem(`${this.localStoragePrefix}NextDuelSecond`);
+        this.nextDuelSecond = parseInt(scriptNextDuelSecond ? scriptNextDuelSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveNextActionSecond() {

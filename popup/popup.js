@@ -13,15 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputRandomDelay = document.getElementById('input-randomDelay');
         const buttonActionCd = document.getElementById('button-actionCd');
         const inputActionCd = document.getElementById('input-actionCd');
-        const buttonHuntCd = document.getElementById('button-huntCd');
-        const inputHuntCd = document.getElementById('input-huntCd');
+        const buttonDuelCd = document.getElementById('button-duelCd');
+        const inputDuelCd = document.getElementById('input-duelCd');
         const buttonResetActionCd = document.getElementById('button-reset-actionCd');
-        const buttonResetHuntCd = document.getElementById('button-reset-huntCd');
+        const buttonResetDuelCd = document.getElementById('button-reset-duelCd');
 
         const buttonBasicActionCd = document.getElementById('button-basic-actionCd');
         const inputBasicActionCd = document.getElementById('input-basic-actionCd');
-        const buttonBasicHuntCd = document.getElementById('button-basic-huntCd');
-        const inputBasicHuntCd = document.getElementById('input-basic-huntCd');
+        const buttonBasicDuelCd = document.getElementById('button-basic-duelCd');
+        const inputBasicDuelCd = document.getElementById('input-basic-duelCd');
         
         const buttonReset = document.getElementById('button-reset');
 
@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
             switchReceiveAward.checked = myKirito.isAutoReceiveAward;
             inputRandomDelay.value = myKirito.randomDelay;
             inputBasicActionCd.value = myKirito.actionCd;
-            inputBasicHuntCd.value = myKirito.huntCd;
+            inputBasicDuelCd.value = myKirito.duelCd;
             inputActionCd.value = myKirito.nextActionSecond;
-            inputHuntCd.value = myKirito.nextHuntSecond;
+            inputDuelCd.value = myKirito.nextDuelSecond;
         }
 
         chrome.tabs.sendMessage(
@@ -106,12 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
 
-        buttonBasicHuntCd.addEventListener('click', () => {
+        buttonBasicDuelCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
-                    event: 'set-basic-hunt-cd',
-                    content: +(inputBasicHuntCd.value)
+                    event: 'set-basic-duel-cd',
+                    content: +(inputBasicDuelCd.value)
                 }
             );
         });
@@ -126,12 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
 
-        buttonHuntCd.addEventListener('click', () => {
+        buttonDuelCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
-                    event: 'set-hunt-cd',
-                    content: +(inputHuntCd.value)
+                    event: 'set-duel-cd',
+                    content: +(inputDuelCd.value)
                 }
             );
         });
@@ -146,11 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
 
-        buttonResetHuntCd.addEventListener('click', () => {
+        buttonResetDuelCd.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
                 {
-                    event: 'set-hunt-cd',
+                    event: 'set-duel-cd',
                     content: 0
                 }
             );

@@ -1,61 +1,30 @@
+import { Dashboard } from './dashboard';
 import { MyKirito } from './my-kirito';
 import { DomHelper } from './dom-helper';
 import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS } from './constant';
 import { sleep, random } from './utils';
+import { DuelTools } from './duel-tools';
 
 export class Worker {
 
-    myKirito: MyKirito;
-    domHelper: DomHelper;
+    dashboard: Dashboard;
+    duelTools: DuelTools;
 
-    constructor(myKirito: MyKirito, domHelper: DomHelper) {
-        this.myKirito = myKirito;
-        this.domHelper = domHelper;
-        this.updateMessageBlock();
+    constructor(
+        private myKirito: MyKirito,
+        private domHelper: DomHelper
+    ) {
+        this.dashboard = new Dashboard(myKirito, domHelper);
+        this.duelTools = new DuelTools(myKirito, domHelper);
+
+        document.addEventListener('urlChange', (event: CustomEvent) => {
+            if (event.detail.current.includes('profile')) {
+                this.duelTools.injectionTitleButton();
+            }
+        });
     }
 
-    updateMessageBlock() {
-        if (this.myKirito.isDead) {
-            this.domHelper.messageBlock.textContent = '死掉了';
-        } else {
-            if (this.myKirito.isActionPause) {
-                this.domHelper.messageBlock.innerHTML = '普通行動已暫停';
-            } else if (this.myKirito.isActionWaitCaptcha) {
-                this.domHelper.messageBlock.innerHTML = '<a href="/">等待驗證後行動</a>';
-                if (location.pathname === '/' && (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) || !this.domHelper.hasIframe())) {
-                    this.myKirito.isActionWaitCaptcha = false;
-                    this.myKirito.saveIsActionWaitCaptcha();
-                }
-            } else {
-                if (this.myKirito.nextActionSecond > 0) {
-                    this.domHelper.messageBlock.innerHTML = `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.action]}`;
-                } else {
-                    this.domHelper.messageBlock.innerHTML = `正在${ACTION_NAME[this.myKirito.action]}`;
-                }
-            }
-            if (this.myKirito.isHuntPause || !this.myKirito.preyId) {
-                if (this.myKirito.isPreyDead) {
-                    this.domHelper.messageBlock.innerHTML += `, <a href="/profile/${this.myKirito.preyId}">他死了</a>`;
-                } else {
-                    this.domHelper.messageBlock.innerHTML += !this.myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
-                }
-            } else if (this.myKirito.isHuntWaitCaptcha) {
-                this.domHelper.messageBlock.innerHTML += `, <a href="/profile/${this.myKirito.preyId}">等待驗證後攻擊</a>`;
-                if (location.href.includes(`/profile/${this.myKirito.preyId}`) && (DUEL_NAME[1] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[1]].disabled) || !this.domHelper.hasIframe())) {
-                    this.myKirito.isHuntWaitCaptcha = false;
-                    this.myKirito.saveIsHuntWaitCaptcha();
-                }
-            } else {
-                if (this.myKirito.nextHuntSecond > 0) {
-                    this.domHelper.messageBlock.innerHTML += `, ${this.myKirito.nextHuntSecond} 秒後發起攻擊`;
-                } else {
-                    this.domHelper.messageBlock.innerHTML += `, 正在進行${DUEL_NAME[this.myKirito.duel]}`;
-                }
-            }
-        }
-    }
-
-    async action() {
+    private async action() {
         this.domHelper.loadLinks();
         if (!(this.domHelper.links['我的桐人'].className.includes('active'))) {
             this.domHelper.links['我的桐人'].click();
@@ -130,12 +99,12 @@ export class Worker {
         }
     }
 
-    async hunt() {
+    private async duel() {
         if (!(location.href.includes(`/profile/${this.myKirito.preyId}`))) {
             location.replace(`/profile/${this.myKirito.preyId}`);
         } else {
             this.myKirito.lock();
-            this.myKirito.scriptStatus = SCRIPT_STATUS.Hunt;
+            this.myKirito.scriptStatus = SCRIPT_STATUS.Duel;
             this.myKirito.saveScriptStatus();
 
             // 檢查暱稱欄位
@@ -158,10 +127,10 @@ export class Worker {
             const tempStatus = await this.domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2)');
             if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
                 this.myKirito.isPreyDead = true;
-                this.myKirito.nextHuntSecond = 0;
-                this.myKirito.isHuntPause = true;
-                this.myKirito.saveIsHuntPause();
-                this.domHelper.updateHunterButtonStyle();
+                this.myKirito.nextDuelSecond = 0;
+                this.myKirito.isDuelPause = true;
+                this.myKirito.saveIsDuelPause();
+                this.dashboard.updateDuelPauseButtonStyle();
                 this.myKirito.unlock();
                 return;
             } else {
@@ -171,7 +140,7 @@ export class Worker {
             const cd = this.domHelper.getDuelCd();
             // 檢查是否在冷卻
             if (cd > 0) {
-                this.myKirito.nextHuntSecond = cd + random(this.myKirito.randomDelay);
+                this.myKirito.nextDuelSecond = cd + random(this.myKirito.randomDelay);
                 this.myKirito.unlock();
                 return;
             }
@@ -199,8 +168,8 @@ export class Worker {
                 } else {
                     // 檢查驗證
                     if (this.domHelper.hasIframe() && DUEL_NAME[1] in this.domHelper.buttons && this.domHelper.buttons[DUEL_NAME[1]].disabled) {
-                        this.myKirito.isHuntWaitCaptcha = true;
-                        this.myKirito.saveIsHuntWaitCaptcha();
+                        this.myKirito.isDuelWaitCaptcha = true;
+                        this.myKirito.saveIsDuelWaitCaptcha();
                         this.myKirito.unlock();
                         return;
                     }
@@ -218,7 +187,7 @@ export class Worker {
             const newLog = this.domHelper.getDuelLog();
             if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
                 console.log(newLog[0]);
-                this.myKirito.nextHuntSecond = this.myKirito.huntCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
+                this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
                 this.myKirito.unlock();
             } else {
                 // 若未出現應有的對戰結果，重新整理
@@ -250,20 +219,20 @@ export class Worker {
         }
 
         this.myKirito.nextActionSecond = this.myKirito.nextActionSecond > 0 ? this.myKirito.nextActionSecond - 1 : 0;
-        this.myKirito.nextHuntSecond = this.myKirito.nextHuntSecond > 0 ? this.myKirito.nextHuntSecond - 1 : 0;
+        this.myKirito.nextDuelSecond = this.myKirito.nextDuelSecond > 0 ? this.myKirito.nextDuelSecond - 1 : 0;
         this.myKirito.saveTempSecond();
         this.myKirito.saveNextActionSecond();
-        this.myKirito.saveNextHuntSecond();
-        this.updateMessageBlock();
+        this.myKirito.saveNextDuelSecond();
+        this.dashboard.updateDashboard();
 
         if (!this.myKirito.isBusy) {
             if (
-                this.myKirito.nextHuntSecond <= 0 &&
-                !this.myKirito.isHuntPause &&
-                !this.myKirito.isHuntWaitCaptcha &&
+                this.myKirito.nextDuelSecond <= 0 &&
+                !this.myKirito.isDuelPause &&
+                !this.myKirito.isDuelWaitCaptcha &&
                 !!this.myKirito.preyId
             ) {
-                this.hunt();
+                this.duel();
             } else if (
                 this.myKirito.nextActionSecond <= 0 &&
                 !this.myKirito.isActionPause &&
@@ -276,8 +245,8 @@ export class Worker {
                 case SCRIPT_STATUS.Action:
                     this.action();
                     break;
-                case SCRIPT_STATUS.Hunt:
-                    this.hunt();
+                case SCRIPT_STATUS.Duel:
+                    this.duel();
                     break;
                 default:
                     this.myKirito.unlock();
