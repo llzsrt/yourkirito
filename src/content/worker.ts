@@ -247,6 +247,7 @@ export class Worker {
             this.domHelper.buttons['領取獎勵'].click();
             console.log('領取樓層獎勵');
             await sleep(500);
+            return;
         }
 
         const tempDead = document.querySelector('#root > div > div')
