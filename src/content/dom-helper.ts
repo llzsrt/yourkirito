@@ -1,6 +1,7 @@
 import { ACTION, DUEL } from './constant';
 import { MyKirito } from './my-kirito';
 import { sleep } from './utils';
+import { getProfile } from './api';
 
 export class DomHelper {
 
@@ -180,7 +181,7 @@ export class DomHelper {
         peepButton.addEventListener('click', async () => {
             self.myKirito.loadToken();
             if (!!self.myKirito.token) {
-                const data = await self.getProfile(self.myKirito.token, id);
+                const data = await getProfile(self.myKirito.token, id);
                 console.log(data);
                 const popup = window.open('', '', `top=0,left=${screen.width - 300},width=300,height=650,location=no`);
                 if (!popup) return console.error('Popup blocked! Please allow popups and try again.');
@@ -415,20 +416,5 @@ export class DomHelper {
             await sleep(500);
             return await this.waitForText(selector, value, timeout - 500);
         }
-    }
-
-    async getProfile(token: string, id: string) {
-        const reponse = await fetch(`https://mykirito.com/api/profile/${id}`, {
-            "headers": {
-                "accept": "application/json, text/plain, */*",
-                "accept-language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-origin",
-                "token": token,
-                "x-requested-with": "XMLHttpRequest"
-            }
-        });
-        return await reponse.json();
     }
 }

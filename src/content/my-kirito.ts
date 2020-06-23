@@ -1,5 +1,6 @@
 import { SCRIPT_STATUS } from './constant';
 import { getNowSecond } from './utils';
+import { getProfile } from './api';
 
 export class MyKirito {
     preyId = '';
@@ -246,11 +247,13 @@ export class MyKirito {
         }
     }
 
-    syncTimer() {
-        const scriptTempSecond = localStorage.getItem(`${this.localStoragePrefix}TempSecond`);
-        const scriptNextActionSecond = localStorage.getItem(`${this.localStoragePrefix}NextActionSecond`);
-        const scriptNextHuntSecond = localStorage.getItem(`${this.localStoragePrefix}NextHuntSecond`);
-        this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : '0') + parseInt(scriptTempSecond ? scriptTempSecond : '0') - getNowSecond();
-        this.nextHuntSecond = parseInt(scriptNextHuntSecond ? scriptNextHuntSecond : '0') + parseInt(scriptTempSecond ? scriptTempSecond : '0') - getNowSecond();
+    async syncProfile() {
+        this.loadToken();
+        if (!!this.token) {
+            const profile = await getProfile(this.token);
+            this.profile = profile;
+            return true;
+        }
+        throw 'Missing token';
     }
 }
