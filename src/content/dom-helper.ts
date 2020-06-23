@@ -74,12 +74,12 @@ export class DomHelper {
             button.addEventListener('click', () => {
                 self.myKirito.action = ACTION[action];
                 self.myKirito.saveDefaultAction();
-                self.setToolsButtonStyle();
+                self.updateToolsButtonStyle();
             });
         }
 
         this.pauseButton = this.addButton('button-group', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
-        this.setPauseButtonStyle();
+        this.updatePauseButtonStyle();
         this.pauseButton.addEventListener('click', () => {
             if (!self.myKirito.isActionPause) {
                 self.myKirito.isActionPause = true;
@@ -91,14 +91,14 @@ export class DomHelper {
                 const tempSecond = self.myKirito.getTempSecond();
                 self.myKirito.loadNextActionSecond(tempSecond);
             }
-            self.setPauseButtonStyle();
+            self.updatePauseButtonStyle();
         });
 
         this.preyNameBlock = hunterWrapper.appendChild(preyName);
 
         hunterWrapper.appendChild(duelButtonGroup);
         this.hunterButton = this.addButton('hunter-wrapper', 'button-hunter', '自動攻擊');
-        this.setHunterButtonStyle();
+        this.updateHunterButtonStyle();
         this.hunterButton.addEventListener('click', () => {
             if (!self.myKirito.isHuntPause) {
                 self.myKirito.unlock();
@@ -111,7 +111,7 @@ export class DomHelper {
                 self.myKirito.isHuntPause = false;
                 self.myKirito.saveIsHuntPause();
             }
-            self.setHunterButtonStyle();
+            self.updateHunterButtonStyle();
         });
 
         for (let duel in DUEL) {
@@ -121,70 +121,14 @@ export class DomHelper {
             button.addEventListener('click', () => {
                 self.myKirito.duel = DUEL[duel];
                 self.myKirito.saveDefaultDuel();
-                self.setToolsButtonStyle();
+                self.updateToolsButtonStyle();
             });
         }
     }
 
-
-    setToolsButtonStyle() {
-        this.actionButtons.forEach(button => {
-            button.setAttribute('class', ACTION[button.textContent] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary');
-        });
-        this.duelButtons.forEach(button => {
-            button.setAttribute('class', DUEL[button.textContent] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
-        })
-    }
-
-
-    setPauseButtonStyle() {
-        this.pauseButton.setAttribute('class', !this.myKirito.isActionPause ? 'btn btn-info active' : 'btn btn-secondary');
-        if (this.myKirito.isActionPause) {
-            this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
-        } else {
-            this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
-        }
-    }
-
-
-    loadButtons() {
-        document.querySelectorAll('button').forEach(button => {
-            this.buttons[button.textContent] = button;
-        });
-    }
-
-
-    loadLinks() {
-        document.querySelectorAll('a').forEach(button => {
-            this.links[button.textContent] = button;
-        });
-    }
-
-    checkPrey() {
-        if (!this.myKirito.preyId || this.myKirito.preyId === 'null' || this.myKirito.preyId === '') {
-            document.getElementById('hunter-wrapper').setAttribute('class', 'hidden');
-            this.preyNameBlock.innerHTML = '無攻擊目標';
-        } else {
-            document.getElementById('hunter-wrapper').setAttribute('class', 'text-right');
-            this.preyNameBlock.innerHTML = `當前攻擊目標: <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a>`;
-        }
-    }
-
-    async watchUrl() {
-        if (location.href != this.oldUrl) {
-            this.oldUrl = location.href;
-            // window.dispatchEvent(new Event('urlChange'));
-            if (location.href.includes('profile')) {
-                this.injectionTitleButton();
-            }
-        }
-        await sleep(50);
-        this.watchUrl();
-    }
-
     async injectionTitleButton() {
         const self = this;
-        const tempName = await this.waitForElement(
+        const tempName = await this.waitForText(
             this.myKirito.profileViewType === 'detail' || !this.myKirito.profileViewType ?
                 'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
                 'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
@@ -238,7 +182,7 @@ export class DomHelper {
                 console.log(data);
                 const popup = window.open('', '', `top=0,left=${screen.width - 300},width=300,height=650,location=no`);
                 if (!popup) return console.error('Popup blocked! Please allow popups and try again.');
-    
+
                 const profile = data.profile;
                 popup.document.write(`<!DOCTYPE html>
                                         <html>
@@ -356,7 +300,25 @@ export class DomHelper {
         });
     }
 
-    setHunterButtonStyle() {
+    updateToolsButtonStyle() {
+        this.actionButtons.forEach(button => {
+            button.setAttribute('class', ACTION[button.textContent] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary');
+        });
+        this.duelButtons.forEach(button => {
+            button.setAttribute('class', DUEL[button.textContent] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary');
+        })
+    }
+
+    updatePauseButtonStyle() {
+        this.pauseButton.setAttribute('class', !this.myKirito.isActionPause ? 'btn btn-info active' : 'btn btn-secondary');
+        if (this.myKirito.isActionPause) {
+            this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
+        } else {
+            this.pauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
+        }
+    }
+
+    updateHunterButtonStyle() {
         if (!this.myKirito.isHuntPause) {
             this.hunterButton.textContent = '停止';
             this.hunterButton.setAttribute('class', 'btn btn-danger active');
@@ -366,7 +328,41 @@ export class DomHelper {
         }
     }
 
-    async waitForElement(selector: string, value: string = '', timeout: number = 10000): Promise<string> {
+    loadButtons() {
+        document.querySelectorAll('button').forEach(button => {
+            this.buttons[button.textContent] = button;
+        });
+    }
+
+    loadLinks() {
+        document.querySelectorAll('a').forEach(button => {
+            this.links[button.textContent] = button;
+        });
+    }
+
+    checkPrey() {
+        if (!this.myKirito.preyId || this.myKirito.preyId === 'null' || this.myKirito.preyId === '') {
+            document.getElementById('hunter-wrapper').setAttribute('class', 'hidden');
+            this.preyNameBlock.innerHTML = '無攻擊目標';
+        } else {
+            document.getElementById('hunter-wrapper').setAttribute('class', 'text-right');
+            this.preyNameBlock.innerHTML = `當前攻擊目標: <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a>`;
+        }
+    }
+
+    async watchUrl() {
+        if (location.href != this.oldUrl) {
+            this.oldUrl = location.href;
+            // window.dispatchEvent(new Event('urlChange'));
+            if (location.href.includes('profile')) {
+                this.injectionTitleButton();
+            }
+        }
+        await sleep(50);
+        this.watchUrl();
+    }
+
+    async waitForText(selector: string, value: string = '', timeout: number = 10000): Promise<string> {
         if (timeout < 1) {
             return null;
         }
@@ -375,7 +371,7 @@ export class DomHelper {
             return target.textContent;
         } else {
             await sleep(500);
-            return await this.waitForElement(selector, value, timeout - 500);
+            return await this.waitForText(selector, value, timeout - 500);
         }
     }
 

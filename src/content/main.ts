@@ -54,7 +54,7 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
     domHelper.loadButtons();
 
     // 檢查暱稱欄位
-    const tempName = await domHelper.waitForElement('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
+    const tempName = await domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
     // 若超過10秒仍未顯示暱稱，重新整理
     if (!tempName) {
         myKirito.unlock();
@@ -100,7 +100,7 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
 
 async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
     // 檢查暱稱欄位
-    const tempName = await domHelper.waitForElement(
+    const tempName = await domHelper.waitForText(
         myKirito.profileViewType === 'detail' || !myKirito.profileViewType ?
             'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
             'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
@@ -112,20 +112,20 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         return;
     }
     // 檢查對手死了沒
-    const tempStatus = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(2)');
+    const tempStatus = await domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2)');
     if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
         myKirito.isPreyDead = true;
         myKirito.nextHuntSecond = 0;
         myKirito.isHuntPause = true;
         myKirito.saveIsHuntPause();
-        domHelper.setHunterButtonStyle();
+        domHelper.updateHunterButtonStyle();
         myKirito.unlock();
         return;
     } else {
         myKirito.isPreyDead = false;
     }
 
-    const tempCdMessage = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)');
+    const tempCdMessage = await domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)');
     // 檢查是否在冷卻
     if (!!tempCdMessage && tempCdMessage.includes('冷卻倒數')) {
         const tempCd = parseInt( tempCdMessage.substring(5).split(' ')[0]);
@@ -174,7 +174,7 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
     }
 
     // 檢查對戰結果
-    const tempResult = await domHelper.waitForElement('#root > div > div:nth-child(1) > div:nth-child(3) > div > div', duelType);
+    const tempResult = await domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(3) > div > div', duelType);
     if (!!tempResult && (tempResult.includes(DUEL_NAME[4]) || tempResult.includes(DUEL_NAME[3]) || tempResult.includes(DUEL_NAME[2]) || tempResult.includes(DUEL_NAME[1]))) {
         console.log(tempResult);
         myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
