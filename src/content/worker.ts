@@ -22,7 +22,7 @@ export class Worker {
                 this.domHelper.messageBlock.innerHTML = '普通行動已暫停';
             } else if (this.myKirito.isActionWaitCaptcha) {
                 this.domHelper.messageBlock.innerHTML = '<a href="/">等待驗證後行動</a>';
-                if (location.pathname === '/' && (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) || !document.querySelector('div > iframe'))) {
+                if (location.pathname === '/' && (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) || !this.domHelper.hasIframe())) {
                     this.myKirito.isActionWaitCaptcha = false;
                     this.myKirito.saveIsActionWaitCaptcha();
                 }
@@ -41,7 +41,7 @@ export class Worker {
                 }
             } else if (this.myKirito.isHuntWaitCaptcha) {
                 this.domHelper.messageBlock.innerHTML += `, <a href="/profile/${this.myKirito.preyId}">等待驗證後攻擊</a>`;
-                if (location.href.includes(`/profile/${this.myKirito.preyId}`) && (DUEL_NAME[1] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe'))) {
+                if (location.href.includes(`/profile/${this.myKirito.preyId}`) && (DUEL_NAME[1] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[1]].disabled) || !this.domHelper.hasIframe())) {
                     this.myKirito.isHuntWaitCaptcha = false;
                     this.myKirito.saveIsHuntWaitCaptcha();
                 }
@@ -55,164 +55,6 @@ export class Worker {
         }
     }
 
-    async actionWork() {
-
-        // 檢查暱稱欄位
-        const tempName = await this.domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
-        // 若超過10秒仍未顯示暱稱，重新整理
-        if (!tempName) {
-            this.myKirito.unlock();
-            location.reload();
-        }
-
-        this.domHelper.loadContentBlocks();
-        this.domHelper.loadButtons();
-
-        // 有OK可以按就按OK
-        if (this.domHelper.buttons['OK']) {
-            this.domHelper.buttons['OK'].click();
-        }
-
-        const cd = this.domHelper.getActionCd();
-        // 檢查是否在冷卻
-        if (cd > 0) {
-            this.myKirito.nextActionSecond = cd + random(this.myKirito.randomDelay);
-            this.myKirito.unlock();
-            return;
-        }
-
-        const oldLog = this.domHelper.getActionLog();
-        let checkCaptchaCount = 0;
-
-        while (checkCaptchaCount < 20) {
-            checkCaptchaCount++;
-            // 按下該按的按鈕
-            if (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled)) {
-                this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].click();
-                console.log(ACTION_NAME[this.myKirito.action]);
-                break;
-            } else {
-                // 檢查驗證
-                if (this.domHelper.hasIframe() && ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) {
-                    this.myKirito.isActionWaitCaptcha = true;
-                    this.myKirito.saveIsActionWaitCaptcha();
-                    this.myKirito.unlock();
-                    return;
-                }
-            }
-            await sleep(500);
-        }
-
-        // 若按鈕為disable，且重試10次仍沒有出現驗證框，重新整理
-        if (checkCaptchaCount >= 20) {
-            this.myKirito.unlock();
-            location.reload();
-        }
-
-        // 檢查行動結果
-        const newLog = this.domHelper.getActionLog();
-        if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
-            console.log(newLog[0]);
-            this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
-            this.myKirito.unlock();
-        } else {
-            // 若未出現應有的行動結果，重新整理
-            this.myKirito.unlock();
-            location.reload();
-        }
-    }
-
-    async huntWork() {
-
-        // 檢查暱稱欄位
-        const tempName = await this.domHelper.waitForText(
-            this.myKirito.profileViewType === 'detail' || !this.myKirito.profileViewType ?
-                'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
-                'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
-        );
-        // 若超過10秒仍未顯示對手暱稱，重新整理
-        if (!tempName) {
-            this.myKirito.unlock();
-            location.reload();
-            return;
-        }
-
-        this.domHelper.loadContentBlocks();
-        this.domHelper.loadButtons();
-
-        // 檢查對手死了沒
-        const tempStatus = await this.domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2)');
-        if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
-            this.myKirito.isPreyDead = true;
-            this.myKirito.nextHuntSecond = 0;
-            this.myKirito.isHuntPause = true;
-            this.myKirito.saveIsHuntPause();
-            this.domHelper.updateHunterButtonStyle();
-            this.myKirito.unlock();
-            return;
-        } else {
-            this.myKirito.isPreyDead = false;
-        }
-
-        const cd = this.domHelper.getDuelCd();
-        // 檢查是否在冷卻
-        if (cd > 0) {
-            this.myKirito.nextHuntSecond = cd + random(this.myKirito.randomDelay);
-            this.myKirito.unlock();
-            return;
-        }
-
-        // 有OK可以按就按OK
-        if (this.domHelper.buttons['OK']) {
-            this.domHelper.buttons['OK'].click();
-        }
-
-        const oldLog = this.domHelper.getDuelLog();
-
-        let checkCaptchaCount = 0;
-        let duelType = '';
-
-        while (checkCaptchaCount < 20) {
-            checkCaptchaCount++;
-            if (DUEL_NAME[this.myKirito.duel] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[this.myKirito.duel]].disabled)) {
-                this.domHelper.buttons[DUEL_NAME[this.myKirito.duel]].click();
-                duelType = DUEL_NAME[this.myKirito.duel];
-                break;
-            } else if (DUEL_NAME[2] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[2]].disabled)) {
-                this.domHelper.buttons[DUEL_NAME[2]].click();
-                duelType = DUEL_NAME[2];
-                break;
-            } else {
-                // 檢查驗證
-                if (this.domHelper.hasIframe() && DUEL_NAME[1] in this.domHelper.buttons && this.domHelper.buttons[DUEL_NAME[1]].disabled) {
-                    this.myKirito.isHuntWaitCaptcha = true;
-                    this.myKirito.saveIsHuntWaitCaptcha();
-                    this.myKirito.unlock();
-                    return;
-                }
-            }
-            await sleep(500);
-        }
-
-        // 若按鈕為disable，且重試20次仍沒有出現驗證框，重新整理
-        if (checkCaptchaCount >= 20) {
-            this.myKirito.unlock();
-            location.reload();
-        }
-
-        // 檢查對戰結果
-        const newLog = this.domHelper.getDuelLog();
-        if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
-            console.log(newLog[0]);
-            this.myKirito.nextHuntSecond = this.myKirito.huntCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
-            this.myKirito.unlock();
-        } else {
-            // 若未出現應有的對戰結果，重新整理
-            this.myKirito.unlock();
-            location.reload();
-        }
-    }
-
     async action() {
         this.domHelper.loadLinks();
         if (!(this.domHelper.links['我的桐人'].className.includes('active'))) {
@@ -221,7 +63,70 @@ export class Worker {
             this.myKirito.lock();
             this.myKirito.scriptStatus = SCRIPT_STATUS.Action;
             this.myKirito.saveScriptStatus();
-            await this.actionWork();
+
+            // 檢查暱稱欄位
+            const tempName = await this.domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
+            // 若超過10秒仍未顯示暱稱，重新整理
+            if (!tempName) {
+                this.myKirito.unlock();
+                location.reload();
+            }
+
+            this.domHelper.loadContentBlocks();
+            this.domHelper.loadButtons();
+
+            // 有OK可以按就按OK
+            if (this.domHelper.buttons['OK']) {
+                this.domHelper.buttons['OK'].click();
+            }
+
+            const cd = this.domHelper.getActionCd();
+            // 檢查是否在冷卻
+            if (cd > 0) {
+                this.myKirito.nextActionSecond = cd + random(this.myKirito.randomDelay);
+                this.myKirito.unlock();
+                return;
+            }
+
+            const oldLog = this.domHelper.getActionLog();
+            let checkCaptchaCount = 0;
+
+            while (checkCaptchaCount < 20) {
+                checkCaptchaCount++;
+                // 按下該按的按鈕
+                if (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled)) {
+                    this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].click();
+                    console.log(ACTION_NAME[this.myKirito.action]);
+                    break;
+                } else {
+                    // 檢查驗證
+                    if (this.domHelper.hasIframe() && ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) {
+                        this.myKirito.isActionWaitCaptcha = true;
+                        this.myKirito.saveIsActionWaitCaptcha();
+                        this.myKirito.unlock();
+                        return;
+                    }
+                }
+                await sleep(500);
+            }
+
+            // 若按鈕為disable，且重試10次仍沒有出現驗證框，重新整理
+            if (checkCaptchaCount >= 20) {
+                this.myKirito.unlock();
+                location.reload();
+            }
+
+            // 檢查行動結果
+            const newLog = this.domHelper.getActionLog();
+            if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
+                console.log(newLog[0]);
+                this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
+                this.myKirito.unlock();
+            } else {
+                // 若未出現應有的行動結果，重新整理
+                this.myKirito.unlock();
+                location.reload();
+            }
         }
     }
 
@@ -232,7 +137,94 @@ export class Worker {
             this.myKirito.lock();
             this.myKirito.scriptStatus = SCRIPT_STATUS.Hunt;
             this.myKirito.saveScriptStatus();
-            await this.huntWork();
+
+            // 檢查暱稱欄位
+            const tempName = await this.domHelper.waitForText(
+                this.myKirito.profileViewType === 'detail' || !this.myKirito.profileViewType ?
+                    'table > tbody > tr:nth-child(1) > td:nth-child(2)' :
+                    'div > table:nth-child(2) > tbody > tr:nth-child(4) > td'
+            );
+            // 若超過10秒仍未顯示對手暱稱，重新整理
+            if (!tempName) {
+                this.myKirito.unlock();
+                location.reload();
+                return;
+            }
+
+            this.domHelper.loadContentBlocks();
+            this.domHelper.loadButtons();
+
+            // 檢查對手死了沒
+            const tempStatus = await this.domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2)');
+            if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
+                this.myKirito.isPreyDead = true;
+                this.myKirito.nextHuntSecond = 0;
+                this.myKirito.isHuntPause = true;
+                this.myKirito.saveIsHuntPause();
+                this.domHelper.updateHunterButtonStyle();
+                this.myKirito.unlock();
+                return;
+            } else {
+                this.myKirito.isPreyDead = false;
+            }
+
+            const cd = this.domHelper.getDuelCd();
+            // 檢查是否在冷卻
+            if (cd > 0) {
+                this.myKirito.nextHuntSecond = cd + random(this.myKirito.randomDelay);
+                this.myKirito.unlock();
+                return;
+            }
+
+            // 有OK可以按就按OK
+            if (this.domHelper.buttons['OK']) {
+                this.domHelper.buttons['OK'].click();
+            }
+
+            const oldLog = this.domHelper.getDuelLog();
+
+            let checkCaptchaCount = 0;
+            let duelType = '';
+
+            while (checkCaptchaCount < 20) {
+                checkCaptchaCount++;
+                if (DUEL_NAME[this.myKirito.duel] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[this.myKirito.duel]].disabled)) {
+                    this.domHelper.buttons[DUEL_NAME[this.myKirito.duel]].click();
+                    duelType = DUEL_NAME[this.myKirito.duel];
+                    break;
+                } else if (DUEL_NAME[2] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[2]].disabled)) {
+                    this.domHelper.buttons[DUEL_NAME[2]].click();
+                    duelType = DUEL_NAME[2];
+                    break;
+                } else {
+                    // 檢查驗證
+                    if (this.domHelper.hasIframe() && DUEL_NAME[1] in this.domHelper.buttons && this.domHelper.buttons[DUEL_NAME[1]].disabled) {
+                        this.myKirito.isHuntWaitCaptcha = true;
+                        this.myKirito.saveIsHuntWaitCaptcha();
+                        this.myKirito.unlock();
+                        return;
+                    }
+                }
+                await sleep(500);
+            }
+
+            // 若按鈕為disable，且重試20次仍沒有出現驗證框，重新整理
+            if (checkCaptchaCount >= 20) {
+                this.myKirito.unlock();
+                location.reload();
+            }
+
+            // 檢查對戰結果
+            const newLog = this.domHelper.getDuelLog();
+            if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
+                console.log(newLog[0]);
+                this.myKirito.nextHuntSecond = this.myKirito.huntCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
+                this.myKirito.unlock();
+            } else {
+                // 若未出現應有的對戰結果，重新整理
+                this.myKirito.unlock();
+                location.reload();
+            }
         }
     }
 
@@ -265,23 +257,27 @@ export class Worker {
         this.updateMessageBlock();
 
         if (!this.myKirito.isBusy) {
-            if (this.myKirito.nextHuntSecond <= 0 &&
+            if (
+                this.myKirito.nextHuntSecond <= 0 &&
                 !this.myKirito.isHuntPause &&
-                !!this.myKirito.preyId && this.myKirito.preyId !== 'null' && this.myKirito.preyId !== '' &&
-                !this.myKirito.isHuntWaitCaptcha) {
-                await this.hunt();
-            } else if (this.myKirito.nextActionSecond <= 0 &&
+                !this.myKirito.isHuntWaitCaptcha &&
+                !!this.myKirito.preyId
+            ) {
+                this.hunt();
+            } else if (
+                this.myKirito.nextActionSecond <= 0 &&
                 !this.myKirito.isActionPause &&
-                !this.myKirito.isActionWaitCaptcha) {
-                await this.action();
+                !this.myKirito.isActionWaitCaptcha
+            ) {
+                this.action();
             }
         } else {
             switch (this.myKirito.scriptStatus) {
                 case SCRIPT_STATUS.Action:
-                    await this.action();
+                    this.action();
                     break;
                 case SCRIPT_STATUS.Hunt:
-                    await this.hunt();
+                    this.hunt();
                     break;
                 default:
                     this.myKirito.unlock();
