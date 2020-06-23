@@ -1,4 +1,3 @@
-import { DuelTools } from './duel-tools';
 import { Worker } from './worker';
 import { MyKirito } from './my-kirito';
 import { DomHelper } from './dom-helper';

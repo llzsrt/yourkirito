@@ -5,8 +5,8 @@ import { getProfile } from "./api";
 
 export class DuelTools {
 
-    setPreyButton: Element;
-    peepButton: Element;
+    setPreyButton: HTMLElement;
+    peepButton: HTMLElement;
 
     constructor(
         private myKirito: MyKirito,

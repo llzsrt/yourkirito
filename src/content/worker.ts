@@ -86,16 +86,22 @@ export class Worker {
             }
 
             // 檢查行動結果
-            const newLog = this.domHelper.getActionLog();
-            if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
-                console.log(newLog[0]);
-                this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
-                this.myKirito.unlock();
-            } else {
-                // 若未出現應有的行動結果，重新整理
-                this.myKirito.unlock();
-                location.reload();
+            let checkResultCount = 0;
+            while (checkResultCount < 20) {
+                checkResultCount++ 
+                const newLog = this.domHelper.getActionLog();
+                if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
+                    console.log(newLog[0]);
+                    this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
+                    this.myKirito.unlock();
+                    return;
+                }
+                await sleep(500);
             }
+
+            // 若未出現應有的行動結果，重新整理
+            this.myKirito.unlock();
+            location.reload();
         }
     }
 
@@ -184,16 +190,22 @@ export class Worker {
             }
 
             // 檢查對戰結果
-            const newLog = this.domHelper.getDuelLog();
-            if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
-                console.log(newLog[0]);
-                this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
-                this.myKirito.unlock();
-            } else {
-                // 若未出現應有的對戰結果，重新整理
-                this.myKirito.unlock();
-                location.reload();
+            let checkResultCount = 0;
+            while (checkResultCount < 20) {
+                checkResultCount++
+                const newLog = this.domHelper.getDuelLog();
+                if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
+                    console.log(newLog[0]);
+                    this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
+                    this.myKirito.unlock();
+                    return;
+                }
+                await sleep(500);
             }
+
+            // 若未出現應有的對戰結果，重新整理
+            this.myKirito.unlock();
+            location.reload();
         }
     }
 
