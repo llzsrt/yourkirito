@@ -8,6 +8,8 @@ export class DomHelper {
 
     buttons: any = {}
     links: any = {}
+    contentBlocks: Element[];
+
     actionButtons: Element[] = [];
     duelButtons: Element[] = [];
     messageBlock: Element;
@@ -340,6 +342,46 @@ export class DomHelper {
         });
     }
 
+    loadContentBlocks() {
+        this.contentBlocks = Array.apply(null, document.querySelectorAll('#root > div > div > div'));
+    }
+
+    getActionCd() {
+        const tempBlocks: Element[] = Array.apply(null, this.contentBlocks.find(x => x.textContent.startsWith('行動')).querySelectorAll('div'));
+        const actionCdBlock = tempBlocks.find(x => x.textContent.startsWith('冷卻倒數'));
+        if (!!actionCdBlock) {
+            return parseInt(actionCdBlock.textContent.substring(5).split(' ')[0]);
+        } else {
+            return 0;
+        }
+    }
+
+    getDuelCd() {
+        const tempBlocks: Element[] = Array.apply(null, this.contentBlocks.find(x => x.textContent.startsWith('挑戰')).querySelectorAll('div'));
+        const duelCdBlock = tempBlocks.find(x => x.textContent.startsWith('冷卻倒數'));
+        if (!!duelCdBlock) {
+            return parseInt(duelCdBlock.textContent.substring(5).split(' ')[0]);
+        } else {
+            return 0;
+        }
+    }
+
+    getActionLog() {
+        const actionLogBlock = this.contentBlocks.find(x => x.textContent.startsWith('行動記錄'));
+        const logBlocks: Element[] = Array.apply(null, actionLogBlock.children);
+        return logBlocks.filter(x => x.nodeName === 'DIV').map(x => x.textContent);
+    }
+
+    getDuelLog() {
+        const duelLogBlock = this.contentBlocks.find(x => x.textContent.startsWith('戰鬥報告'));
+        const logBlocks: Element[] = Array.apply(null, duelLogBlock.children);
+        return logBlocks.filter(x => x.nodeName === 'DIV').map(x => x.children[0].textContent);
+    }
+
+    hasIframe() {
+        return !!document.querySelector('div > iframe');
+    }
+
     checkPrey() {
         if (!this.myKirito.preyId || this.myKirito.preyId === 'null' || this.myKirito.preyId === '') {
             document.getElementById('hunter-wrapper').setAttribute('class', 'hidden');
@@ -367,7 +409,7 @@ export class DomHelper {
             return null;
         }
         const target = document.querySelector(selector);
-        if (!!target && target.textContent.includes(value)) {
+        if (!!target && !!target.textContent && target.textContent.includes(value)) {
             return target.textContent;
         } else {
             await sleep(500);

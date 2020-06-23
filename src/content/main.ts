@@ -51,7 +51,6 @@ function main() {
 }
 
 async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
-    domHelper.loadButtons();
 
     // 檢查暱稱欄位
     const tempName = await domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
@@ -61,14 +60,26 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
         location.reload();
     }
 
+    domHelper.loadContentBlocks();
+    domHelper.loadButtons();
+
     // 有OK可以按就按OK
     if (domHelper.buttons['OK']) {
         domHelper.buttons['OK'].click();
     }
 
+    const cd = domHelper.getActionCd();
+    // 檢查是否在冷卻
+    if (cd > 0) {
+        myKirito.nextActionSecond = cd + random(myKirito.randomDelay);
+        myKirito.unlock();
+        return;
+    }
+
+    const oldLog = domHelper.getActionLog();
     let checkCaptchaCount = 0;
 
-    while (checkCaptchaCount < 10) {
+    while (checkCaptchaCount < 20) {
         checkCaptchaCount++;
         // 按下該按的按鈕
         if (ACTION_NAME[myKirito.action] in domHelper.buttons && !(domHelper.buttons[ACTION_NAME[myKirito.action]].disabled)) {
@@ -77,7 +88,7 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
             break;
         } else {
             // 檢查驗證
-            if (document.querySelector('div > iframe') && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
+            if (domHelper.hasIframe() && ACTION_NAME[myKirito.action] in domHelper.buttons && domHelper.buttons[ACTION_NAME[myKirito.action]].disabled) {
                 myKirito.isActionWaitCaptcha = true;
                 myKirito.saveIsActionWaitCaptcha();
                 myKirito.unlock();
@@ -87,18 +98,27 @@ async function actionWork(myKirito: MyKirito, domHelper: DomHelper) {
         await sleep(500);
     }
 
-    // 若按鈕為disable，且重試10次仍沒有出現驗證框，放棄本次行動
-    if (checkCaptchaCount >= 10) {
-        myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
+    // 若按鈕為disable，且重試10次仍沒有出現驗證框，重新整理
+    if (checkCaptchaCount >= 20) {
         myKirito.unlock();
-        return;
+        location.reload();
     }
 
-    myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
-    myKirito.unlock();
+    // 檢查行動結果
+    const newLog = domHelper.getActionLog();
+    if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
+        console.log(newLog[0]);
+        myKirito.nextActionSecond = myKirito.actionCd + random(myKirito.randomDelay);
+        myKirito.unlock();
+    } else {
+        // 若未出現應有的行動結果，重新整理
+        myKirito.unlock();
+        location.reload();
+    }
 }
 
 async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
+
     // 檢查暱稱欄位
     const tempName = await domHelper.waitForText(
         myKirito.profileViewType === 'detail' || !myKirito.profileViewType ?
@@ -111,6 +131,10 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         location.reload();
         return;
     }
+
+    domHelper.loadContentBlocks();
+    domHelper.loadButtons();
+
     // 檢查對手死了沒
     const tempStatus = await domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2)');
     if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
@@ -125,26 +149,25 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         myKirito.isPreyDead = false;
     }
 
-    const tempCdMessage = await domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)');
+    const cd = domHelper.getDuelCd();
     // 檢查是否在冷卻
-    if (!!tempCdMessage && tempCdMessage.includes('冷卻倒數')) {
-        const tempCd = parseInt( tempCdMessage.substring(5).split(' ')[0]);
-        myKirito.nextHuntSecond = tempCd + random(myKirito.randomDelay);
+    if (cd > 0) {
+        myKirito.nextHuntSecond = cd + random(myKirito.randomDelay);
         myKirito.unlock();
         return;
     }
-
-    domHelper.loadButtons();
 
     // 有OK可以按就按OK
     if (domHelper.buttons['OK']) {
         domHelper.buttons['OK'].click();
     }
 
+    const oldLog = domHelper.getDuelLog();
+
     let checkCaptchaCount = 0;
     let duelType = '';
 
-    while (checkCaptchaCount < 10) {
+    while (checkCaptchaCount < 20) {
         checkCaptchaCount++;
         if (DUEL_NAME[myKirito.duel] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[myKirito.duel]].disabled)) {
             domHelper.buttons[DUEL_NAME[myKirito.duel]].click();
@@ -156,7 +179,7 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
             break;
         } else {
             // 檢查驗證
-            if (document.querySelector('div > iframe') && DUEL_NAME[1] in domHelper.buttons && domHelper.buttons[DUEL_NAME[1]].disabled) {
+            if (domHelper.hasIframe() && DUEL_NAME[1] in domHelper.buttons && domHelper.buttons[DUEL_NAME[1]].disabled) {
                 myKirito.isHuntWaitCaptcha = true;
                 myKirito.saveIsHuntWaitCaptcha();
                 myKirito.unlock();
@@ -166,21 +189,20 @@ async function huntWork(myKirito: MyKirito, domHelper: DomHelper) {
         await sleep(500);
     }
 
-    // 若按鈕為disable，且重試10次仍沒有出現驗證框，放棄本次攻擊
-    if (checkCaptchaCount >= 10) {
-        myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
+    // 若按鈕為disable，且重試20次仍沒有出現驗證框，重新整理
+    if (checkCaptchaCount >= 20) {
         myKirito.unlock();
-        return;
+        location.reload();
     }
 
     // 檢查對戰結果
-    const tempResult = await domHelper.waitForText('#root > div > div:nth-child(1) > div:nth-child(3) > div > div', duelType);
-    if (!!tempResult && (tempResult.includes(DUEL_NAME[4]) || tempResult.includes(DUEL_NAME[3]) || tempResult.includes(DUEL_NAME[2]) || tempResult.includes(DUEL_NAME[1]))) {
-        console.log(tempResult);
+    const newLog = domHelper.getDuelLog();
+    if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
+        console.log(newLog[0]);
         myKirito.nextHuntSecond = myKirito.huntCd + random(myKirito.randomDelay) + (myKirito.duel == 4 ? myKirito.extraMercilesslyCd : 0);
         myKirito.unlock();
     } else {
-        // 若未超過10秒仍未出現應有的對戰結果，重新整理
+        // 若未出現應有的對戰結果，重新整理
         myKirito.unlock();
         location.reload();
     }
