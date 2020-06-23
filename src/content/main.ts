@@ -248,12 +248,12 @@ function endless(myKirito: MyKirito, domHelper: DomHelper) {
 
             if (myKirito.isHuntPause || !myKirito.preyId) {
                 if (myKirito.isPreyDead) {
-                    domHelper.messageBlock.innerHTML += `, <a href="profile/${myKirito.preyId}">他死了</a>`;
+                    domHelper.messageBlock.innerHTML += `, <a href="/profile/${myKirito.preyId}">他死了</a>`;
                 } else {
                     domHelper.messageBlock.innerHTML += !myKirito.preyId ? ', 沒有攻擊目標' : ', 攻擊已暫停';
                 }
             } else if (myKirito.isHuntWaitCaptcha) {
-                domHelper.messageBlock.innerHTML += `, <a href="profile/${myKirito.preyId}">等待驗證後攻擊</a>`;
+                domHelper.messageBlock.innerHTML += `, <a href="/profile/${myKirito.preyId}">等待驗證後攻擊</a>`;
 
                 if (location.href.includes(`/profile/${myKirito.preyId}`) && (DUEL_NAME[1] in domHelper.buttons && !(domHelper.buttons[DUEL_NAME[1]].disabled) || !document.querySelector('div > iframe'))) {
                     myKirito.isHuntWaitCaptcha = false;
