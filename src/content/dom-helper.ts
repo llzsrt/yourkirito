@@ -1,4 +1,3 @@
-import { MyKirito } from './my-kirito';
 import { sleep } from './utils';
 
 export class DomHelper {
@@ -69,7 +68,7 @@ export class DomHelper {
 
     async watchUrl() {
         if (location.href != this.originalUrl) {
-            document.dispatchEvent(new CustomEvent('urlChange', { detail: { original: this.originalUrl, current: location.href } }));
+            document.dispatchEvent(new CustomEvent('urlChange', { detail: { originalUrl: this.originalUrl, currentUrl: location.href } }));
             this.originalUrl = location.href;
         }
         await sleep(50);

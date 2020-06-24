@@ -21,7 +21,7 @@ export class Worker {
     }
 
     private onUrlChange(event: CustomEvent) {
-        if (event.detail.current.includes('profile')) {
+        if (event.detail.currentUrl.includes('profile')) {
             this.duelTools.injectionTitleButtons();
         }
     }
