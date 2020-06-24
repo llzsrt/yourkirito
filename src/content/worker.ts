@@ -33,13 +33,14 @@ export class Worker {
             this.domHelper.links['我的桐人'].click();
         } else {
             this.myKirito.lock();
-            this.myKirito.setScriptStatus(SCRIPT_STATUS.Action);
+            this.myKirito.scriptStatus = SCRIPT_STATUS.Action;
 
             // 檢查暱稱欄位
             const tempName = await this.domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
             // 若超過10秒仍未顯示暱稱，重新整理
             if (!tempName) {
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.ActionAfterReload);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.ActionAfterReload;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 location.reload();
             }
@@ -56,7 +57,8 @@ export class Worker {
             // 檢查是否在冷卻
             if (cd > 0) {
                 this.myKirito.nextActionSecond = cd + random(this.myKirito.randomDelay);
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 return;
             }
@@ -76,7 +78,8 @@ export class Worker {
                     if (this.domHelper.hasIframe() && ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) {
                         this.myKirito.isActionWaitCaptcha = true;
                         this.myKirito.saveIsActionWaitCaptcha();
-                        this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                        this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                        this.myKirito.saveScriptStatus();
                         this.myKirito.unlock();
                         return;
                     }
@@ -86,7 +89,8 @@ export class Worker {
 
             // 若按鈕為disable，且重試10次仍沒有出現驗證框，重新整理
             if (checkCaptchaCount >= 20) {
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.ActionAfterReload);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.ActionAfterReload;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 location.reload();
             }
@@ -99,7 +103,8 @@ export class Worker {
                 if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
                     console.log(newLog[0]);
                     this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
-                    this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                    this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                    this.myKirito.saveScriptStatus();
                     this.myKirito.unlock();
                     return;
                 }
@@ -107,7 +112,8 @@ export class Worker {
             }
 
             // 若未出現應有的行動結果，重新整理
-            this.myKirito.setScriptStatus(SCRIPT_STATUS.ActionAfterReload);
+            this.myKirito.scriptStatus = SCRIPT_STATUS.ActionAfterReload;
+            this.myKirito.saveScriptStatus();
             this.myKirito.unlock();
             location.reload();
         }
@@ -118,7 +124,7 @@ export class Worker {
             location.replace(`/profile/${this.myKirito.preyId}`);
         } else {
             this.myKirito.lock();
-            this.myKirito.setScriptStatus(SCRIPT_STATUS.Duel);
+            this.myKirito.scriptStatus = SCRIPT_STATUS.Duel;
 
             // 檢查暱稱欄位
             const tempName = await this.domHelper.waitForText(
@@ -128,7 +134,8 @@ export class Worker {
             );
             // 若超過10秒仍未顯示對手暱稱，重新整理
             if (!tempName) {
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 location.reload();
                 return;
@@ -145,7 +152,8 @@ export class Worker {
                 this.myKirito.isDuelPause = true;
                 this.myKirito.saveIsDuelPause();
                 this.dashboard.updateDuelPauseButtonStyle();
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 return;
             } else {
@@ -155,7 +163,8 @@ export class Worker {
             // 檢查是否在冷卻
             if (cd > 0) {
                 this.myKirito.nextDuelSecond = cd + random(this.myKirito.randomDelay);
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 return;
             }
@@ -184,7 +193,8 @@ export class Worker {
                     if (this.domHelper.hasIframe() && DUEL_NAME[1] in this.domHelper.buttons && this.domHelper.buttons[DUEL_NAME[1]].disabled) {
                         this.myKirito.isDuelWaitCaptcha = true;
                         this.myKirito.saveIsDuelWaitCaptcha();
-                        this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                        this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                        this.myKirito.saveScriptStatus();
                         this.myKirito.unlock();
                         return;
                     }
@@ -194,7 +204,8 @@ export class Worker {
 
             // 若按鈕為disable，且重試20次仍沒有出現驗證框，重新整理
             if (checkCaptchaCount >= 20) {
-                this.myKirito.setScriptStatus(SCRIPT_STATUS.DuelAfterReload);
+                this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
+                this.myKirito.saveScriptStatus();
                 this.myKirito.unlock();
                 location.reload();
             }
@@ -207,7 +218,8 @@ export class Worker {
                 if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
                     console.log(newLog[0]);
                     this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
-                    this.myKirito.setScriptStatus(SCRIPT_STATUS.Normal);
+                    this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                    this.myKirito.saveScriptStatus();
                     this.myKirito.unlock();
                     return;
                 }
@@ -216,7 +228,8 @@ export class Worker {
 
             // 若未出現應有的對戰結果，重新整理
             this.myKirito.unlock();
-            this.myKirito.setScriptStatus(SCRIPT_STATUS.DuelAfterReload);
+            this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
+            this.myKirito.saveScriptStatus();
             location.reload();
         }
     }
@@ -266,11 +279,11 @@ export class Worker {
         } else {
             switch (this.myKirito.scriptStatus) {
                 case SCRIPT_STATUS.ActionAfterReload:
-                    this.myKirito.setScriptStatus(SCRIPT_STATUS.Action);
+                    this.myKirito.scriptStatus = SCRIPT_STATUS.Action;
                     this.action();
                     break;
                 case SCRIPT_STATUS.DuelAfterReload:
-                    this.myKirito.setScriptStatus(SCRIPT_STATUS.Duel);
+                    this.myKirito.scriptStatus = SCRIPT_STATUS.Duel;
                     this.duel();
                     break;
                 case SCRIPT_STATUS.Normal:

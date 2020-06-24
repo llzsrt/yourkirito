@@ -181,11 +181,6 @@ export class MyKirito {
         localStorage.setItem(`${this.localStoragePrefix}IsBusy`, 'false');
     }
 
-    setScriptStatus(status) {
-        this.scriptStatus = status;
-        this.saveScriptStatus();
-    }
-
     loadIsBusy() {
         this.isBusy = localStorage.getItem(`${this.localStoragePrefix}IsBusy`) === 'true';
     }
