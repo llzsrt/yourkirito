@@ -21,8 +21,8 @@ export class DomHelper {
     }
 
     loadLinks() {
-        document.querySelectorAll('a').forEach(button => {
-            this.links[button.textContent] = button;
+        document.querySelectorAll('a').forEach(link => {
+            this.links[link.textContent] = link;
         });
     }
 
