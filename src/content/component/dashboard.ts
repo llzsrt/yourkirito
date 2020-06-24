@@ -1,7 +1,7 @@
-import { DomHelper } from './dom-helper';
-import { MyKirito } from "./my-kirito";
-import { ACTION, DUEL, ACTION_NAME, DUEL_NAME } from "./constant";
-import { addButton } from "./utils";
+import { DomHelper } from '../service/dom-helper';
+import { MyKirito } from "../service/my-kirito";
+import { ACTION, DUEL, ACTION_NAME, DUEL_NAME } from "../constant";
+import { addButton } from "../function/utils";
 
 export class Dashboard {
 

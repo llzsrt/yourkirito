@@ -1,6 +1,9 @@
 import { Worker } from './worker';
-import { MyKirito } from './my-kirito';
-import { DomHelper } from './dom-helper';
+import { MyKirito } from './service/my-kirito';
+import { DomHelper } from './service/dom-helper';
+import { registerUrlChangeEvent } from './event/url-change';
+
+registerUrlChangeEvent();
 
 const myKirito = new MyKirito();
 const domHelper = new DomHelper();

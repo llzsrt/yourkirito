@@ -1,9 +1,10 @@
-import { Dashboard } from './dashboard';
-import { MyKirito } from './my-kirito';
-import { DomHelper } from './dom-helper';
+import { Dashboard } from './component/dashboard';
+import { MyKirito } from './service/my-kirito';
+import { DomHelper } from './service/dom-helper';
 import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS } from './constant';
-import { sleep, random } from './utils';
-import { DuelTools } from './duel-tools';
+import { sleep, random } from './function/utils';
+import { DuelTools } from './component/duel-tools';
+import { UrlChangeEventDetail } from './event/url-change';
 
 export class Worker {
 
@@ -17,10 +18,10 @@ export class Worker {
         this.dashboard = new Dashboard(myKirito, domHelper);
         this.duelTools = new DuelTools(myKirito, domHelper);
 
-        document.addEventListener('urlChange', this.onUrlChange);
+        window.addEventListener('urlChange', this.onUrlChange);
     }
 
-    private onUrlChange(event: CustomEvent) {
+    private onUrlChange(event: CustomEvent<UrlChangeEventDetail>) {
         if (event.detail.currentUrl.includes('profile')) {
             this.duelTools.injectionTitleButtons();
         }

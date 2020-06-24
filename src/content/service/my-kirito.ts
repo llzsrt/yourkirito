@@ -1,6 +1,6 @@
-import { SCRIPT_STATUS } from './constant';
-import { getNowSecond } from './utils';
-import { getProfile } from './api';
+import { SCRIPT_STATUS } from '../constant';
+import { getNowSecond } from '../function/utils';
+import { getProfile } from '../function/api';
 
 export class MyKirito {
     preyId = '';
@@ -29,7 +29,6 @@ export class MyKirito {
     profile = null;
 
     localStoragePrefix = 'your';
-
 
     constructor() {
         const tempSecond = this.getTempSecond();

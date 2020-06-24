@@ -1,4 +1,4 @@
-import { sleep } from './utils';
+import { sleep } from '../function/utils';
 
 export class DomHelper {
 
@@ -6,12 +6,9 @@ export class DomHelper {
     links: any = {}
     contentBlocks: Element[];
 
-    private originalUrl: string = '';
-
     constructor() {
         this.loadLinks();
         this.loadButtons();
-        this.watchUrl();
     }
 
     loadButtons() {
@@ -64,15 +61,6 @@ export class DomHelper {
 
     hasIframe() {
         return !!document.querySelector('div > iframe');
-    }
-
-    async watchUrl() {
-        if (location.href != this.originalUrl) {
-            document.dispatchEvent(new CustomEvent('urlChange', { detail: { originalUrl: this.originalUrl, currentUrl: location.href } }));
-            this.originalUrl = location.href;
-        }
-        await sleep(50);
-        this.watchUrl();
     }
 
     async waitForText(selector: string, value: string = '', timeout: number = 10000): Promise<string> {
