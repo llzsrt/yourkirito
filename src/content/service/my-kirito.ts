@@ -179,7 +179,10 @@ export class MyKirito {
     unlock() {
         this.isBusy = false;
         localStorage.setItem(`${this.localStoragePrefix}IsBusy`, 'false');
-        this.scriptStatus = SCRIPT_STATUS.Normal;
+    }
+
+    setScriptStatus(status) {
+        this.scriptStatus = status;
         this.saveScriptStatus();
     }
 

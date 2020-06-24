@@ -35,5 +35,7 @@ export const DUEL_NAME = {
 export const SCRIPT_STATUS = {
     Normal: 0,
     Action: 1,
-    Duel: 2
+    Duel: 2,
+    ActionAfterReload: 3,
+    DuelAfterReload: 4
 }
