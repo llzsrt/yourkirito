@@ -239,12 +239,6 @@ export class Worker {
 
         this.domHelper.loadButtons();
 
-        if ('領取獎勵' in this.domHelper.buttons && !(this.domHelper.buttons['領取獎勵'].disabled) && this.myKirito.isAutoReceiveAward) {
-            this.domHelper.buttons['領取獎勵'].click();
-            console.log('領取樓層獎勵');
-            return;
-        }
-
         const tempDead = document.querySelector('#root > div > div')
         if (!!tempDead && tempDead.textContent === '你的角色死亡了，請進行轉生') {
             this.myKirito.isDead = true;
@@ -258,6 +252,12 @@ export class Worker {
         this.myKirito.saveNextActionSecond();
         this.myKirito.saveNextDuelSecond();
         this.dashboard.updateDashboard();
+
+        if ('領取獎勵' in this.domHelper.buttons && !(this.domHelper.buttons['領取獎勵'].disabled) && this.myKirito.isAutoReceiveAward) {
+            this.domHelper.buttons['領取獎勵'].click();
+            console.log('領取樓層獎勵');
+            return;
+        }
 
         if (!this.myKirito.isBusy) {
             if (
