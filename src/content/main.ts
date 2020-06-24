@@ -3,7 +3,7 @@ import { MyKirito } from './my-kirito';
 import { DomHelper } from './dom-helper';
 
 const myKirito = new MyKirito();
-const domHelper = new DomHelper(myKirito);
+const domHelper = new DomHelper();
 const worker = new Worker(myKirito, domHelper);
 worker.endless();
 

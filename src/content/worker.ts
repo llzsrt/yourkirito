@@ -17,11 +17,13 @@ export class Worker {
         this.dashboard = new Dashboard(myKirito, domHelper);
         this.duelTools = new DuelTools(myKirito, domHelper);
 
-        document.addEventListener('urlChange', (event: CustomEvent) => {
-            if (event.detail.current.includes('profile')) {
-                this.duelTools.injectionTitleButtons();
-            }
-        });
+        document.addEventListener('urlChange', this.onUrlChange);
+    }
+
+    private onUrlChange(event: CustomEvent) {
+        if (event.detail.current.includes('profile')) {
+            this.duelTools.injectionTitleButtons();
+        }
     }
 
     private async action() {

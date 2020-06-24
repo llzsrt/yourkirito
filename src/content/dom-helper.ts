@@ -9,7 +9,7 @@ export class DomHelper {
 
     private originalUrl: string = '';
 
-    constructor(private myKirito: MyKirito) {
+    constructor() {
         this.loadLinks();
         this.loadButtons();
         this.watchUrl();
