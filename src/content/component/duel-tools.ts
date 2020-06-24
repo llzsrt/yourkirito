@@ -11,11 +11,7 @@ export class DuelTools {
     constructor(
         private myKirito: MyKirito,
         private domHelper: DomHelper
-    ) {
-        if (location.href.includes('profile')) {
-            this.injectionTitleButtons();
-        }
-    }
+    ) { }
 
     async injectionTitleButtons() {
         const self = this;
