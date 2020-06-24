@@ -219,7 +219,6 @@ export class Worker {
         if ('領取獎勵' in this.domHelper.buttons && !(this.domHelper.buttons['領取獎勵'].disabled) && this.myKirito.isAutoReceiveAward) {
             this.domHelper.buttons['領取獎勵'].click();
             console.log('領取樓層獎勵');
-            await sleep(500);
             return;
         }
 
