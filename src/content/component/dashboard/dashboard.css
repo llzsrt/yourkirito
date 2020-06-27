@@ -11,8 +11,23 @@
     margin: 0 .2rem;
 }
 
+.btn-group {
+    position: relative;
+    display: inline-block;
+    margin: .2rem 0;
+}
+
+.button-quit-find {
+    position: absolute;
+    top: -1px;
+    left: 0px;
+    margin-left: -127px;
+    min-width: 125px;
+    height: 3rem;
+}
+
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .text-right {
@@ -149,10 +164,4 @@
 
 .btn-group-vertical>.btn.active, .btn-group-vertical>.btn:active, .btn-group-vertical>.btn:focus, .btn-group>.btn.active, .btn-group>.btn:active, .btn-group>.btn:focus {
     z-index: 1;
-}
-
-.btn-group {
-    position: relative;
-    display: inline-block;
-    margin: .2rem 0;
 }

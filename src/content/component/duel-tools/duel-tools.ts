@@ -8,12 +8,14 @@ export class DuelTools {
     setPreyButton: HTMLElement;
     peepButton: HTMLElement;
 
+    isPrey = false;
+
     constructor(
         private myKirito: MyKirito,
         private domHelper: DomHelper
     ) { }
 
-    async injectionTitleButtons() {
+    async injectionComponent() {
         const self = this;
         const id = location.href.split('/').pop();
         const tempName = await this.domHelper.waitForText(
@@ -24,24 +26,25 @@ export class DuelTools {
         if ((!tempName)) {
             await sleep(50);
             if (location.href.includes('profile')) {
-                this.injectionTitleButtons();
+                this.injectionComponent();
             }
             return;
         }
         this.domHelper.loadButtons();
         this.setPreyButton = document.createElement('button');
-        const isPrey = !!self.myKirito.preyId && self.myKirito.preyId !== '' && location.href.includes(self.myKirito.preyId);
+        this.isPrey = !!self.myKirito.preyId && self.myKirito.preyId !== '' && location.href.includes(self.myKirito.preyId);
         this.setPreyButton.id = 'button-prey';
         this.setPreyButton.className = 'sc-AxgMl llLWDd';
-        this.setPreyButton.textContent = isPrey ? '移除目標' : '設為攻擊目標';
+        this.setPreyButton.textContent = this.isPrey ? '移除目標' : '設為攻擊目標';
         this.setPreyButton.setAttribute('type', 'button');
         this.setPreyButton.addEventListener('click', () => {
-            const isPrey = !!self.myKirito.preyId && self.myKirito.preyId !== '' && location.href.includes(self.myKirito.preyId);
-            if (isPrey) {
+            if (self.isPrey) {
+                self.isPrey = false;
                 self.myKirito.preyId = '';
                 self.myKirito.preyName = '';
                 this.setPreyButton.textContent = '設為攻擊目標';
             } else {
+                self.isPrey = true;
                 self.myKirito.preyId = location.href.split('/').pop();
                 self.myKirito.preyName = tempName;
                 this.setPreyButton.textContent = '移除目標';

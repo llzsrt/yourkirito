@@ -1,3 +1,4 @@
+import { FIND_STATUS } from './../constant';
 import { SCRIPT_STATUS } from '../constant';
 import { getNowSecond } from '../function/utils';
 import { getProfile } from '../function/api';
@@ -25,8 +26,10 @@ export class MyKirito {
     token = null;
     profileViewType = '';
     scriptStatus = SCRIPT_STATUS.Normal;
+    findStatus = FIND_STATUS.Normal;
 
     profile = null;
+    setFoundUserAsPrey = false;
 
     localStoragePrefix = 'your';
 

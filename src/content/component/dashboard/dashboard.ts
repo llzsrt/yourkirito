@@ -1,3 +1,4 @@
+import { FIND_STATUS, SCRIPT_STATUS } from './../../constant';
 import { DomHelper } from '../../service/dom-helper';
 import { MyKirito } from "../../service/my-kirito";
 import { ACTION, DUEL, ACTION_NAME, DUEL_NAME } from "../../constant";
@@ -8,20 +9,19 @@ export class Dashboard {
 
     actionButtons: HTMLElement[] = [];
     actionPauseButton: HTMLElement;
+    actionButtonsWrapper: HTMLElement;
     duelButtonWrapper: HTMLElement;
     duelButtons: HTMLElement[] = [];
     duelPauseButton: HTMLElement;
     messageBlock: HTMLElement;
+    quitFindModeButton: HTMLButtonElement;
 
     constructor(
         private myKirito: MyKirito,
         private domHelper: DomHelper
-    ) {
-        this.injectionDashboard();
-        this.updateDashboard();
-    }
+    ) { }
 
-    injectionDashboard() {
+    injectionComponent() {
         const self = this;
         const toolsWrapper = document.createElement('div');
         toolsWrapper.id = 'tools-wrapper';
@@ -30,9 +30,12 @@ export class Dashboard {
         this.duelButtonWrapper = document.createElement('div');
         this.duelButtonWrapper.id = 'duel-wrapper';
 
-        const buttonGroup = document.createElement('div');
-        buttonGroup.className = `${style.btnGroup}`;
-        buttonGroup.id = 'button-group';
+        const actionButtonGroup = document.createElement('div');
+        actionButtonGroup.className = `${style.btnGroup}`;
+        actionButtonGroup.id = 'button-group';
+
+        this.actionButtonsWrapper = document.createElement('div');
+        this.actionButtonsWrapper.appendChild(actionButtonGroup);
 
         const duelButtonGroup = document.createElement('div');
         duelButtonGroup.className = `${style.btnGroup}`;
@@ -45,9 +48,20 @@ export class Dashboard {
         this.messageBlock.id = 'message-block';
         statusBar.appendChild(this.messageBlock);
 
+        this.quitFindModeButton = document.createElement('button');
+        this.quitFindModeButton.textContent = '離開尋找模式';
+        this.quitFindModeButton.hidden = true;
+        this.quitFindModeButton.classList.add(style.btn, style.btnInfo, style.buttonQuitFind);
+        this.quitFindModeButton.addEventListener('click', () => {
+            self.myKirito.findStatus = FIND_STATUS.Normal;
+            self.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+            self.myKirito.isBusy = false;
+        });
+        
         document.getElementById('root').appendChild(toolsWrapper);
         toolsWrapper.appendChild(this.duelButtonWrapper);
-        toolsWrapper.appendChild(buttonGroup);
+        toolsWrapper.appendChild(this.actionButtonsWrapper);
+        statusBar.appendChild(this.quitFindModeButton);
         toolsWrapper.appendChild(statusBar);
 
         for (let action in ACTION) {
@@ -134,8 +148,35 @@ export class Dashboard {
         }
     }
 
+    updateButtonsShowHide() {
+        if (!this.myKirito.preyId && !this.duelButtonWrapper.hidden || this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
+            this.duelButtonWrapper.hidden = true;
+        } else if (this.myKirito.preyId && this.duelButtonWrapper.hidden) {
+            this.duelButtonWrapper.hidden = false;
+        }
+
+        if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
+            this.actionButtonsWrapper.hidden = true;
+            this.quitFindModeButton.classList.remove(style.hidden);
+        } else {
+            this.quitFindModeButton.classList.add(style.hidden);
+            this.actionButtonsWrapper.hidden = false;
+        }
+    }
+
     updateDashboard() {
-        if (this.myKirito.isDead) {
+        if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
+            switch (this.myKirito.findStatus) {
+                case FIND_STATUS.Processing:
+                    this.messageBlock.textContent = '正在尋找符合條件的對象... ';
+                    break;
+                case FIND_STATUS.Found:
+                    this.messageBlock.textContent = '找到了 ';
+                    break;
+                case FIND_STATUS.NotFound:
+                    this.messageBlock.textContent = '找不到符合條件的對象 ';
+            }
+        } else if (this.myKirito.isDead) {
             this.messageBlock.textContent = '死掉了';
         } else {
             if (this.myKirito.isActionPause) {
@@ -174,10 +215,6 @@ export class Dashboard {
             }
         }
 
-        if (!this.myKirito.preyId && !this.duelButtonWrapper.hidden) {
-            this.duelButtonWrapper.hidden = true;
-        } else if (this.myKirito.preyId && this.duelButtonWrapper.hidden) {
-            this.duelButtonWrapper.hidden = false;
-        }
+        this.updateButtonsShowHide();
     }
 }

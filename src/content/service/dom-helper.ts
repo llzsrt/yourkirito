@@ -2,9 +2,10 @@ import { sleep } from '../function/utils';
 
 export class DomHelper {
 
-    buttons: any = {}
+    buttons: { [key: string]: HTMLButtonElement} = {}
     links: any = {}
     contentBlocks: Element[];
+    contentTables: HTMLTableElement[];
 
     constructor() {
         this.loadLinks();
@@ -23,10 +24,15 @@ export class DomHelper {
         });
     }
 
-    loadContentBlocks() {
-        this.contentBlocks = Array.apply(null, document.querySelectorAll('#root > div > div > div'));
+    getElementArray<T>(node: any, query: string) {
+        const elementArray: T[] = Array.apply(null, node.querySelectorAll(query));
+        return elementArray;
     }
 
+    loadContentBlocks() {
+        this.contentBlocks = this.getElementArray(document, '#root > div > div > div');
+    }
+    
     getActionCd() {
         const tempBlocks: Element[] = Array.apply(null, this.contentBlocks.find(x => x.textContent.startsWith('行動')).querySelectorAll('div'));
         const actionCdBlock = tempBlocks.find(x => x.textContent.startsWith('冷卻倒數'));

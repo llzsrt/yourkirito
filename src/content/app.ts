@@ -1,15 +1,17 @@
 import { Dashboard } from './component/dashboard/dashboard';
 import { MyKirito } from './service/my-kirito';
 import { DomHelper } from './service/dom-helper';
-import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS } from './constant';
+import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS, FIND_STATUS } from './constant';
 import { sleep, random } from './function/utils';
 import { DuelTools } from './component/duel-tools/duel-tools';
 import { UrlChangeEventDetail } from './event/url-change';
+import { UserListTools } from './component/user-list-tools/user-list-tools';
 
 export class App {
 
     dashboard: Dashboard;
     duelTools: DuelTools;
+    userListTools: UserListTools;
 
     constructor(
         private myKirito: MyKirito,
@@ -17,10 +19,27 @@ export class App {
     ) {
         this.dashboard = new Dashboard(myKirito, domHelper);
         this.duelTools = new DuelTools(myKirito, domHelper);
+        this.userListTools = new UserListTools(myKirito, domHelper);
 
-        window.addEventListener('urlChange', (event: CustomEvent<UrlChangeEventDetail>) => {
+        this.dashboard.injectionComponent();
+        this.dashboard.updateDashboard();
+
+        window.addEventListener('urlChange', async (event: CustomEvent<UrlChangeEventDetail>) => {
+            
+            if (this.myKirito.findStatus === FIND_STATUS.Found && !event.detail.currentUrl.includes('profile')) {
+                this.dashboard.quitFindModeButton.click();
+            }
+
             if (event.detail.currentUrl.includes('profile')) {
-                this.duelTools.injectionTitleButtons();
+                await this.duelTools.injectionComponent();
+                if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
+                    if (this.myKirito.findStatus === FIND_STATUS.Found && this.myKirito.setFoundUserAsPrey && !this.duelTools.isPrey) {
+                        this.duelTools.setPreyButton.click();
+                        this.dashboard.quitFindModeButton.click();
+                    }
+                }
+            } else if (event.detail.currentUrl.includes('user-list')) {
+                this.userListTools.injectionComponent();
             }
         });
     }
