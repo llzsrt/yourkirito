@@ -1,9 +1,9 @@
-import { Dashboard } from './component/dashboard';
+import { Dashboard } from './component/dashboard/dashboard';
 import { MyKirito } from './service/my-kirito';
 import { DomHelper } from './service/dom-helper';
 import { ACTION_NAME, DUEL_NAME, SCRIPT_STATUS } from './constant';
 import { sleep, random } from './function/utils';
-import { DuelTools } from './component/duel-tools';
+import { DuelTools } from './component/duel-tools/duel-tools';
 import { UrlChangeEventDetail } from './event/url-change';
 
 export class App {

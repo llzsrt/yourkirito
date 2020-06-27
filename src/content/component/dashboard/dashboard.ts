@@ -1,7 +1,8 @@
-import { DomHelper } from '../service/dom-helper';
-import { MyKirito } from "../service/my-kirito";
-import { ACTION, DUEL, ACTION_NAME, DUEL_NAME } from "../constant";
-import { addButton } from "../function/utils";
+import { DomHelper } from '../../service/dom-helper';
+import { MyKirito } from "../../service/my-kirito";
+import { ACTION, DUEL, ACTION_NAME, DUEL_NAME } from "../../constant";
+import { addButton } from "../../function/utils";
+import style from './dashboard.css';
 
 export class Dashboard {
 
@@ -24,20 +25,21 @@ export class Dashboard {
         const self = this;
         const toolsWrapper = document.createElement('div');
         toolsWrapper.id = 'tools-wrapper';
+        toolsWrapper.className = `${style.toolsWrapper}`;
 
         this.duelButtonWrapper = document.createElement('div');
         this.duelButtonWrapper.id = 'duel-wrapper';
 
         const buttonGroup = document.createElement('div');
-        buttonGroup.className = 'btn-group';
+        buttonGroup.className = `${style.btnGroup}`;
         buttonGroup.id = 'button-group';
 
         const duelButtonGroup = document.createElement('div');
-        duelButtonGroup.className = 'btn-group';
+        duelButtonGroup.className = `${style.btnGroup}`;
         duelButtonGroup.id = 'duel-group';
 
         const statusBar = document.createElement('div');
-        statusBar.className = 'alert alert-info text-right';
+        statusBar.className = `${style.alert} ${style.alertInfo} ${style.textRight}`;
         statusBar.id = 'status-bar';
         this.messageBlock = document.createElement('div');
         this.messageBlock.id = 'message-block';
@@ -51,7 +53,7 @@ export class Dashboard {
         for (let action in ACTION) {
             const button = addButton('button-group', `button-${action}`, action);
             this.actionButtons.push(button);
-            button.className = ACTION[action] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary';
+            button.className = ACTION[action] === this.myKirito.action ? `${style.btn} ${style.btnSecondary} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
             button.addEventListener('click', () => {
                 self.myKirito.action = ACTION[action];
                 self.myKirito.saveDefaultAction();
@@ -95,7 +97,7 @@ export class Dashboard {
         for (let duel in DUEL) {
             const button = addButton('duel-group', `button-${duel}`, duel);
             this.duelButtons.push(button);
-            button.className = DUEL[duel] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary';
+            button.className = DUEL[duel] === this.myKirito.duel ? `${style.btn} ${style.btnSecondary} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
             button.addEventListener('click', () => {
                 self.myKirito.duel = DUEL[duel];
                 self.myKirito.saveDefaultDuel();
@@ -106,15 +108,15 @@ export class Dashboard {
 
     updateButtonsStyle() {
         this.actionButtons.forEach(button => {
-            button.className = ACTION[button.textContent] === this.myKirito.action ? 'btn btn-secondary active' : 'btn btn-secondary';
+            button.className = ACTION[button.textContent] === this.myKirito.action ? `${style.btn} ${style.btnSecondary} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
         });
         this.duelButtons.forEach(button => {
-            button.className = DUEL[button.textContent] === this.myKirito.duel ? 'btn btn-secondary active' : 'btn btn-secondary';
+            button.className = DUEL[button.textContent] === this.myKirito.duel ? `${style.btn} ${style.btnSecondary} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
         })
     }
 
     updateActionPauseButtonStyle() {
-        this.actionPauseButton.className = !this.myKirito.isActionPause ? 'btn btn-info active' : 'btn btn-secondary';
+        this.actionPauseButton.className = !this.myKirito.isActionPause ? `${style.btn} ${style.btnInfo} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
         if (this.myKirito.isActionPause) {
             this.actionPauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
         } else {
@@ -125,10 +127,10 @@ export class Dashboard {
     updateDuelPauseButtonStyle() {
         if (!this.myKirito.isDuelPause) {
             this.duelPauseButton.textContent = '停止';
-            this.duelPauseButton.className = 'btn btn-danger active';
+            this.duelPauseButton.className = `${style.btn} ${style.btnDanger} ${style.buttonDuel} ${style.active}`;
         } else {
             this.duelPauseButton.textContent = '自動攻擊';
-            this.duelPauseButton.className = 'btn btn-danger';
+            this.duelPauseButton.className = `${style.btn} ${style.btnDanger}`;
         }
     }
 
