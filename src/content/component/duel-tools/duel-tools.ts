@@ -1,7 +1,7 @@
-import { MyKirito } from "../service/my-kirito";
-import { DomHelper } from "../service/dom-helper";
-import { sleep, insertAfter } from "../function/utils";
-import { getProfile } from "../function/api";
+import { MyKirito } from "../../service/my-kirito";
+import { DomHelper } from "../../service/dom-helper";
+import { sleep, insertAfter } from "../../function/utils";
+import { getProfile } from "../../function/api";
 
 export class DuelTools {
 

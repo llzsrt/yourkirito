@@ -19,6 +19,8 @@
     "homepage": "https://github.com/llzsrt/yourkirito#readme",
     "devDependencies": {
         "@types/chrome": "0.0.115",
+        "css-loader": "^3.6.0",
+        "style-loader": "^1.2.1",
         "ts-loader": "^7.0.5",
         "typescript": "^3.9.5",
         "webpack": "^4.43.0",

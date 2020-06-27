@@ -1,10 +1,26 @@
 const path = require('path');
+
 module.exports = {
     module: {
         rules: [
             {
                 test: /\.ts$/,
                 loader: 'ts-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            localsConvention: 'dashesOnly'
+                        }
+                    }
+                ]
             }
         ]
     },
