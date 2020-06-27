@@ -105,9 +105,9 @@ export class MyKirito {
     }
 
     loadDuelCd() {
-        const scriptDuelCd = localStorage.getItem(`${this.localStoragePrefix}DuelCd`);
-        if (!!scriptDuelCd) {
-            this.duelCd = parseInt(scriptDuelCd);
+        const tempDuelCd = localStorage.getItem(`${this.localStoragePrefix}DuelCd`);
+        if (!!tempDuelCd) {
+            this.duelCd = parseInt(tempDuelCd);
         }
     }
 
@@ -116,9 +116,9 @@ export class MyKirito {
     }
 
     loadActionCd() {
-        const scriptActionCd = localStorage.getItem(`${this.localStoragePrefix}ActionCd`);
-        if (!!scriptActionCd) {
-            this.actionCd = parseInt(scriptActionCd);
+        const tempActionCd = localStorage.getItem(`${this.localStoragePrefix}ActionCd`);
+        if (!!tempActionCd) {
+            this.actionCd = parseInt(tempActionCd);
         }
     }
 
@@ -127,9 +127,9 @@ export class MyKirito {
     }
 
     loadRandomDelay() {
-        const scriptRandomDelay = localStorage.getItem(`${this.localStoragePrefix}RandomDelay`);
-        if (!!scriptRandomDelay) {
-            this.randomDelay = parseInt(scriptRandomDelay);
+        const tempRandomDelay = localStorage.getItem(`${this.localStoragePrefix}RandomDelay`);
+        if (!!tempRandomDelay) {
+            this.randomDelay = parseInt(tempRandomDelay);
         }
     }
 
@@ -154,9 +154,9 @@ export class MyKirito {
     }
 
     loadIsDuelPause() {
-        const scriptIsDuelPause = localStorage.getItem(`${this.localStoragePrefix}IsDuelPause`);
-        if (!!scriptIsDuelPause) {
-            this.isDuelPause = scriptIsDuelPause === 'true';
+        const tempIsDuelPause = localStorage.getItem(`${this.localStoragePrefix}IsDuelPause`);
+        if (!!tempIsDuelPause) {
+            this.isDuelPause = tempIsDuelPause === 'true';
         }
     }
 
@@ -165,9 +165,9 @@ export class MyKirito {
     }
 
     loadDuelReloadCount() {
-        const scriptduelReloadCount = localStorage.getItem(`${this.localStoragePrefix}duelReloadCount`);
-        if (!!scriptduelReloadCount) {
-            this.duelReloadCount = parseInt(scriptduelReloadCount);
+        const tempduelReloadCount = localStorage.getItem(`${this.localStoragePrefix}duelReloadCount`);
+        if (!!tempduelReloadCount) {
+            this.duelReloadCount = parseInt(tempduelReloadCount);
         }
     }
 
@@ -190,9 +190,9 @@ export class MyKirito {
     }
 
     loadIsActionPause() {
-        const scriptIsActionPause = localStorage.getItem(`${this.localStoragePrefix}IsActionPause`);
-        if (!!scriptIsActionPause) {
-            this.isActionPause = scriptIsActionPause === 'true';
+        const tempIsActionPause = localStorage.getItem(`${this.localStoragePrefix}IsActionPause`);
+        if (!!tempIsActionPause) {
+            this.isActionPause = tempIsActionPause === 'true';
         }
     }
 
@@ -201,8 +201,8 @@ export class MyKirito {
     }
 
     loadNextDuelSecond(tempSecond) {
-        const scriptNextDuelSecond = localStorage.getItem(`${this.localStoragePrefix}NextDuelSecond`);
-        this.nextDuelSecond = parseInt(scriptNextDuelSecond ? scriptNextDuelSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
+        const tempNextDuelSecond = localStorage.getItem(`${this.localStoragePrefix}NextDuelSecond`);
+        this.nextDuelSecond = parseInt(tempNextDuelSecond ? tempNextDuelSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveNextActionSecond() {
@@ -210,8 +210,8 @@ export class MyKirito {
     }
 
     loadNextActionSecond(tempSecond) {
-        const scriptNextActionSecond = localStorage.getItem(`${this.localStoragePrefix}NextActionSecond`);
-        this.nextActionSecond = parseInt(scriptNextActionSecond ? scriptNextActionSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
+        const tempNextActionSecond = localStorage.getItem(`${this.localStoragePrefix}NextActionSecond`);
+        this.nextActionSecond = parseInt(tempNextActionSecond ? tempNextActionSecond : '0') + parseInt(tempSecond ? tempSecond : 0) - getNowSecond();
     }
 
     saveTempSecond() {
@@ -227,9 +227,9 @@ export class MyKirito {
     }
 
     loadDefaultDuel() {
-        const scriptDuel = localStorage.getItem(`${this.localStoragePrefix}Duel`);
-        if (!!scriptDuel) {
-            this.duel = parseInt(scriptDuel);
+        const tempDuel = localStorage.getItem(`${this.localStoragePrefix}Duel`);
+        if (!!tempDuel) {
+            this.duel = parseInt(tempDuel);
         }
     }
 
@@ -238,9 +238,9 @@ export class MyKirito {
     }
 
     loadDefaultAction() {
-        const scriptAction = localStorage.getItem(`${this.localStoragePrefix}Action`);
-        if (!!scriptAction) {
-            this.action = parseInt(scriptAction);
+        const tempAction = localStorage.getItem(`${this.localStoragePrefix}Action`);
+        if (!!tempAction) {
+            this.action = parseInt(tempAction);
         }
     }
 
