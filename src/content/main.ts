@@ -1,4 +1,4 @@
-import { Worker } from './worker';
+import { App } from './app';
 import { MyKirito } from './service/my-kirito';
 import { DomHelper } from './service/dom-helper';
 import { registerUrlChangeEvent } from './event/url-change';
@@ -7,8 +7,8 @@ registerUrlChangeEvent();
 
 const myKirito = new MyKirito();
 const domHelper = new DomHelper();
-const worker = new Worker(myKirito, domHelper);
-worker.endless();
+const app = new App(myKirito, domHelper);
+app.endless();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     switch (message.event) {

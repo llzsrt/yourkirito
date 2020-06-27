@@ -6,7 +6,7 @@ import { sleep, random } from './function/utils';
 import { DuelTools } from './component/duel-tools';
 import { UrlChangeEventDetail } from './event/url-change';
 
-export class Worker {
+export class App {
 
     dashboard: Dashboard;
     duelTools: DuelTools;
