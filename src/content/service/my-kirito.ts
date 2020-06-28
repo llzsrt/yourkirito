@@ -64,7 +64,7 @@ export class MyKirito {
     saveSchedule() {
         localStorage.setItem(`${this.localStoragePrefix}Schedule`, JSON.stringify(this.schedule));
     }
-
+    
     loadSchedule() {
         const tempSchedule: Partial<Schedule> = JSON.parse(localStorage.getItem(`${this.localStoragePrefix}Schedule`));
         this.schedule = new Schedule(tempSchedule);

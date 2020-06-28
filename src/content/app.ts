@@ -172,7 +172,7 @@ export class App {
             if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
                 this.myKirito.isPreyDead = true;
                 this.myKirito.nextDuelSecond = 0;
-                if (this.myKirito.schedule.isEnable) this.myKirito.schedule.isPause = true;
+                if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) this.myKirito.schedule.isPause = true;
                 this.myKirito.saveSchedule();
                 this.myKirito.isDuelPause = true;
                 this.myKirito.saveIsDuelPause();
@@ -199,7 +199,7 @@ export class App {
             }
 
             const oldLog = this.domHelper.getDuelLog();
-            const tempDuel = this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.duel;
+            const tempDuel = (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) ? this.myKirito.schedule.current.content : this.myKirito.duel;
             let checkCaptchaCount = 0;
             let duelType = '';
 
@@ -244,7 +244,7 @@ export class App {
                     console.log(newLog[0]);
                     this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
                     this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
-                    if (this.myKirito.schedule.isEnable) {
+                    if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) {
                         this.myKirito.schedule.next();
                         this.myKirito.saveSchedule();
                     }
@@ -311,20 +311,20 @@ export class App {
                 !this.myKirito.isDuelPause &&
                 !this.myKirito.isDuelWaitCaptcha &&
                 !!this.myKirito.preyId &&
-                !this.myKirito.schedule.isEnable || this.myKirito.schedule.isEnable && !this.myKirito.schedule.isDuelScheduleEnable
+                (!this.myKirito.schedule.isEnable || this.myKirito.schedule.isEnable && !this.myKirito.schedule.isDuelScheduleEnable)
             ) {
                 this.duel();
-            } else if (
+            } 
+            else if (
                 this.myKirito.nextActionSecond <= 0 &&
                 !this.myKirito.isActionPause &&
                 !this.myKirito.isActionWaitCaptcha &&
                 !this.myKirito.schedule.isEnable
             ) {
                 this.action();
-            }
-
-            if (this.myKirito.schedule.isEnable && !this.myKirito.schedule.isPause) {
-                if (this.myKirito.schedule.processQueue.length > 0) {
+            } 
+            else if (this.myKirito.schedule.isEnable && !this.myKirito.schedule.isPause) {
+                if (this.myKirito.schedule.processList.length > 0) {
                     if (!this.myKirito.schedule.current) {
                         this.myKirito.schedule.next();
                     }
@@ -338,17 +338,22 @@ export class App {
                             }
                             break;
                         case ProcessType.Duel:
-                            if (
-                                this.myKirito.nextDuelSecond <= 0 &&
-                                !this.myKirito.isDuelWaitCaptcha &&
-                                !!this.myKirito.preyId
-                            ) {
-                                this.duel();
+                            if (this.myKirito.schedule.isDuelScheduleEnable) {
+                                if (
+                                    this.myKirito.nextDuelSecond <= 0 &&
+                                    !this.myKirito.isDuelWaitCaptcha &&
+                                    !!this.myKirito.preyId
+                                ) {
+                                    this.duel();
+                                }
+                            } else {
+                                this.myKirito.schedule.next();
                             }
                             break;
+                        default:
+                            this.myKirito.schedule.next();
+                            break;
                     }
-                } else {
-                    this.myKirito.schedule.reset();
                 }
             }
         } else {

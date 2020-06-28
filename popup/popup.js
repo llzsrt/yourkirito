@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const blockTitle = document.getElementById('profile-title');
         const blockInfo = document.getElementById('profile-info');
 
+        const fileSchedule = document.getElementById('file-schedule');
         const switchReceiveAward = document.getElementById('switch-receiveAward');
+        const switchScheduleEnable = document.getElementById('switch-scheduleEnable');
+        const switchScheduleDuelEnable = document.getElementById('switch-scheduleDuelEnable');
 
         const buttonRandomDelay = document.getElementById('button-randomDelay');
         const inputRandomDelay = document.getElementById('input-randomDelay');
@@ -44,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
             switchReceiveAward.checked = myKirito.isAutoReceiveAward;
+            switchScheduleEnable.checked = myKirito.schedule.isEnable;
+            switchScheduleDuelEnable.checked = myKirito.schedule.isDuelScheduleEnable;
             inputRandomDelay.value = myKirito.randomDelay;
             inputBasicActionCd.value = myKirito.actionCd;
             inputBasicDuelCd.value = myKirito.duelCd;
@@ -62,6 +67,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         );
 
+        fileSchedule.addEventListener('change', (event)=> {
+            if (event.target.files.length > 0) {
+                const file = event.target.files[0];
+                readFile(file, (result) => {
+                    try {
+                        const data = JSON.parse(result);
+
+                        chrome.tabs.sendMessage(
+                            tabs[0].id,
+                            {
+                                event: 'set-schedule-process-list',
+                                content: data
+                            }
+                        );
+                    } catch (ex) {
+                        alert(ex);
+                    }
+                });
+            }
+        });
+
         buttonReset.addEventListener('click', () => {
             chrome.tabs.sendMessage(
                 tabs[0].id,
@@ -71,6 +97,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 (response) => {
                     myKirito = response.myKirito;
                     init(myKirito);
+                }
+            );
+        });
+
+        switchScheduleEnable.addEventListener('change', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-schedule-enable',
+                    content: switchScheduleEnable.checked
+                }
+            );
+        });
+
+        switchScheduleDuelEnable.addEventListener('change', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-schedule-duel-enable',
+                    content: switchScheduleDuelEnable.checked
                 }
             );
         });
@@ -157,3 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+function readFile(file, callback) {
+    if (typeof callback !== "function") {
+        throw new Error("Please supply a callback function to handle the read text!")
+    }
+    const reader = new FileReader()
+    reader.addEventListener("load", function () {
+        callback(reader.result)
+    })
+    return reader.readAsText(file)
+}

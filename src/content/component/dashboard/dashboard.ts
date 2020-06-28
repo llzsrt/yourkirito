@@ -17,6 +17,7 @@ export class Dashboard {
     duelPauseButton: HTMLElement;
     messageBlock: HTMLElement;
     quitFindModeButton: HTMLButtonElement;
+    schedulePauseButton: HTMLButtonElement;
 
     constructor(
         private myKirito: MyKirito,
@@ -37,6 +38,7 @@ export class Dashboard {
         this.actionButtonGroup.id = 'button-group';
 
         this.actionButtonsWrapper = document.createElement('div');
+        this.actionButtonsWrapper.id = 'action-wrapper';
         this.actionButtonsWrapper.appendChild(this.actionButtonGroup);
 
         const duelButtonGroup = document.createElement('div');
@@ -59,11 +61,31 @@ export class Dashboard {
             self.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
             self.myKirito.isBusy = false;
         });
-        
+
+        this.schedulePauseButton = document.createElement('button');
+        this.schedulePauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>';
+        this.schedulePauseButton.hidden = true;
+        this.schedulePauseButton.classList.add(style.btn, style.btnSecondary, style.buttonSchedulePause);
+        this.schedulePauseButton.addEventListener('click', () => {
+            const tempIsPause = self.myKirito.schedule.isPause;
+            if (!tempIsPause) {
+                self.myKirito.schedule.isPause = true;
+                self.myKirito.saveSchedule();
+            } else {
+                self.myKirito.schedule.isPause = false;
+                self.myKirito.saveSchedule();
+                const tempSecond = self.myKirito.getTempSecond();
+                self.myKirito.loadNextActionSecond(tempSecond);
+                self.myKirito.loadNextDuelSecond(tempSecond);
+            }
+            self.updateSchedulePauseButtonStyle();
+        });
+
         document.getElementById('root').appendChild(toolsWrapper);
         toolsWrapper.appendChild(this.duelButtonWrapper);
         toolsWrapper.appendChild(this.actionButtonsWrapper);
         statusBar.appendChild(this.quitFindModeButton);
+        statusBar.appendChild(this.schedulePauseButton);
         toolsWrapper.appendChild(statusBar);
 
         for (let action in ACTION) {
@@ -78,26 +100,16 @@ export class Dashboard {
         }
 
 
-        this.actionPauseButton = addButton('button-group', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
+        this.actionPauseButton = addButton('action-wrapper', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
         this.updateActionPauseButtonStyle();
         this.actionPauseButton.addEventListener('click', () => {
-            const tempIsPause = self.myKirito.schedule.isEnable ? self.myKirito.schedule.isPause : self.myKirito.isActionPause;
+            const tempIsPause = self.myKirito.isActionPause;
             if (!tempIsPause) {
-                if (self.myKirito.schedule.isEnable) {
-                    self.myKirito.schedule.isPause = true;
-                    self.myKirito.saveSchedule();
-                } else {
-                    self.myKirito.isActionPause = true;
-                    self.myKirito.saveIsActionPause();
-                }
+                self.myKirito.isActionPause = true;
+                self.myKirito.saveIsActionPause();
             } else {
-                if (self.myKirito.schedule.isEnable) {
-                    self.myKirito.schedule.isPause = false;
-                    self.myKirito.saveSchedule();
-                } else {
-                    self.myKirito.isActionPause = false;
-                    self.myKirito.saveIsActionPause();
-                }
+                self.myKirito.isActionPause = false;
+                self.myKirito.saveIsActionPause();
                 const tempSecond = self.myKirito.getTempSecond();
                 self.myKirito.loadNextActionSecond(tempSecond);
             }
@@ -143,12 +155,21 @@ export class Dashboard {
     }
 
     updateActionPauseButtonStyle() {
-        const tempIsPause = this.myKirito.schedule.isEnable ? this.myKirito.schedule.isPause : this.myKirito.isActionPause;
+        const tempIsPause = this.myKirito.isActionPause;
         this.actionPauseButton.className = !tempIsPause ? `${style.btn} ${style.btnInfo} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
         if (this.myKirito.isActionPause) {
-            this.actionPauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
+            this.actionPauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>';
         } else {
-            this.actionPauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
+            this.actionPauseButton.innerHTML = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/></svg>';
+        }
+    }
+
+    updateSchedulePauseButtonStyle() {
+        this.schedulePauseButton.className = !this.myKirito.schedule.isPause ? `${style.btn} ${style.btnInfo} ${style.buttonSchedulePause} ${style.active}` : `${style.btn} ${style.btnSecondary} ${style.buttonSchedulePause}`;
+        if (this.myKirito.schedule.isPause) {
+            this.schedulePauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>';
+        } else {
+            this.schedulePauseButton.innerHTML = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/></svg>';
         }
     }
 
@@ -163,19 +184,15 @@ export class Dashboard {
     }
 
     updateButtonsShowHide() {
-        if (!this.myKirito.preyId && !this.duelButtonWrapper.hidden || this.myKirito.scriptStatus === SCRIPT_STATUS.Find || this.myKirito.schedule.isEnable) {
+        if (!this.myKirito.preyId && !this.duelButtonWrapper.hidden || this.myKirito.scriptStatus === SCRIPT_STATUS.Find || this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) {
             this.duelButtonWrapper.hidden = true;
         } else if (this.myKirito.preyId && this.duelButtonWrapper.hidden) {
             this.duelButtonWrapper.hidden = false;
         }
 
-        if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
+        if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find || this.myKirito.schedule.isEnable) {
             this.actionButtonsWrapper.hidden = true;
-        }else if (this.myKirito.schedule.isEnable) {
-            this.actionButtonGroup.classList.add(style.hidden);
-            this.actionButtonsWrapper.hidden = false;
         } else {
-            this.actionButtonGroup.classList.remove(style.hidden);
             this.actionButtonsWrapper.hidden = false;
         }
 
@@ -184,6 +201,13 @@ export class Dashboard {
         } else {
             this.quitFindModeButton.classList.add(style.hidden);
         }
+
+        if (this.myKirito.schedule.isEnable) {
+            this.schedulePauseButton.classList.remove(style.hidden);;
+        } else {
+            this.schedulePauseButton.classList.add(style.hidden);
+        }
+
     }
 
     updateDashboard() {
@@ -201,24 +225,31 @@ export class Dashboard {
         } else if (this.myKirito.isDead) {
             this.messageBlock.textContent = '死掉了';
         } else if (this.myKirito.schedule.isEnable) {
+            const messages = [];
             if (this.myKirito.schedule.isPause) {
-                if (this.myKirito.isPreyDead) {
-                    this.messageBlock.innerHTML = this.getDuelStatus();
+                if (this.myKirito.isPreyDead && this.myKirito.schedule.isDuelScheduleEnable) {
+                    messages.push(this.getDuelStatus());
                 } else {
-                    this.messageBlock.textContent = '排程行動已暫停';
+                    messages.push('排程行動已暫停');
                 }
             } else if (!!this.myKirito.schedule.current) {
                 switch (this.myKirito.schedule.current.type) {
                     case ProcessType.Action:
-                        this.messageBlock.innerHTML = this.getActionStatus();
+                        messages.push(this.getActionStatus());
                         break;
                     case ProcessType.Duel:
-                        this.messageBlock.innerHTML = this.getDuelStatus();
+                        messages.push(this.getDuelStatus());
                         break;
                 }
             } else {
-                this.messageBlock.textContent = '目前沒有行動';
+                messages.push('目前沒有行動');
             }
+
+            if (!this.myKirito.schedule.isDuelScheduleEnable) {
+                messages.push(this.getDuelStatus());
+            }
+
+            this.messageBlock.innerHTML = messages.join(', ');
         } else {
             const messages = [];
             messages.push(this.getActionStatus());
@@ -245,12 +276,12 @@ export class Dashboard {
     }
 
     getDuelStatus() {
-        if (this.myKirito.isPreyDead) {
-            return `<a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 已經死了`;
-        } else if (this.myKirito.isDuelPause && !this.myKirito.schedule.isEnable) {
-            return `對 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 的攻擊已暫停`;
-        } else if (!this.myKirito.preyId){
+        if (!this.myKirito.preyId) {
             return '沒有攻擊目標';
+        } else if (this.myKirito.isPreyDead) {
+            return `<a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 已經死了`;
+        } else if (this.myKirito.isDuelPause && !(this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable)) {
+            return `對 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 的攻擊已暫停`;
         } else if (this.myKirito.isDuelWaitCaptcha) {
             return `<a href="/profile/${this.myKirito.preyId}">等待驗證後攻擊 ${this.myKirito.preyName}</a>`;
         } else {

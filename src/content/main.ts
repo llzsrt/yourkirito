@@ -7,6 +7,7 @@ registerUrlChangeEvent();
 
 const myKirito = new MyKirito();
 const domHelper = new DomHelper();
+
 const app = new App(myKirito, domHelper);
 app.endless();
 
@@ -27,6 +28,20 @@ if ('onMessage' in chrome.runtime) {
                 const newMyKirito = new MyKirito();
                 sendResponse({ myKirito: newMyKirito });
                 location.reload();
+                break;
+            case 'set-schedule-process-list':
+                myKirito.schedule.processList = message.content;
+                myKirito.saveSchedule();
+                break;
+            case 'set-schedule-duel-enable':
+                myKirito.schedule.isDuelScheduleEnable = message.content;
+                myKirito.saveSchedule();
+                app.dashboard.updateButtonsShowHide();
+                break;
+            case 'set-schedule-enable':
+                myKirito.schedule.isEnable = message.content;
+                myKirito.saveSchedule();
+                app.dashboard.updateButtonsShowHide();
                 break;
             case 'set-random-delay':
                 myKirito.randomDelay = message.content;

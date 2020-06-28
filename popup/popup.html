@@ -75,6 +75,23 @@
 
             <div id="script-parameter" class="collapse" data-parent="#config">
                 <div class="card-body">
+                    <div class="input-group">
+                        <div class="input-group-append">
+                            <input id="file-schedule" type="file" accept=".json,.txt" hidden>
+                            <label for="file-schedule" class="btn btn-secondary">
+                                讀取排程檔案
+                            </label>
+                        </div>
+                    </div>
+                    <div class="custom-control custom-switch mb-3">
+                        <input type="checkbox" class="custom-control-input" id="switch-scheduleEnable">
+                        <label class="custom-control-label" for="switch-scheduleEnable">排程模式</label>
+                    </div>
+                    <div class="custom-control custom-switch mb-3">
+                        <input type="checkbox" class="custom-control-input" id="switch-scheduleDuelEnable">
+                        <label class="custom-control-label" for="switch-scheduleDuelEnable">將戰鬥納入排程</label>
+                    </div>
+
                     <div class="custom-control custom-switch mb-3">
                         <input type="checkbox" class="custom-control-input" id="switch-receiveAward">
                         <label class="custom-control-label" for="switch-receiveAward">自動領取樓層獎勵</label>

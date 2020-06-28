@@ -17,6 +17,14 @@
     margin: .2rem 0;
 }
 
+.button-schedule-pause {
+    position: absolute;
+    top: -1px;
+    left: 0px;
+    margin-left: -45px;
+    height: 3rem;
+}
+
 .button-quit-find {
     position: absolute;
     top: -1px;
