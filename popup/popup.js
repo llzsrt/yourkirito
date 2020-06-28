@@ -73,6 +73,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 readFile(file, (result) => {
                     try {
                         const data = JSON.parse(result);
+                        let check = true;
+                        if ('length' in data) {
+                            if (data.length > 0) {
+                                data.forEach(temp => {
+                                    if (!('type' in temp) || !('content' in temp)) {
+                                        return false;
+                                    }
+                                });
+                            }
+                        } else {
+                            check = false;
+                        }
+
+                        if (!check) {
+                            alert('檔案格式錯誤');
+                            return;
+                        }
 
                         chrome.tabs.sendMessage(
                             tabs[0].id,
