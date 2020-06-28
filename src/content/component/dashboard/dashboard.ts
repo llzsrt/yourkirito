@@ -4,12 +4,14 @@ import { MyKirito } from "../../service/my-kirito";
 import { ACTION, DUEL, ACTION_NAME, DUEL_NAME } from "../../constant";
 import { addButton } from "../../function/utils";
 import style from './dashboard.css';
+import { ProcessType } from '../../schedule';
 
 export class Dashboard {
 
     actionButtons: HTMLElement[] = [];
     actionPauseButton: HTMLElement;
     actionButtonsWrapper: HTMLElement;
+    actionButtonGroup: HTMLElement;
     duelButtonWrapper: HTMLElement;
     duelButtons: HTMLElement[] = [];
     duelPauseButton: HTMLElement;
@@ -30,12 +32,12 @@ export class Dashboard {
         this.duelButtonWrapper = document.createElement('div');
         this.duelButtonWrapper.id = 'duel-wrapper';
 
-        const actionButtonGroup = document.createElement('div');
-        actionButtonGroup.className = `${style.btnGroup}`;
-        actionButtonGroup.id = 'button-group';
+        this.actionButtonGroup = document.createElement('div');
+        this.actionButtonGroup.className = `${style.btnGroup}`;
+        this.actionButtonGroup.id = 'button-group';
 
         this.actionButtonsWrapper = document.createElement('div');
-        this.actionButtonsWrapper.appendChild(actionButtonGroup);
+        this.actionButtonsWrapper.appendChild(this.actionButtonGroup);
 
         const duelButtonGroup = document.createElement('div');
         duelButtonGroup.className = `${style.btnGroup}`;
@@ -75,16 +77,27 @@ export class Dashboard {
             });
         }
 
+
         this.actionPauseButton = addButton('button-group', `button-pause`, '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>');
         this.updateActionPauseButtonStyle();
         this.actionPauseButton.addEventListener('click', () => {
-            if (!self.myKirito.isActionPause) {
-                self.myKirito.isActionPause = true;
-                self.myKirito.saveIsActionPause();
-                localStorage.setItem('scriptIsActionPause', 'true');
+            const tempIsPause = self.myKirito.schedule.isEnable ? self.myKirito.schedule.isPause : self.myKirito.isActionPause;
+            if (!tempIsPause) {
+                if (self.myKirito.schedule.isEnable) {
+                    self.myKirito.schedule.isPause = true;
+                    self.myKirito.saveSchedule();
+                } else {
+                    self.myKirito.isActionPause = true;
+                    self.myKirito.saveIsActionPause();
+                }
             } else {
-                self.myKirito.isActionPause = false;
-                self.myKirito.saveIsActionPause();
+                if (self.myKirito.schedule.isEnable) {
+                    self.myKirito.schedule.isPause = false;
+                    self.myKirito.saveSchedule();
+                } else {
+                    self.myKirito.isActionPause = false;
+                    self.myKirito.saveIsActionPause();
+                }
                 const tempSecond = self.myKirito.getTempSecond();
                 self.myKirito.loadNextActionSecond(tempSecond);
             }
@@ -130,7 +143,8 @@ export class Dashboard {
     }
 
     updateActionPauseButtonStyle() {
-        this.actionPauseButton.className = !this.myKirito.isActionPause ? `${style.btn} ${style.btnInfo} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
+        const tempIsPause = this.myKirito.schedule.isEnable ? this.myKirito.schedule.isPause : this.myKirito.isActionPause;
+        this.actionPauseButton.className = !tempIsPause ? `${style.btn} ${style.btnInfo} ${style.active}` : `${style.btn} ${style.btnSecondary}`;
         if (this.myKirito.isActionPause) {
             this.actionPauseButton.innerHTML = '<svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>'
         } else {
@@ -149,7 +163,7 @@ export class Dashboard {
     }
 
     updateButtonsShowHide() {
-        if (!this.myKirito.preyId && !this.duelButtonWrapper.hidden || this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
+        if (!this.myKirito.preyId && !this.duelButtonWrapper.hidden || this.myKirito.scriptStatus === SCRIPT_STATUS.Find || this.myKirito.schedule.isEnable) {
             this.duelButtonWrapper.hidden = true;
         } else if (this.myKirito.preyId && this.duelButtonWrapper.hidden) {
             this.duelButtonWrapper.hidden = false;
@@ -157,10 +171,18 @@ export class Dashboard {
 
         if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
             this.actionButtonsWrapper.hidden = true;
+        }else if (this.myKirito.schedule.isEnable) {
+            this.actionButtonGroup.classList.add(style.hidden);
+            this.actionButtonsWrapper.hidden = false;
+        } else {
+            this.actionButtonGroup.classList.remove(style.hidden);
+            this.actionButtonsWrapper.hidden = false;
+        }
+
+        if (this.myKirito.scriptStatus === SCRIPT_STATUS.Find) {
             this.quitFindModeButton.classList.remove(style.hidden);
         } else {
             this.quitFindModeButton.classList.add(style.hidden);
-            this.actionButtonsWrapper.hidden = false;
         }
     }
 
@@ -178,43 +200,65 @@ export class Dashboard {
             }
         } else if (this.myKirito.isDead) {
             this.messageBlock.textContent = '死掉了';
-        } else {
-            if (this.myKirito.isActionPause) {
-                this.messageBlock.innerHTML = '普通行動已暫停';
-            } else if (this.myKirito.isActionWaitCaptcha) {
-                this.messageBlock.innerHTML = '<a href="/">等待驗證後行動</a>';
-                if (location.pathname === '/' && (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) || !this.domHelper.hasIframe())) {
-                    this.myKirito.isActionWaitCaptcha = false;
-                    this.myKirito.saveIsActionWaitCaptcha();
-                }
-            } else {
-                if (this.myKirito.nextActionSecond > 0) {
-                    this.messageBlock.innerHTML = `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.action]}`;
-                } else {
-                    this.messageBlock.innerHTML = `正在${ACTION_NAME[this.myKirito.action]}`;
-                }
-            }
-            if (this.myKirito.isDuelPause || !this.myKirito.preyId) {
+        } else if (this.myKirito.schedule.isEnable) {
+            if (this.myKirito.schedule.isPause) {
                 if (this.myKirito.isPreyDead) {
-                    this.messageBlock.innerHTML += `, <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 已經死了`;
+                    this.messageBlock.innerHTML = this.getDuelStatus();
                 } else {
-                    this.messageBlock.innerHTML += !this.myKirito.preyId ? ', 沒有攻擊目標' : `, 對 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 的攻擊已暫停`;
+                    this.messageBlock.textContent = '排程行動已暫停';
                 }
-            } else if (this.myKirito.isDuelWaitCaptcha) {
-                this.messageBlock.innerHTML += `, <a href="/profile/${this.myKirito.preyId}">等待驗證後攻擊 ${this.myKirito.preyName}</a>`;
-                if (location.href.includes(`/profile/${this.myKirito.preyId}`) && (DUEL_NAME[1] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[1]].disabled) || !this.domHelper.hasIframe())) {
-                    this.myKirito.isDuelWaitCaptcha = false;
-                    this.myKirito.saveIsDuelWaitCaptcha();
+            } else if (!!this.myKirito.schedule.current) {
+                switch (this.myKirito.schedule.current.type) {
+                    case ProcessType.Action:
+                        this.messageBlock.innerHTML = this.getActionStatus();
+                        break;
+                    case ProcessType.Duel:
+                        this.messageBlock.innerHTML = this.getDuelStatus();
+                        break;
                 }
             } else {
-                if (this.myKirito.nextDuelSecond > 0) {
-                    this.messageBlock.innerHTML += `, ${this.myKirito.nextDuelSecond} 秒後向 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 發起攻擊`;
-                } else {
-                    this.messageBlock.innerHTML += `, 正在對 ${this.myKirito.preyName} 進行${DUEL_NAME[this.myKirito.duel]}`;
-                }
+                this.messageBlock.textContent = '目前沒有行動';
             }
+        } else {
+            const messages = [];
+            messages.push(this.getActionStatus());
+            messages.push(this.getDuelStatus());
+
+            this.messageBlock.innerHTML = messages.join(', ');
         }
 
         this.updateButtonsShowHide();
+    }
+
+    getActionStatus() {
+        if (this.myKirito.isActionPause && !this.myKirito.schedule.isEnable) {
+            return '普通行動已暫停';
+        } else if (this.myKirito.isActionWaitCaptcha) {
+            return '<a href="/">等待驗證後行動</a>';
+        } else {
+            if (this.myKirito.nextActionSecond > 0) {
+                return `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.action]}`;
+            } else {
+                return `正在${ACTION_NAME[this.myKirito.action]}`;
+            }
+        }
+    }
+
+    getDuelStatus() {
+        if (this.myKirito.isPreyDead) {
+            return `<a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 已經死了`;
+        } else if (this.myKirito.isDuelPause && !this.myKirito.schedule.isEnable) {
+            return `對 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 的攻擊已暫停`;
+        } else if (!this.myKirito.preyId){
+            return '沒有攻擊目標';
+        } else if (this.myKirito.isDuelWaitCaptcha) {
+            return `<a href="/profile/${this.myKirito.preyId}">等待驗證後攻擊 ${this.myKirito.preyName}</a>`;
+        } else {
+            if (this.myKirito.nextDuelSecond > 0) {
+                return `${this.myKirito.nextDuelSecond} 秒後向 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 發起攻擊`;
+            } else {
+                return `正在對 ${this.myKirito.preyName} 進行${DUEL_NAME[this.myKirito.duel]}`;
+            }
+        }
     }
 }

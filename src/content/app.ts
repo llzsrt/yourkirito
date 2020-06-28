@@ -6,6 +6,7 @@ import { sleep, random } from './function/utils';
 import { DuelTools } from './component/duel-tools/duel-tools';
 import { UrlChangeEventDetail } from './event/url-change';
 import { UserListTools } from './component/user-list-tools/user-list-tools';
+import { ProcessType } from './schedule';
 
 export class App {
 
@@ -25,7 +26,7 @@ export class App {
         this.dashboard.updateDashboard();
 
         window.addEventListener('urlChange', async (event: CustomEvent<UrlChangeEventDetail>) => {
-            
+
             if (this.myKirito.findStatus === FIND_STATUS.Found && !event.detail.currentUrl.includes('profile')) {
                 this.dashboard.quitFindModeButton.click();
             }
@@ -81,18 +82,19 @@ export class App {
             }
 
             const oldLog = this.domHelper.getActionLog();
+            const tempAction = this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.action;
             let checkCaptchaCount = 0;
 
             while (checkCaptchaCount < 20) {
                 checkCaptchaCount++;
                 // 按下該按的按鈕
-                if (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled)) {
-                    this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].click();
-                    console.log(ACTION_NAME[this.myKirito.action]);
+                if (ACTION_NAME[tempAction] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[tempAction]].disabled)) {
+                    this.domHelper.buttons[ACTION_NAME[tempAction]].click();
+                    console.log(ACTION_NAME[tempAction]);
                     break;
                 } else {
                     // 檢查驗證
-                    if (this.domHelper.hasIframe() && ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) {
+                    if (this.domHelper.hasIframe() && ACTION_NAME[tempAction] in this.domHelper.buttons && this.domHelper.buttons[ACTION_NAME[tempAction]].disabled) {
                         this.myKirito.isActionWaitCaptcha = true;
                         this.myKirito.saveIsActionWaitCaptcha();
                         this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
@@ -115,12 +117,16 @@ export class App {
             // 檢查行動結果
             let checkResultCount = 0;
             while (checkResultCount < 20) {
-                checkResultCount++ 
+                checkResultCount++
                 const newLog = this.domHelper.getActionLog();
                 if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
                     console.log(newLog[0]);
                     this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
                     this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                    if (this.myKirito.schedule.isEnable) {
+                        this.myKirito.schedule.next();
+                        this.myKirito.saveSchedule();
+                    }
                     this.myKirito.saveScriptStatus();
                     this.myKirito.unlock();
                     return;
@@ -166,6 +172,8 @@ export class App {
             if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
                 this.myKirito.isPreyDead = true;
                 this.myKirito.nextDuelSecond = 0;
+                if (this.myKirito.schedule.isEnable) this.myKirito.schedule.isPause = true;
+                this.myKirito.saveSchedule();
                 this.myKirito.isDuelPause = true;
                 this.myKirito.saveIsDuelPause();
                 this.dashboard.updateDuelPauseButtonStyle();
@@ -191,15 +199,15 @@ export class App {
             }
 
             const oldLog = this.domHelper.getDuelLog();
-
+            const tempDuel = this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.duel;
             let checkCaptchaCount = 0;
             let duelType = '';
 
             while (checkCaptchaCount < 20) {
                 checkCaptchaCount++;
-                if (DUEL_NAME[this.myKirito.duel] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[this.myKirito.duel]].disabled)) {
-                    this.domHelper.buttons[DUEL_NAME[this.myKirito.duel]].click();
-                    duelType = DUEL_NAME[this.myKirito.duel];
+                if (DUEL_NAME[tempDuel] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[tempDuel]].disabled)) {
+                    this.domHelper.buttons[DUEL_NAME[tempDuel]].click();
+                    duelType = DUEL_NAME[tempDuel];
                     break;
                 } else if (DUEL_NAME[2] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[2]].disabled)) {
                     this.domHelper.buttons[DUEL_NAME[2]].click();
@@ -236,6 +244,10 @@ export class App {
                     console.log(newLog[0]);
                     this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
                     this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                    if (this.myKirito.schedule.isEnable) {
+                        this.myKirito.schedule.next();
+                        this.myKirito.saveSchedule();
+                    }
                     this.myKirito.saveScriptStatus();
                     this.myKirito.unlock();
                     return;
@@ -272,6 +284,20 @@ export class App {
         this.myKirito.saveNextDuelSecond();
         this.dashboard.updateDashboard();
 
+        if (this.myKirito.isActionWaitCaptcha) {
+            if (location.pathname === '/' && (ACTION_NAME[this.myKirito.action] in this.domHelper.buttons && !(this.domHelper.buttons[ACTION_NAME[this.myKirito.action]].disabled) || !this.domHelper.hasIframe())) {
+                this.myKirito.isActionWaitCaptcha = false;
+                this.myKirito.saveIsActionWaitCaptcha();
+            }
+        }
+
+        if (this.myKirito.isDuelWaitCaptcha) {
+            if (location.href.includes(`/profile/${this.myKirito.preyId}`) && (DUEL_NAME[1] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[1]].disabled) || !this.domHelper.hasIframe())) {
+                this.myKirito.isDuelWaitCaptcha = false;
+                this.myKirito.saveIsDuelWaitCaptcha();
+            }
+        }
+
         if ('領取獎勵' in this.domHelper.buttons && !(this.domHelper.buttons['領取獎勵'].disabled) && this.myKirito.isAutoReceiveAward) {
             this.domHelper.buttons['領取獎勵'].click();
             console.log('領取樓層獎勵');
@@ -279,19 +305,51 @@ export class App {
         }
 
         if (!this.myKirito.isBusy) {
+
             if (
                 this.myKirito.nextDuelSecond <= 0 &&
                 !this.myKirito.isDuelPause &&
                 !this.myKirito.isDuelWaitCaptcha &&
-                !!this.myKirito.preyId
+                !!this.myKirito.preyId &&
+                !this.myKirito.schedule.isEnable || this.myKirito.schedule.isEnable && !this.myKirito.schedule.isDuelScheduleEnable
             ) {
                 this.duel();
             } else if (
                 this.myKirito.nextActionSecond <= 0 &&
                 !this.myKirito.isActionPause &&
-                !this.myKirito.isActionWaitCaptcha
+                !this.myKirito.isActionWaitCaptcha &&
+                !this.myKirito.schedule.isEnable
             ) {
                 this.action();
+            }
+
+            if (this.myKirito.schedule.isEnable && !this.myKirito.schedule.isPause) {
+                if (this.myKirito.schedule.processQueue.length > 0) {
+                    if (!this.myKirito.schedule.current) {
+                        this.myKirito.schedule.next();
+                    }
+                    switch (this.myKirito.schedule.current.type) {
+                        case ProcessType.Action:
+                            if (
+                                this.myKirito.nextActionSecond <= 0 &&
+                                !this.myKirito.isActionWaitCaptcha
+                            ) {
+                                this.action();
+                            }
+                            break;
+                        case ProcessType.Duel:
+                            if (
+                                this.myKirito.nextDuelSecond <= 0 &&
+                                !this.myKirito.isDuelWaitCaptcha &&
+                                !!this.myKirito.preyId
+                            ) {
+                                this.duel();
+                            }
+                            break;
+                    }
+                } else {
+                    this.myKirito.schedule.reset();
+                }
             }
         } else {
             switch (this.myKirito.scriptStatus) {

@@ -1,3 +1,4 @@
+import { Process, Schedule } from '../schedule';
 import { FIND_STATUS } from './../constant';
 import { SCRIPT_STATUS } from '../constant';
 import { getNowSecond } from '../function/utils';
@@ -28,6 +29,8 @@ export class MyKirito {
     scriptStatus = SCRIPT_STATUS.Normal;
     findStatus = FIND_STATUS.Normal;
 
+    schedule = new Schedule();
+
     profile = null;
     setFoundUserAsPrey = false;
 
@@ -55,6 +58,16 @@ export class MyKirito {
         this.loadIsActionWaitCaptcha();
         this.loadIsDuelWaitCaptcha();
         this.loadIsAutoReceiveAward();
+        this.loadSchedule();
+    }
+
+    saveSchedule() {
+        localStorage.setItem(`${this.localStoragePrefix}Schedule`, JSON.stringify(this.schedule));
+    }
+
+    loadSchedule() {
+        const tempSchedule: Partial<Schedule> = JSON.parse(localStorage.getItem(`${this.localStoragePrefix}Schedule`));
+        this.schedule = new Schedule(tempSchedule);
     }
 
     saveIsAutoReceiveAward() {
