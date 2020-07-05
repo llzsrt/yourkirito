@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const blockName = document.getElementById('profile-name');
         const blockTitle = document.getElementById('profile-title');
         const blockInfo = document.getElementById('profile-info');
+        const blockWarning = document.getElementById('profile-warning');
 
         const fileSchedule = document.getElementById('file-schedule');
         const switchReceiveAward = document.getElementById('switch-receiveAward');
@@ -41,9 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             blockName.textContent = myKirito.profile.nickname;
             blockTitle.textContent = myKirito.profile.title;
+            if (myKirito.profile.botlv) {
+                blockWarning.hidden = false;
+                blockWarning.textContent = `Warning: BOTLV${myKirito.profile.botlv}`;
+            }
             blockInfo.innerHTML = `
-                        <div class="mb-2">目前樓層 <span class="badge badge-secondary mr-3">${myKirito.profile.floor}</span>  成就點數 <span class="badge badge-secondary">${myKirito.profile.achievementPoints}</span></div>
-                        <div class="mb-2">行動次數 <span class="badge badge-secondary mr-3">${myKirito.profile.actionCount}</span> 挑戰次數 <span class="badge badge-secondary">${myKirito.profile.challengeCount}</span></div>
+                    <div class="col-6 text-right">
+                        <div class="mb-2 text-nowrap">目前樓層 <span class="badge badge-secondary">${myKirito.profile.floor}</span></div>
+                        <div class="mb-2 text-nowrap">行動次數 <span class="badge badge-secondary">${myKirito.profile.actionCount}</span></div>
+                    </div>
+                    <div class="col-6 text-left">
+                        <div class="mb-2 text-nowrap">成就點數 <span class="badge badge-secondary">${myKirito.profile.achievementPoints}</span></div>
+                        <div class="mb-2 text-nowrap">挑戰次數 <span class="badge badge-secondary">${myKirito.profile.challengeCount}</span></div>
+                    </div>
                 `;
 
             switchReceiveAward.checked = myKirito.isAutoReceiveAward;
