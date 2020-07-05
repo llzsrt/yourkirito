@@ -269,9 +269,9 @@ export class Dashboard {
             return '<a href="/">等待驗證後行動</a>';
         } else {
             if (this.myKirito.nextActionSecond > 0) {
-                return `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.action]}`;
+                return `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.action]}`;
             } else {
-                return `正在${ACTION_NAME[this.myKirito.action]}`;
+                return `正在${ACTION_NAME[this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.action]}`;
             }
         }
     }
@@ -289,7 +289,7 @@ export class Dashboard {
             if (this.myKirito.nextDuelSecond > 0) {
                 return `${this.myKirito.nextDuelSecond} 秒後向 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 發起攻擊`;
             } else {
-                return `正在對 ${this.myKirito.preyName} 進行${DUEL_NAME[this.myKirito.duel]}`;
+                return `正在對 ${this.myKirito.preyName} 進行${DUEL_NAME[(this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) ? this.myKirito.schedule.current.content : this.myKirito.duel]}`;
             }
         }
     }
