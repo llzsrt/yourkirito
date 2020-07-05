@@ -1,6 +1,7 @@
 function generateHeaders(token: string) {
     return {
         "accept": "application/json, text/plain, */*",
+        "x-requested-with": "XMLHttpRequest",
         "token": token
     }
 }
