@@ -332,13 +332,13 @@ export class App {
                 case CheckAction.Action:
                     this.myKirito.schedule.current = {
                         type: ProcessType.Action,
-                        content: +(currentContent.value ?? 2)
+                        content: +(currentContent.value ? currentContent.value : 2)
                     }
                     break;
                 case CheckAction.Duel:
                     this.myKirito.schedule.current = {
                         type: ProcessType.Duel,
-                        content: +(currentContent.value ?? 1)
+                        content: +(currentContent.value ? currentContent.value : 1)
                     }
                     break;
                 case CheckAction.Reincarnation:
