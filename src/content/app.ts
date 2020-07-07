@@ -380,11 +380,15 @@ export class App {
 
             const profileTable = document.querySelector("#root > div > div > div > table");
             const profiles = {};
+            let profileColor = 'black';
             this.domHelper.getElementArray<HTMLTableRowElement>(profileTable, 'tr').forEach(tr => {
-                const keys = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'th').map(x => x.textContent.trim());
-                const values = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'td').map(x => x.textContent.trim());
+                const keys = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'th');
+                const values = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'td');
                 for(let i = 0; i < keys.length; i++) {
-                    profiles[keys[i]] = values[i];
+                    profiles[keys[i].textContent.trim()] = values[i].textContent.trim();
+                    if (keys[i].textContent.trim() === '暱稱') {
+                        profileColor = values[i].style.color.trim();
+                    }
                 }
             });
 
@@ -412,7 +416,8 @@ export class App {
                 win: profiles['勝場'],
                 lose: profiles['敗場'],
                 totalWin: profiles['總勝場'],
-                totalLose: profiles['總敗場']
+                totalLose: profiles['總敗場'],
+                color: profileColor
             }
         }
     }
