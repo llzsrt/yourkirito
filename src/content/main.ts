@@ -39,6 +39,7 @@ if ('onMessage' in chrome.runtime) {
                 break;
             case 'set-schedule-process-list':
                 myKirito.schedule.processList = message.content;
+                myKirito.schedule.processQueue = message.content;
                 myKirito.saveSchedule();
                 break;
             case 'set-only-duel-with-red':
