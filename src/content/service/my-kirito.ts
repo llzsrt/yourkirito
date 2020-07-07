@@ -28,6 +28,7 @@ export class MyKirito {
     profileViewType = '';
     scriptStatus = SCRIPT_STATUS.Normal;
     findStatus = FIND_STATUS.Normal;
+    reincarnationCharacter = '';
 
     schedule = new Schedule();
 

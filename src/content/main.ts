@@ -29,6 +29,11 @@ if ('onMessage' in chrome.runtime) {
                 sendResponse({ myKirito: newMyKirito });
                 location.reload();
                 break;
+            case 'schedule-reset':
+                myKirito.schedule.resetQueue();
+                myKirito.schedule.count = 0;
+                myKirito.saveSchedule();
+                break;
             case 'set-schedule-process-list':
                 myKirito.schedule.processList = message.content;
                 myKirito.saveSchedule();

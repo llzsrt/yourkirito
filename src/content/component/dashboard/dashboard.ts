@@ -227,6 +227,7 @@ export class Dashboard {
             this.messageBlock.textContent = '死掉了';
         } else if (this.myKirito.schedule.isEnable) {
             const messages = [];
+            messages.push(`第 ${this.myKirito.schedule.count + 1} 輪`)
             if (this.myKirito.schedule.isPause) {
                 if (this.myKirito.isPreyDead && this.myKirito.schedule.isDuelScheduleEnable) {
                     messages.push(this.getDuelStatus());
@@ -240,6 +241,12 @@ export class Dashboard {
                         break;
                     case ProcessType.Duel:
                         messages.push(this.getDuelStatus());
+                        break;
+                    case ProcessType.Check:
+                        messages.push('正在檢查...');
+                        break;
+                    case ProcessType.Reincarnation:
+                        messages.push('正在轉生...');
                         break;
                 }
             } else {
@@ -269,9 +276,9 @@ export class Dashboard {
             return '<a href="/">等待驗證後行動</a>';
         } else {
             if (this.myKirito.nextActionSecond > 0) {
-                return `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.action]}`;
+                return `${this.myKirito.nextActionSecond} 秒後${ACTION_NAME[this.myKirito.schedule.isEnable ? +this.myKirito.schedule.current.content : this.myKirito.action]}`;
             } else {
-                return `正在${ACTION_NAME[this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.action]}`;
+                return `正在${ACTION_NAME[this.myKirito.schedule.isEnable ? +this.myKirito.schedule.current.content : this.myKirito.action]}`;
             }
         }
     }
@@ -289,7 +296,7 @@ export class Dashboard {
             if (this.myKirito.nextDuelSecond > 0) {
                 return `${this.myKirito.nextDuelSecond} 秒後向 <a href="/profile/${this.myKirito.preyId}">${this.myKirito.preyName}</a> 發起攻擊`;
             } else {
-                return `正在對 ${this.myKirito.preyName} 進行${DUEL_NAME[(this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) ? this.myKirito.schedule.current.content : this.myKirito.duel]}`;
+                return `正在對 ${this.myKirito.preyName} 進行${DUEL_NAME[(this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) ? +this.myKirito.schedule.current.content : this.myKirito.duel]}`;
             }
         }
     }

@@ -6,7 +6,7 @@ import { sleep, random } from './function/utils';
 import { DuelTools } from './component/duel-tools/duel-tools';
 import { UrlChangeEventDetail } from './event/url-change';
 import { UserListTools } from './component/user-list-tools/user-list-tools';
-import { ProcessType } from './schedule';
+import { ProcessType, ProcessCheckContent, CheckAction } from './schedule';
 
 export class App {
 
@@ -82,7 +82,7 @@ export class App {
             }
 
             const oldLog = this.domHelper.getActionLog();
-            const tempAction = this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content : this.myKirito.action;
+            const tempAction = this.myKirito.schedule.isEnable ? +this.myKirito.schedule.current.content : this.myKirito.action;
             let checkCaptchaCount = 0;
 
             while (checkCaptchaCount < 20) {
@@ -121,7 +121,7 @@ export class App {
                 const newLog = this.domHelper.getActionLog();
                 if (newLog.length > oldLog.length && newLog[0].includes('行動成功')) {
                     console.log(newLog[0]);
-                    this.myKirito.nextActionSecond = this.myKirito.actionCd + random(this.myKirito.randomDelay);
+                    this.myKirito.nextActionSecond = this.domHelper.getActionCd() + random(this.myKirito.randomDelay);
                     this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
                     if (this.myKirito.schedule.isEnable) {
                         this.myKirito.schedule.next();
@@ -199,7 +199,7 @@ export class App {
             }
 
             const oldLog = this.domHelper.getDuelLog();
-            const tempDuel = (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) ? this.myKirito.schedule.current.content : this.myKirito.duel;
+            const tempDuel = (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) ? +this.myKirito.schedule.current.content : this.myKirito.duel;
             let checkCaptchaCount = 0;
             let duelType = '';
 
@@ -242,7 +242,7 @@ export class App {
                 const newLog = this.domHelper.getDuelLog();
                 if (newLog.length > oldLog.length && newLog[0].includes(duelType)) {
                     console.log(newLog[0]);
-                    this.myKirito.nextDuelSecond = this.myKirito.duelCd + random(this.myKirito.randomDelay) + (this.myKirito.duel == 4 ? this.myKirito.extraMercilesslyCd : 0);
+                    this.myKirito.nextDuelSecond = this.domHelper.getDuelCd() + random(this.myKirito.randomDelay);
                     this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
                     if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) {
                         this.myKirito.schedule.next();
@@ -260,6 +260,154 @@ export class App {
             this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
             this.myKirito.saveScriptStatus();
             location.reload();
+        }
+    }
+
+    private async reincarnation() {
+        this.domHelper.loadLinks();
+        if (!(this.domHelper.links['轉生'].className.includes('active'))) {
+            this.domHelper.links['轉生'].click();
+        } else {
+            this.myKirito.lock();
+            this.myKirito.scriptStatus = SCRIPT_STATUS.Reincarnation;
+
+            // 檢查角色列表
+            const temp = await this.domHelper.waitForText('#root > div > div > div:nth-child(2) > div');
+            // 若超過10秒仍未顯示角色列表，重新整理
+            if (!temp) {
+                this.myKirito.scriptStatus = SCRIPT_STATUS.ReincarnationAfterReload;
+                this.myKirito.saveScriptStatus();
+                this.myKirito.unlock();
+                location.reload();
+            }
+
+            const tempReincarnationCharacter = this.myKirito.schedule.isEnable ? +this.myKirito.schedule.current.content : this.myKirito.reincarnationCharacter;
+
+            const characterListWrapper = this.domHelper.getElementArray<HTMLElement>(document, 'h3').find(x => x.textContent === '選擇角色').nextElementSibling;
+            const characterList = this.domHelper.getElementArray<HTMLDivElement>(characterListWrapper, 'div');
+            characterList.forEach(character => {
+                const tempTable = character.querySelector('table');
+                const characterNameTh = this.domHelper.getElementArray<HTMLTableRowElement>(tempTable, 'th').find(x => x.textContent === '名稱');
+                const characterName = characterNameTh.nextElementSibling.textContent;
+                if (characterName.trim() === tempReincarnationCharacter) {
+                    character.querySelector('div').click();
+                }
+            });
+
+            this.domHelper.loadButtons();
+            if (!!this.domHelper.buttons['轉生']) {
+                if (this.domHelper.buttons['轉生'].disabled) {
+                    while (this.domHelper.buttons['轉生'].disabled) {
+                        this.domHelper.buttons['+'].click();
+                        await sleep(500);
+                    }
+                }
+                this.domHelper.buttons['轉生'].click();
+            }
+
+            this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+            if (this.myKirito.schedule.isEnable) {
+                this.myKirito.schedule.next();
+                this.myKirito.saveSchedule();
+            }
+            this.myKirito.saveScriptStatus();
+            this.myKirito.unlock();
+        }
+    }
+
+    private async check() {
+        this.myKirito.lock();
+        this.myKirito.scriptStatus = SCRIPT_STATUS.Check;
+
+        await this.syncProfileFromProfilePage();
+
+        const currentContent = <ProcessCheckContent>this.myKirito.schedule.current.content;
+        const condition = currentContent.if;
+        const $profile = this.myKirito.profile;
+        const $count = this.myKirito.schedule.count;
+        const $dead = this.myKirito.isDead;
+        const result = eval(condition);
+        if (result) {
+            switch (currentContent.do) {
+                case CheckAction.Action:
+                    this.myKirito.schedule.current = {
+                        type: ProcessType.Action,
+                        content: +(currentContent.value ?? 2)
+                    }
+                    break;
+                case CheckAction.Duel:
+                    this.myKirito.schedule.current = {
+                        type: ProcessType.Duel,
+                        content: +(currentContent.value ?? 1)
+                    }
+                    break;
+                case CheckAction.Reincarnation:
+                    this.myKirito.schedule.current = {
+                        type: ProcessType.Reincarnation,
+                        content: currentContent.value
+                    }
+                    break;
+                case CheckAction.ResetSchedule:
+                    this.myKirito.schedule.reset();
+                    break;
+            }
+        } else {
+            this.myKirito.schedule.next();
+        }
+        this.myKirito.saveSchedule();
+        this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+        this.myKirito.unlock();
+    }
+
+    async syncProfileFromProfilePage() {
+        this.domHelper.loadLinks();
+        if (!(this.domHelper.links['我的桐人'].className.includes('active'))) {
+            this.domHelper.links['我的桐人'].click();
+        } else {
+
+            // 檢查暱稱欄位
+            const tempName = await this.domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
+            // 若超過10秒仍未顯示暱稱，重新整理
+            if (!tempName) {
+                location.reload();
+            }
+
+            const profileTable = document.querySelector("#root > div > div > div > table");
+            const profiles = {};
+            this.domHelper.getElementArray<HTMLTableRowElement>(profileTable, 'tr').forEach(tr => {
+                const keys = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'th').map(x => x.textContent.trim());
+                const values = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'td').map(x => x.textContent.trim());
+                for(let i = 0; i < keys.length; i++) {
+                    profiles[keys[i]] = values[i];
+                }
+            });
+
+            this.myKirito.profile = {
+                nickname: profiles['暱稱'],
+                character: profiles['角色'],
+                title: profiles['稱號'],
+                lv: profiles['等級'],
+                hp: profiles['HP'],
+                atk: profiles['攻擊'],
+                def: profiles['防禦'],
+                stm: profiles['體力'],
+                agi: profiles['敏捷'],
+                spd: profiles['反應速度'],
+                tec: profiles['技巧'],
+                int: profiles['智力'],
+                lck: profiles['幸運'],
+                exp: profiles['經驗值'],
+                kill: profiles['主動擊殺'],
+                defKill: profiles['防衛擊殺'],
+                totalKill: profiles['總主動擊殺'],
+                totalDefKill: profiles['總防衛擊殺'],
+                totalDeath: profiles['遭襲死亡'],
+                defDeath: profiles['遭反殺死亡'],
+                win: profiles['勝場'],
+                lose: profiles['敗場'],
+                totalWin: profiles['總勝場'],
+                totalLose: profiles['總敗場']
+            }
         }
     }
 
@@ -350,6 +498,12 @@ export class App {
                                 this.myKirito.schedule.next();
                             }
                             break;
+                        case ProcessType.Reincarnation:
+                            this.reincarnation();
+                            break;
+                        case ProcessType.Check:
+                            this.check();
+                            break;
                         default:
                             this.myKirito.schedule.next();
                             break;
@@ -365,6 +519,10 @@ export class App {
                 case SCRIPT_STATUS.DuelAfterReload:
                     this.myKirito.scriptStatus = SCRIPT_STATUS.Duel;
                     this.duel();
+                    break;
+                case SCRIPT_STATUS.ReincarnationAfterReload:
+                    this.myKirito.scriptStatus = SCRIPT_STATUS.Reincarnation;
+                    this.reincarnation();
                     break;
                 case SCRIPT_STATUS.Normal:
                     this.myKirito.unlock();

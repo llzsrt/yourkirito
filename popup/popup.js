@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputBasicDuelCd = document.getElementById('input-basic-duelCd');
         
         const buttonReset = document.getElementById('button-reset');
+        const buttonScheduleReset = document.getElementById('button-scheduleReset');
 
         let myKirito=null;
 
@@ -125,6 +126,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 (response) => {
                     myKirito = response.myKirito;
                     init(myKirito);
+                }
+            );
+        });
+
+        buttonScheduleReset.addEventListener('click', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'schedule-reset'
                 }
             );
         });

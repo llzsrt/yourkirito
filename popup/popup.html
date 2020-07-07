@@ -23,7 +23,8 @@
                 <div id="profile-title"></div>
             </div>
         </div>
-        <div id="profile-warning" class="mt-3 p-2 text-center badge badge-danger" style="width: 100%;" hidden >Warning: BOTLV1</div>
+        <div id="profile-warning" class="mt-3 p-2 text-center badge badge-danger" style="width: 100%;" hidden>Warning:
+            BOTLV1</div>
         <div id="profile-info" class="mt-3 row"></div>
     </div>
     <div id="config">
@@ -68,13 +69,13 @@
         </div>
 
         <div class="card border-right-0 border-left-0">
-            <a data-toggle="collapse" data-target="#script-parameter">
+            <a data-toggle="collapse" data-target="#script-schedule">
                 <div class="card-header">
-                    參數設定
+                    排程設定
                 </div>
             </a>
 
-            <div id="script-parameter" class="collapse" data-parent="#config">
+            <div id="script-schedule" class="collapse" data-parent="#config">
                 <div class="card-body">
                     <div class="input-group">
                         <div class="input-group-append">
@@ -93,6 +94,24 @@
                         <label class="custom-control-label" for="switch-scheduleDuelEnable">將戰鬥納入排程</label>
                     </div>
 
+                    <div class="input-group">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" id="button-scheduleReset">重置排程</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-right-0 border-left-0">
+            <a data-toggle="collapse" data-target="#script-parameter">
+                <div class="card-header">
+                    參數設定
+                </div>
+            </a>
+
+            <div id="script-parameter" class="collapse" data-parent="#config">
+                <div class="card-body">
                     <div class="custom-control custom-switch mb-3">
                         <input type="checkbox" class="custom-control-input" id="switch-receiveAward">
                         <label class="custom-control-label" for="switch-receiveAward">自動領取樓層獎勵</label>
