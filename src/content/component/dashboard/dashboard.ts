@@ -223,11 +223,9 @@ export class Dashboard {
                 case FIND_STATUS.NotFound:
                     this.messageBlock.textContent = '找不到符合條件的對象 ';
             }
-        } else if (this.myKirito.isDead) {
-            this.messageBlock.textContent = '死掉了';
         } else if (this.myKirito.schedule.isEnable) {
             const messages = [];
-            messages.push(`第 ${this.myKirito.schedule.count + 1} 輪`)
+            if (this.myKirito.schedule.count > 0) messages.push(`第 ${this.myKirito.schedule.count + 1} 輪`)
             if (this.myKirito.schedule.isPause) {
                 if (this.myKirito.isPreyDead && this.myKirito.schedule.isDuelScheduleEnable) {
                     messages.push(this.getDuelStatus());
@@ -248,6 +246,12 @@ export class Dashboard {
                     case ProcessType.Reincarnation:
                         messages.push('正在轉生...');
                         break;
+                    case ProcessType.Delay:
+                        messages.push('等待');
+                        break;
+                    case ProcessType.ResetSchedule:
+                        messages.push('重置排程');
+                        break;
                 }
             } else {
                 messages.push('目前沒有行動');
@@ -258,6 +262,9 @@ export class Dashboard {
             }
 
             this.messageBlock.innerHTML = messages.join(', ');
+            
+        } else if (this.myKirito.isDead) {
+            this.messageBlock.textContent = '死掉了';
         } else {
             const messages = [];
             messages.push(this.getActionStatus());

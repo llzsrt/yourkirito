@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const switchScheduleEnable = document.getElementById('switch-scheduleEnable');
         const switchScheduleDuelEnable = document.getElementById('switch-scheduleDuelEnable');
         const switchDoNotStopSchedule = document.getElementById('switch-doNotStopSchedule');
+        const switchOnlyDuelWithRed = document.getElementById('switch-onlyDuelWithRed');
 
         const buttonRandomDelay = document.getElementById('button-randomDelay');
         const inputRandomDelay = document.getElementById('input-randomDelay');
@@ -59,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
+            switchOnlyDuelWithRed.checked = myKirito.onlyDuelWithRed;
+            switchDoNotStopSchedule.checked = myKirito.doNotStopSchedule;
             switchReceiveAward.checked = myKirito.isAutoReceiveAward;
             switchScheduleEnable.checked = myKirito.schedule.isEnable;
             switchScheduleDuelEnable.checked = myKirito.schedule.isDuelScheduleEnable;
@@ -136,6 +139,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabs[0].id,
                 {
                     event: 'schedule-reset'
+                }
+            );
+        });
+
+        switchOnlyDuelWithRed.addEventListener('change', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-only-duel-with-red',
+                    content: switchOnlyDuelWithRed.checked
                 }
             );
         });

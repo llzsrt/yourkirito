@@ -33,16 +33,8 @@ export class Schedule {
 
 export class ProcessCheckContent {
     if: string;
-    do: CheckAction;
+    do: ProcessType;
     value?: ProcessActionContent | ProcessDuelContent | string;
-}
-
-export enum CheckAction {
-    Action = 'action',
-    Duel = 'duel',
-    Reincarnation = 'reincarnation',
-    ResetSchedule = 'reset-schedule',
-    Delay = 'delay'
 }
 
 export enum CheckTarget {
@@ -54,7 +46,7 @@ export enum CheckTarget {
 
 export class Process {
     type: ProcessType;
-    content: ProcessActionContent | ProcessDuelContent | ProcessCheckContent | string;
+    content?: ProcessActionContent | ProcessDuelContent | ProcessCheckContent | string;
 }
 
 export enum ProcessType {
@@ -62,7 +54,9 @@ export enum ProcessType {
     Duel = 'duel',
     Check = 'check',
     Reincarnation = 'reincarnation',
-    Delay = 'delay'
+    ResetSchedule = 'reset-schedule',
+    Delay = 'delay',
+    Reload = 'reload'
 }
 
 export enum ProcessActionContent {

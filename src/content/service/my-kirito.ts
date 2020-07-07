@@ -34,6 +34,7 @@ export class MyKirito {
 
     schedule = new Schedule();
     doNotStopSchedule = false;
+    onlyDuelWithRed = false;
 
     profile = null;
     setFoundUserAsPrey = false;
@@ -64,6 +65,15 @@ export class MyKirito {
         this.loadIsAutoReceiveAward();
         this.loadSchedule();
         this.loadDoNotStopSchedule();
+        this.loadOnlyDuelWithRed();
+    }
+
+    saveOnlyDuelWithRed() {
+        localStorage.setItem(`${this.localStoragePrefix}OnlyDuelWithRed`, this.onlyDuelWithRed.toString());
+    }
+
+    loadOnlyDuelWithRed() {
+        this.onlyDuelWithRed = localStorage.getItem(`${this.localStoragePrefix}OnlyDuelWithRed`) === 'true';
     }
 
     saveDoNotStopSchedule() {

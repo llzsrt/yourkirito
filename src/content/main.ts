@@ -2,6 +2,7 @@ import { App } from './app';
 import { MyKirito } from './service/my-kirito';
 import { DomHelper } from './service/dom-helper';
 import { registerUrlChangeEvent } from './event/url-change';
+import { SCRIPT_STATUS } from './constant';
 
 registerUrlChangeEvent();
 
@@ -33,10 +34,16 @@ if ('onMessage' in chrome.runtime) {
                 myKirito.schedule.resetQueue();
                 myKirito.schedule.count = 0;
                 myKirito.saveSchedule();
+                myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                myKirito.unlock();
                 break;
             case 'set-schedule-process-list':
                 myKirito.schedule.processList = message.content;
                 myKirito.saveSchedule();
+                break;
+            case 'set-only-duel-with-red':
+                myKirito.onlyDuelWithRed = message.content;
+                myKirito.saveOnlyDuelWithRed();
                 break;
             case 'set-schedule-do-not-stop':
                 myKirito.doNotStopSchedule = message.content;
