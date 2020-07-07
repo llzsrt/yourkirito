@@ -346,7 +346,8 @@ export class App {
                 default:
                     this.myKirito.schedule.current = {
                         type: currentContent.do,
-                        content: 'value' in currentContent ? currentContent.value : null
+                        content: 'content' in currentContent ? currentContent.content : null,
+                        after: 'after' in currentContent ? currentContent.after : null
                     }
                     break;
             }

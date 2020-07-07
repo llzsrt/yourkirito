@@ -17,7 +17,11 @@ export class Schedule {
             this.resetQueue();
             this.count += 1;
         }
-        this.current = this.processQueue.shift();
+        if (this.current.after) {
+            this.current = this.current.after;
+        } else {
+            this.current = this.processQueue.shift();
+        }
     }
 
     resetQueue() {
@@ -34,7 +38,8 @@ export class Schedule {
 export class ProcessCheckContent {
     if: string;
     do: ProcessType;
-    value?: ProcessActionContent | ProcessDuelContent | string;
+    content?: ProcessActionContent | ProcessDuelContent | string;
+    after?: Process;
 }
 
 export enum CheckTarget {
@@ -47,6 +52,7 @@ export enum CheckTarget {
 export class Process {
     type: ProcessType;
     content?: ProcessActionContent | ProcessDuelContent | ProcessCheckContent | string;
+    after?: Process;
 }
 
 export enum ProcessType {
