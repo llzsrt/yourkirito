@@ -41,7 +41,8 @@ export enum CheckAction {
     Action = 'action',
     Duel = 'duel',
     Reincarnation = 'reincarnation',
-    ResetSchedule = 'reset-schedule'
+    ResetSchedule = 'reset-schedule',
+    Delay = 'delay'
 }
 
 export enum CheckTarget {
@@ -60,7 +61,8 @@ export enum ProcessType {
     Action = 'action',
     Duel = 'duel',
     Check = 'check',
-    Reincarnation = 'reincarnation'
+    Reincarnation = 'reincarnation',
+    Delay = 'delay'
 }
 
 export enum ProcessActionContent {

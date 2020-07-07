@@ -38,6 +38,10 @@ if ('onMessage' in chrome.runtime) {
                 myKirito.schedule.processList = message.content;
                 myKirito.saveSchedule();
                 break;
+            case 'set-schedule-do-not-stop':
+                myKirito.doNotStopSchedule = message.content;
+                myKirito.saveDoNotStopSchedule();
+                break;
             case 'set-schedule-duel-enable':
                 myKirito.schedule.isDuelScheduleEnable = message.content;
                 myKirito.saveSchedule();

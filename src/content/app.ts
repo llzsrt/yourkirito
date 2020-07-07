@@ -172,7 +172,7 @@ export class App {
             if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
                 this.myKirito.isPreyDead = true;
                 this.myKirito.nextDuelSecond = 0;
-                if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) this.myKirito.schedule.isPause = true;
+                if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable && !this.myKirito.doNotStopSchedule) this.myKirito.schedule.isPause = true;
                 this.myKirito.saveSchedule();
                 this.myKirito.isDuelPause = true;
                 this.myKirito.saveIsDuelPause();
@@ -347,6 +347,12 @@ export class App {
                         content: currentContent.value
                     }
                     break;
+                case CheckAction.Delay:
+                    this.myKirito.schedule.current = {
+                        type: ProcessType.Delay,
+                        content: currentContent.value
+                    }
+                    break;
                 case CheckAction.ResetSchedule:
                     this.myKirito.schedule.reset();
                     break;
@@ -409,6 +415,14 @@ export class App {
                 totalLose: profiles['總敗場']
             }
         }
+    }
+
+    async scheduleDelay() {
+        this.myKirito.lock();
+        this.myKirito.scriptStatus = SCRIPT_STATUS.ScheduleDelay;
+        await sleep(+this.myKirito.schedule.current.content);
+        this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+        this.myKirito.unlock();
     }
 
     async endless() {
@@ -500,6 +514,9 @@ export class App {
                             break;
                         case ProcessType.Reincarnation:
                             this.reincarnation();
+                            break;
+                        case ProcessType.Delay:
+                            this.scheduleDelay();
                             break;
                         case ProcessType.Check:
                             this.check();

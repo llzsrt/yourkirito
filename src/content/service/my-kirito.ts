@@ -28,9 +28,12 @@ export class MyKirito {
     profileViewType = '';
     scriptStatus = SCRIPT_STATUS.Normal;
     findStatus = FIND_STATUS.Normal;
+
+    isAutoReincarnation = false;
     reincarnationCharacter = '';
 
     schedule = new Schedule();
+    doNotStopSchedule = false;
 
     profile = null;
     setFoundUserAsPrey = false;
@@ -60,6 +63,15 @@ export class MyKirito {
         this.loadIsDuelWaitCaptcha();
         this.loadIsAutoReceiveAward();
         this.loadSchedule();
+        this.loadDoNotStopSchedule();
+    }
+
+    saveDoNotStopSchedule() {
+        localStorage.setItem(`${this.localStoragePrefix}DoNotStopSchedule`, this.doNotStopSchedule.toString());
+    }
+
+    loadDoNotStopSchedule() {
+        this.doNotStopSchedule = localStorage.getItem(`${this.localStoragePrefix}DoNotStopSchedule`) === 'true';
     }
 
     saveSchedule() {

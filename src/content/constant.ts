@@ -45,7 +45,8 @@ export const SCRIPT_STATUS = {
     Find: 5,
     Check: 6,
     Reincarnation: 7,
-    ReincarnationAfterReload: 8
+    ReincarnationAfterReload: 8,
+    ScheduleDelay: 9
 }
 
 export const FIND_STATUS = {

@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const switchReceiveAward = document.getElementById('switch-receiveAward');
         const switchScheduleEnable = document.getElementById('switch-scheduleEnable');
         const switchScheduleDuelEnable = document.getElementById('switch-scheduleDuelEnable');
+        const switchDoNotStopSchedule = document.getElementById('switch-doNotStopSchedule');
 
         const buttonRandomDelay = document.getElementById('button-randomDelay');
         const inputRandomDelay = document.getElementById('input-randomDelay');
@@ -135,6 +136,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabs[0].id,
                 {
                     event: 'schedule-reset'
+                }
+            );
+        });
+
+        switchDoNotStopSchedule.addEventListener('change', () => {
+            chrome.tabs.sendMessage(
+                tabs[0].id,
+                {
+                    event: 'set-schedule-do-not-stop',
+                    content: switchDoNotStopSchedule.checked
                 }
             );
         });
