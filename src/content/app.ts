@@ -168,7 +168,14 @@ export class App {
             if (!!tempStatus && tempStatus === '此玩家目前是死亡狀態') {
                 this.myKirito.isPreyDead = true;
                 this.myKirito.nextDuelSecond = 0;
-                if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable && !this.myKirito.doNotStopSchedule) this.myKirito.schedule.isPause = true
+                if (this.myKirito.schedule.isEnable && this.myKirito.schedule.isDuelScheduleEnable) {
+                    if (!this.myKirito.doNotStopSchedule) {
+                        this.myKirito.schedule.isPause = true;
+                    } else {
+                        this.myKirito.nextDuelSecond = random(this.myKirito.duelCd);
+                    }
+                }
+                    
                 this.myKirito.saveSchedule();
                 this.myKirito.isDuelPause = true;
                 this.myKirito.saveIsDuelPause();
@@ -452,9 +459,11 @@ export class App {
             }
         }
 
+        let tempDuelWaitCaptchaDontReload = false;
         if (this.myKirito.isDuelWaitCaptcha) {
             if (location.href.includes(`/profile/${this.myKirito.preyId}`) && (DUEL_NAME[1] in this.domHelper.buttons && !(this.domHelper.buttons[DUEL_NAME[1]].disabled) || !this.domHelper.hasIframe())) {
                 this.myKirito.isDuelWaitCaptcha = false;
+                tempDuelWaitCaptchaDontReload = true;
                 this.myKirito.saveIsDuelWaitCaptcha();
             }
         }
@@ -513,7 +522,7 @@ export class App {
                                     this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
                                     this.myKirito.saveScriptStatus();
                                     this.myKirito.lock();
-                                    location.reload();
+                                    if (!tempDuelWaitCaptchaDontReload) location.reload();
                                 }
                             } else {
                                 this.myKirito.schedule.next();
