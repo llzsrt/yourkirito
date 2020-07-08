@@ -59,7 +59,6 @@ export class App {
             if (!tempName) {
                 this.myKirito.scriptStatus = SCRIPT_STATUS.ActionAfterReload;
                 this.myKirito.saveScriptStatus();
-                this.myKirito.unlock();
                 location.reload();
             }
 
@@ -110,7 +109,6 @@ export class App {
             if (checkCaptchaCount >= 20) {
                 this.myKirito.scriptStatus = SCRIPT_STATUS.ActionAfterReload;
                 this.myKirito.saveScriptStatus();
-                this.myKirito.unlock();
                 location.reload();
             }
 
@@ -137,7 +135,6 @@ export class App {
             // 若未出現應有的行動結果，重新整理
             this.myKirito.scriptStatus = SCRIPT_STATUS.ActionAfterReload;
             this.myKirito.saveScriptStatus();
-            this.myKirito.unlock();
             location.reload();
         }
     }
@@ -157,9 +154,8 @@ export class App {
             );
             // 若超過10秒仍未顯示對手暱稱，重新整理
             if (!tempName) {
-                this.myKirito.scriptStatus = SCRIPT_STATUS.Normal;
+                this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
                 this.myKirito.saveScriptStatus();
-                this.myKirito.unlock();
                 location.reload();
                 return;
             }
@@ -244,7 +240,6 @@ export class App {
             if (checkCaptchaCount >= 20) {
                 this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
                 this.myKirito.saveScriptStatus();
-                this.myKirito.unlock();
                 location.reload();
             }
 
@@ -290,7 +285,6 @@ export class App {
             if (!temp) {
                 this.myKirito.scriptStatus = SCRIPT_STATUS.ReincarnationAfterReload;
                 this.myKirito.saveScriptStatus();
-                this.myKirito.unlock();
                 location.reload();
             }
 
@@ -496,6 +490,7 @@ export class App {
                 if (this.myKirito.schedule.processList.length > 0) {
                     if (!this.myKirito.schedule.current) {
                         this.myKirito.schedule.next();
+                        this.myKirito.saveSchedule();
                     }
                     switch (this.myKirito.schedule.current.type) {
                         case ProcessType.Action:
@@ -515,7 +510,10 @@ export class App {
                                     !this.myKirito.isDuelWaitCaptcha &&
                                     !!this.myKirito.preyId
                                 ) {
-                                    this.duel();
+                                    this.myKirito.scriptStatus = SCRIPT_STATUS.DuelAfterReload;
+                                    this.myKirito.saveScriptStatus();
+                                    this.myKirito.lock();
+                                    location.reload();
                                 }
                             } else {
                                 this.myKirito.schedule.next();

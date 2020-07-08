@@ -17,7 +17,7 @@ export class Schedule {
             this.resetQueue();
             this.count += 1;
         }
-        if (this.current.after) {
+        if (this.current && 'after' in this.current) {
             this.current = this.current.after;
         } else {
             this.current = this.processQueue.shift();
