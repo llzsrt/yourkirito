@@ -13,13 +13,15 @@ export class Schedule {
     }
 
     next() {
-        if (this.processQueue.length <= 0) {
-            this.resetQueue();
-            this.count += 1;
-        }
+        
         if (this.current && 'after' in this.current) {
             this.current = this.current.after;
         } else {
+            if (this.processQueue.length <= 0) {
+                this.resetQueue();
+                this.count += 1;
+            }
+
             this.current = this.processQueue.shift();
         }
     }
