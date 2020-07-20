@@ -2,7 +2,7 @@ export function registerUrlChangeEvent() {
     let originalUrl = '';
     window.setInterval(() => {
         if (location.href != originalUrl) {
-            window.dispatchEvent(new CustomEvent<UrlChangeEventDetail>('urlChange', { detail: { originalUrl: originalUrl, currentUrl: location.href } }));
+            window.dispatchEvent(new CustomEvent<UrlChangeEventDetail>('urlChange', { detail: { originalUrl, currentUrl: location.href } }));
             originalUrl = location.href;
         }
     }, 50);
