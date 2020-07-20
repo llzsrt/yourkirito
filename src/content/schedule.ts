@@ -39,8 +39,7 @@ export class Schedule {
 
 export class ProcessCheckContent {
     if: string;
-    do: ProcessType;
-    content?: ProcessActionContent | ProcessDuelContent | string;
+    do: Process;
     after?: Process;
 }
 

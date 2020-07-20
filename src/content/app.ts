@@ -343,15 +343,7 @@ export class App {
         const $random = random;
         const result = eval(condition);
         if (result) {
-            switch (currentContent.do) {
-                default:
-                    this.myKirito.schedule.current = {
-                        type: currentContent.do,
-                        content: 'content' in currentContent ? currentContent.content : null,
-                        after: 'after' in currentContent ? currentContent.after : null
-                    }
-                    break;
-            }
+            this.myKirito.schedule.current = currentContent.do;
         } else {
             this.myKirito.schedule.next();
         }

@@ -7,10 +7,7 @@ export class DomHelper {
     contentBlocks: Element[];
     contentTables: HTMLTableElement[];
 
-    constructor() {
-        this.loadLinks();
-        this.loadButtons();
-    }
+    constructor() { }
 
     loadButtons() {
         document.querySelectorAll('button').forEach(button => {
@@ -24,13 +21,13 @@ export class DomHelper {
         });
     }
 
-    getElementArray<T>(collection: HTMLCollection): T[];
-    getElementArray<T>(selector: string, node?: any): T[];
-    getElementArray<T>(query: HTMLCollection | string, node: any = document): T[] {
+    getElementArray<T extends Element>(collection: HTMLCollection | NodeListOf<T>): T[];
+    getElementArray<T extends Element>(selector: string, node?: any): T[];
+    getElementArray<T extends Element>(query: HTMLCollection | NodeListOf<T> | string, node?: any): T[] {
         if(typeof query === 'string') {
-            return Array.apply(null, node.querySelectorAll(query));
+            return Array.from((node ?? document).querySelectorAll(query));
         } else {
-            return Array.apply(null, query);
+            return Array.from(query as any);
         }
     }
 
@@ -39,7 +36,7 @@ export class DomHelper {
     }
     
     getActionCd() {
-        const tempBlocks: Element[] = Array.apply(null, this.contentBlocks.find(x => x.textContent.startsWith('行動')).querySelectorAll('div'));
+        const tempBlocks: Element[] = this.getElementArray(this.contentBlocks.find(x => x.textContent.startsWith('行動')).querySelectorAll('div'));
         const actionCdBlock = tempBlocks.find(x => x.textContent.startsWith('冷卻倒數'));
         if (!!actionCdBlock) {
             return parseInt(actionCdBlock.textContent.substring(5).split(' ')[0]);
@@ -49,7 +46,7 @@ export class DomHelper {
     }
 
     getDuelCd() {
-        const tempBlocks: Element[] = Array.apply(null, this.contentBlocks.find(x => x.textContent.startsWith('挑戰')).querySelectorAll('div'));
+        const tempBlocks: Element[] = this.getElementArray(this.contentBlocks.find(x => x.textContent.startsWith('挑戰')).querySelectorAll('div'));
         const duelCdBlock = tempBlocks.find(x => x.textContent.startsWith('冷卻倒數'));
         if (!!duelCdBlock) {
             return parseInt(duelCdBlock.textContent.substring(5).split(' ')[0]);
