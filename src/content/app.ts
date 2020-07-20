@@ -297,11 +297,11 @@ export class App {
 
             const tempReincarnationCharacter: string = this.myKirito.schedule.isEnable ? this.myKirito.schedule.current.content.toString() : this.myKirito.reincarnationCharacter;
 
-            const characterListWrapper = this.domHelper.getElementArray<HTMLElement>(document, 'h3').find(x => x.textContent === '選擇角色').nextElementSibling;
-            const characterList = this.domHelper.getElementArray<HTMLDivElement>(characterListWrapper, 'div').filter(x => x.parentElement === characterListWrapper);
+            const characterListWrapper = this.domHelper.getElementArray<HTMLElement>('h3').find(x => x.textContent === '選擇角色').nextElementSibling;
+            const characterList = this.domHelper.getElementArray<HTMLDivElement>('div', characterListWrapper).filter(x => x.parentElement === characterListWrapper);
             characterList.forEach(character => {
                 const tempTable = character.querySelector('table');
-                const characterNameTh = this.domHelper.getElementArray<HTMLTableRowElement>(tempTable, 'th').find(x => x.textContent === '名稱');
+                const characterNameTh = this.domHelper.getElementArray<HTMLTableRowElement>('th', tempTable).find(x => x.textContent === '名稱');
                 const characterName = characterNameTh.nextElementSibling.textContent;
                 if (characterName.trim() === tempReincarnationCharacter) {
                     character.querySelector('div').click();
@@ -376,9 +376,9 @@ export class App {
         const profileTable = document.querySelector("#root > div > div > div > table");
         const profiles = {};
         let profileColor = 'black';
-        this.domHelper.getElementArray<HTMLTableRowElement>(profileTable, 'tr').forEach(tr => {
-            const keys = this.domHelper.getElementArray<HTMLTableRowElement>(tr, 'th');
-            const values = this.domHelper.getElementArray<HTMLTableColElement>(tr, 'td');
+        this.domHelper.getElementArray<HTMLTableRowElement>('tr', profileTable).forEach(tr => {
+            const keys = this.domHelper.getElementArray<HTMLTableRowElement>('th', tr);
+            const values = this.domHelper.getElementArray<HTMLTableColElement>('td', tr);
             for (let i = 0; i < keys.length; i++) {
                 profiles[keys[i].textContent.trim()] = values[i].textContent.trim();
                 if (keys[i].textContent.trim() === '暱稱') {

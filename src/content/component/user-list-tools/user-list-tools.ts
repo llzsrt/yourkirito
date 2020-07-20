@@ -99,7 +99,7 @@ export class UserListTools {
         }
 
         const check = await this.domHelper.waitForText('#root > div > div > table > tbody > tr:nth-child(2)');
-        const userListTable = this.domHelper.getElementArray<HTMLTableElement>(document, '#root > div > div > table');
+        const userListTable = this.domHelper.getElementArray<HTMLTableElement>('#root > div > div > table');
         if (!check || userListTable.length === 0 || !!this.oldTable && this.oldTable == userListTable[0].textContent) {
             await sleep(500);
             this.find();
@@ -110,9 +110,9 @@ export class UserListTools {
             this.oldTable = userListTable[0].textContent;
         }
 
-        const userRows = this.domHelper.getElementArray<HTMLTableRowElement>(userListTable[0], 'tr');
+        const userRows = this.domHelper.getElementArray<HTMLTableRowElement>('tr', userListTable[0]);
 
-        const optionColors = this.domHelper.getElementArray<HTMLOptionElement>(this.statusSelect, 'option:checked').map(x => x.value);
+        const optionColors = this.domHelper.getElementArray<HTMLOptionElement>('option:checked', this.statusSelect).map(x => x.value);
         for (let userRow of userRows) {
             const character = userRow.querySelector('td:nth-child(3) > div > div:nth-child(1) > div:nth-child(2)');
             if (!character) {

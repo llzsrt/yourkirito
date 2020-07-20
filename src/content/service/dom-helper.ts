@@ -24,13 +24,18 @@ export class DomHelper {
         });
     }
 
-    getElementArray<T>(node: any, query: string) {
-        const elementArray: T[] = Array.apply(null, node.querySelectorAll(query));
-        return elementArray;
+    getElementArray<T>(collection: HTMLCollection): T[];
+    getElementArray<T>(selector: string, node?: any): T[];
+    getElementArray<T>(query: HTMLCollection | string, node: any = document): T[] {
+        if(typeof query === 'string') {
+            return Array.apply(null, node.querySelectorAll(query));
+        } else {
+            return Array.apply(null, query);
+        }
     }
 
     loadContentBlocks() {
-        this.contentBlocks = this.getElementArray(document, '#root > div > div > div');
+        this.contentBlocks = this.getElementArray('#root > div > div > div');
     }
     
     getActionCd() {
@@ -55,13 +60,13 @@ export class DomHelper {
 
     getActionLog() {
         const actionLogBlock = this.contentBlocks.find(x => x.textContent.startsWith('行動記錄'));
-        const logBlocks: Element[] = Array.apply(null, actionLogBlock.children);
+        const logBlocks: Element[] = this.getElementArray(actionLogBlock.children);
         return logBlocks.filter(x => x.nodeName === 'DIV').map(x => x.textContent);
     }
 
     getDuelLog() {
         const duelLogBlock = this.contentBlocks.find(x => x.textContent.startsWith('戰鬥報告'));
-        const logBlocks: Element[] = Array.apply(null, duelLogBlock.children);
+        const logBlocks: Element[] = this.getElementArray(duelLogBlock.children);
         return logBlocks.filter(x => x.nodeName === 'DIV').map(x => x.children[0].textContent);
     }
 
