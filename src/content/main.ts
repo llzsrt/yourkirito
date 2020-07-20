@@ -2,9 +2,11 @@ import { App } from './app';
 import { MyKirito } from './service/my-kirito';
 import { DomHelper } from './service/dom-helper';
 import { registerUrlChangeEvent } from './event/url-change';
+import { registerXhrDoneEvent } from './event/xhr-done';
 import { SCRIPT_STATUS } from './constant';
 
 registerUrlChangeEvent();
+registerXhrDoneEvent();
 
 const myKirito = new MyKirito();
 const domHelper = new DomHelper();

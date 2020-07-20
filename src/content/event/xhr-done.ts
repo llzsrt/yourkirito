@@ -7,8 +7,7 @@ export function registerXhrDoneEvent() {
             xhr.addEventListener('readystatechange', function () {
                 if (this.readyState === xhr.DONE) {
                     window.dispatchEvent(
-                        new CustomEvent<XMLHttpRequest>('xhrDone',
-                            { detail: this })
+                        new CustomEvent<XMLHttpRequest>('xhrDone', { detail: this })
                     );
                 }
             }, false);
