@@ -8,29 +8,30 @@ export class Schedule {
     processList: Process[] = [];
     processQueue: Process[] = [];
 
-    processStack: Process[] = [];
+    afterStack: Process[] = [];
 
     constructor(data?: Partial<Schedule>) {
         if (data) Object.assign(this, data);
     }
 
     next() {
-        if (this.processStack.length === 0) {
+        if (this.afterStack.length === 0) {
             if (this.processQueue.length === 0) {
                 this.resetQueue();
                 this.count += 1;
             }
             const current = this.processQueue.shift();
             if ('after' in current) {
-                this.processStack.push(current.after);
+                this.afterStack.push(current.after);
                 delete current.after;
-                this.processStack.push(current);
             }
+            this.current = current;
         } else {
-            if ('after' in this.current) this.processStack.push(this.current.after);
+            if ('after' in this.current) this.afterStack.push(this.current.after);
+            this.current = this.afterStack.pop();
         }
 
-        this.current = this.processStack.pop();
+        
     }
 
     resetQueue() {

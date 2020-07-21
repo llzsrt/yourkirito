@@ -44,9 +44,8 @@ export class App {
             }
         });
 
-        window.addEventListener('xhrDone', async (event: CustomEvent<XMLHttpRequest>) => {
-            const body = JSON.parse(event.detail.response);
-            console.log(body);
+        window.addEventListener('xhrDone', async (event: CustomEvent) => {
+            console.log(event.detail);
         });
     }
 
@@ -498,6 +497,7 @@ export class App {
                         this.myKirito.schedule.next();
                         this.myKirito.saveSchedule();
                     }
+                    
                     switch (this.myKirito.schedule.current.type) {
                         case ProcessType.Action:
                             if (
