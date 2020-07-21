@@ -8,22 +8,29 @@ export class Schedule {
     processList: Process[] = [];
     processQueue: Process[] = [];
 
+    processStack: Process[] = [];
+
     constructor(data?: Partial<Schedule>) {
         if (data) Object.assign(this, data);
     }
 
     next() {
-        
-        if (this.current && 'after' in this.current) {
-            this.current = this.current.after;
-        } else {
-            if (this.processQueue.length <= 0) {
+        if (this.processStack.length === 0) {
+            if (this.processQueue.length === 0) {
                 this.resetQueue();
                 this.count += 1;
             }
-
-            this.current = this.processQueue.shift();
+            const current = this.processQueue.shift();
+            if ('after' in current) {
+                this.processStack.push(current.after);
+                delete current.after;
+                this.processStack.push(current);
+            }
+        } else {
+            if ('after' in this.current) this.processStack.push(this.current.after);
         }
+
+        this.current = this.processStack.pop();
     }
 
     resetQueue() {
@@ -40,7 +47,6 @@ export class Schedule {
 export class ProcessCheckContent {
     if: string;
     do: Process;
-    after?: Process;
 }
 
 export enum CheckTarget {

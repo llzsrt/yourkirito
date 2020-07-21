@@ -1,4 +1,4 @@
-import { Process, Schedule } from '../schedule';
+import { Schedule } from '../schedule';
 import { FIND_STATUS } from './../constant';
 import { SCRIPT_STATUS } from '../constant';
 import { getNowSecond } from '../function/utils';

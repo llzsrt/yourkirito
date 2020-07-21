@@ -25,7 +25,7 @@ export class DomHelper {
     getElementArray<T extends Element>(selector: string, node?: any): T[];
     getElementArray<T extends Element>(query: HTMLCollection | NodeListOf<T> | string, node?: any): T[] {
         if(typeof query === 'string') {
-            return Array.from((node ?? document).querySelectorAll(query));
+            return Array.from((node ? node : document).querySelectorAll(query));
         } else {
             return Array.from(query as any);
         }

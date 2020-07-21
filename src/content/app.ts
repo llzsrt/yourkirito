@@ -43,6 +43,11 @@ export class App {
                 this.userListTools.injectionComponent();
             }
         });
+
+        window.addEventListener('xhrDone', async (event: CustomEvent<XMLHttpRequest>) => {
+            const body = JSON.parse(event.detail.response);
+            console.log(body);
+        });
     }
 
     private async action() {
