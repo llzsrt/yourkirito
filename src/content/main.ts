@@ -5,6 +5,7 @@ import { registerUrlChangeEvent } from './event/url-change';
 import { registerXhrDoneEvent } from './event/xhr-done';
 import { SCRIPT_STATUS } from './constant';
 
+
 registerUrlChangeEvent();
 registerXhrDoneEvent();
 
@@ -18,13 +19,17 @@ if ('onMessage' in chrome.runtime) {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         switch (message.event) {
             case 'sync':
-                myKirito.syncProfile()
-                    .catch(err => {
-                        console.error(err);
-                    })
-                    .finally(() => {
-                        sendResponse({ myKirito });
-                    });
+                if (myKirito.profile) {
+                    sendResponse({ myKirito });
+                } else {
+                    app.syncProfileFromProfilePage()
+                        .catch(err => {
+                            console.error(err);
+                        })
+                        .finally(() => {
+                            sendResponse({ myKirito });
+                        });
+                }
                 return true;
             case 'reset':
                 localStorage.clear();

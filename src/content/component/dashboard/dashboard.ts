@@ -263,7 +263,7 @@ export class Dashboard {
 
             this.messageBlock.innerHTML = messages.join(', ');
             
-        } else if (this.myKirito.isDead) {
+        } else if (this.myKirito.profile.dead) {
             this.messageBlock.textContent = '死掉了';
         } else {
             const messages = [];

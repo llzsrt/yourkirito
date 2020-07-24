@@ -21,9 +21,10 @@ export class App {
         this.dashboard = new Dashboard(myKirito, domHelper);
         this.duelTools = new DuelTools(myKirito, domHelper);
         this.userListTools = new UserListTools(myKirito, domHelper);
-
+        
         this.dashboard.injectionComponent();
         this.dashboard.updateDashboard();
+        if (!this.myKirito.profile) this.syncProfileFromProfilePage();
 
         window.addEventListener('urlChange', async (event: CustomEvent<UrlChangeEventDetail>) => {
 
@@ -45,7 +46,19 @@ export class App {
         });
 
         window.addEventListener('xhrDone', async (event: CustomEvent) => {
-            console.log(event.detail);
+            const body = JSON.parse(event.detail.response);
+            if ('empty' in body && 'challengeCount' in body) {
+                this.myKirito.profile = body;
+            } else if ('userList' in body) {
+                this.myKirito.userList = body.userList;
+            } else if ('profile' in body) {
+                // update competitor profile
+                this.myKirito.competitorProfile = body.profile;
+            } else if ('reports' in body) {
+                // reports list
+            } else if ('boss' in body) {
+                // boss info
+            }
         });
     }
 
@@ -361,60 +374,64 @@ export class App {
         if (!(this.domHelper.links['我的桐人'].className.includes('active'))) {
             this.domHelper.links['我的桐人'].click();
         }
+        if (!this.myKirito.profile) {
+            // 檢查暱稱欄位
+            const tempName = await this.domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
+            // 若超過10秒仍未顯示暱稱，重新整理
+            if (!tempName) {
+                location.reload();
+            }
 
-        // 檢查暱稱欄位
-        const tempName = await this.domHelper.waitForText('#root > div > div > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2)');
-        // 若超過10秒仍未顯示暱稱，重新整理
-        if (!tempName) {
-            location.reload();
-        }
-
-        const profileTable = document.querySelector("#root > div > div > div > table");
-        const profiles = {};
-        let profileColor = 'black';
-        this.domHelper.getElementArray<HTMLTableRowElement>('tr', profileTable).forEach(tr => {
-            const keys = this.domHelper.getElementArray<HTMLTableRowElement>('th', tr);
-            const values = this.domHelper.getElementArray<HTMLTableColElement>('td', tr);
-            for (let i = 0; i < keys.length; i++) {
-                profiles[keys[i].textContent.trim()] = values[i].textContent.trim();
-                if (keys[i].textContent.trim() === '暱稱') {
-                    switch (values[i].style.color.trim()) {
-                        case 'var(--color)':
-                            profileColor = 'black';
-                        default:
-                            profileColor = values[i].style.color.trim();
+            const profileTable = document.querySelector("#root > div > div > div > table");
+            const profiles = {};
+            const profileDead = (document.querySelector("#root > div > div") as HTMLDivElement).style.opacity === '1';
+            const profileAvatar = (document.querySelector("picture > img") as HTMLImageElement).src.split('/').pop().split('.')[0];
+            let profileColor = 'black';
+            this.domHelper.getElementArray<HTMLTableRowElement>('tr', profileTable).forEach(tr => {
+                const keys = this.domHelper.getElementArray<HTMLTableRowElement>('th', tr);
+                const values = this.domHelper.getElementArray<HTMLTableColElement>('td', tr);
+                for (let i = 0; i < keys.length; i++) {
+                    profiles[keys[i].textContent.trim()] = values[i].textContent.trim();
+                    if (keys[i].textContent.trim() === '暱稱') {
+                        switch (values[i].style.color.trim()) {
+                            case 'var(--color)':
+                                profileColor = 'black';
+                            default:
+                                profileColor = values[i].style.color.trim();
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        this.myKirito.profile = {
-            nickname: profiles['暱稱'],
-            character: profiles['角色'],
-            title: profiles['稱號'],
-            lv: profiles['等級'],
-            hp: profiles['HP'],
-            atk: profiles['攻擊'],
-            def: profiles['防禦'],
-            stm: profiles['體力'],
-            agi: profiles['敏捷'],
-            spd: profiles['反應速度'],
-            tec: profiles['技巧'],
-            int: profiles['智力'],
-            lck: profiles['幸運'],
-            exp: profiles['經驗值'],
-            kill: profiles['主動擊殺'],
-            defKill: profiles['防衛擊殺'],
-            totalKill: profiles['總主動擊殺'],
-            totalDefKill: profiles['總防衛擊殺'],
-            totalDeath: profiles['遭襲死亡'],
-            defDeath: profiles['遭反殺死亡'],
-            win: profiles['勝場'],
-            lose: profiles['敗場'],
-            totalWin: profiles['總勝場'],
-            totalLose: profiles['總敗場'],
-            dead: this.myKirito.isDead,
-            color: profileColor
+            this.myKirito.profile = {
+                nickname: profiles['暱稱'],
+                character: profiles['角色'],
+                title: profiles['稱號'],
+                lv: profiles['等級'],
+                hp: profiles['HP'],
+                atk: profiles['攻擊'],
+                def: profiles['防禦'],
+                stm: profiles['體力'],
+                agi: profiles['敏捷'],
+                spd: profiles['反應速度'],
+                tec: profiles['技巧'],
+                int: profiles['智力'],
+                lck: profiles['幸運'],
+                exp: profiles['經驗值'],
+                kill: profiles['主動擊殺'],
+                defKill: profiles['防衛擊殺'],
+                totalKill: profiles['總主動擊殺'],
+                totalDefKill: profiles['總防衛擊殺'],
+                totalDeath: profiles['遭襲死亡'],
+                defDeath: profiles['遭反殺死亡'],
+                win: profiles['勝場'],
+                lose: profiles['敗場'],
+                totalWin: profiles['總勝場'],
+                totalLose: profiles['總敗場'],
+                avatar: profileAvatar,
+                dead: profileDead,
+                color: profileColor
+            }
         }
     }
 
@@ -433,13 +450,6 @@ export class App {
         this.endless();
 
         this.domHelper.loadButtons();
-
-        const tempDead = document.querySelector('#root > div > div')
-        if (!!tempDead && tempDead.textContent === '你的角色死亡了，請進行轉生') {
-            this.myKirito.isDead = true;
-        } else {
-            this.myKirito.isDead = false;
-        }
 
         this.myKirito.nextActionSecond = this.myKirito.nextActionSecond > 0 ? this.myKirito.nextActionSecond - 1 : 0;
         this.myKirito.nextDuelSecond = this.myKirito.nextDuelSecond > 0 ? this.myKirito.nextDuelSecond - 1 : 0;
@@ -474,7 +484,7 @@ export class App {
 
             if (
                 this.myKirito.nextDuelSecond <= 0 &&
-                !this.myKirito.isDead &&
+                !this.myKirito.profile.dead &&
                 !this.myKirito.isDuelPause &&
                 !this.myKirito.isDuelWaitCaptcha &&
                 !!this.myKirito.preyId &&
@@ -484,7 +494,7 @@ export class App {
             }
             else if (
                 this.myKirito.nextActionSecond <= 0 &&
-                !this.myKirito.isDead &&
+                !this.myKirito.profile.dead &&
                 !this.myKirito.isActionPause &&
                 !this.myKirito.isActionWaitCaptcha &&
                 !this.myKirito.schedule.isEnable
@@ -502,7 +512,7 @@ export class App {
                         case ProcessType.Action:
                             if (
                                 this.myKirito.nextActionSecond <= 0 &&
-                                !this.myKirito.isDead &&
+                                !this.myKirito.profile.dead &&
                                 !this.myKirito.isActionWaitCaptcha
                             ) {
                                 this.action();
@@ -512,7 +522,7 @@ export class App {
                             if (this.myKirito.schedule.isDuelScheduleEnable) {
                                 if (
                                     this.myKirito.nextDuelSecond <= 0 &&
-                                    !this.myKirito.isDead &&
+                                    !this.myKirito.profile.dead &&
                                     !this.myKirito.isDuelWaitCaptcha &&
                                     !!this.myKirito.preyId
                                 ) {

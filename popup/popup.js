@@ -49,16 +49,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 blockWarning.hidden = false;
                 blockWarning.textContent = `Warning: BOTLV${myKirito.profile.botlv}`;
             }
-            blockInfo.innerHTML = `
-                    <div class="col-6 text-right">
-                        <div class="mb-2 text-nowrap">目前樓層 <span class="badge badge-secondary">${myKirito.profile.floor}</span></div>
-                        <div class="mb-2 text-nowrap">行動次數 <span class="badge badge-secondary">${myKirito.profile.actionCount}</span></div>
-                    </div>
-                    <div class="col-6 text-left">
-                        <div class="mb-2 text-nowrap">成就點數 <span class="badge badge-secondary">${myKirito.profile.achievementPoints}</span></div>
-                        <div class="mb-2 text-nowrap">挑戰次數 <span class="badge badge-secondary">${myKirito.profile.challengeCount}</span></div>
-                    </div>
-                `;
+
+            if (myKirito.profile.floor) {
+                blockInfo.innerHTML = `
+                        <div class="col-6 text-right">
+                            <div class="mb-2 text-nowrap">目前樓層 <span class="badge badge-secondary">${myKirito.profile.floor}</span></div>
+                            <div class="mb-2 text-nowrap">行動次數 <span class="badge badge-secondary">${myKirito.profile.actionCount}</span></div>
+                        </div>
+                        <div class="col-6 text-left">
+                            <div class="mb-2 text-nowrap">成就點數 <span class="badge badge-secondary">${myKirito.profile.achievementPoints}</span></div>
+                            <div class="mb-2 text-nowrap">挑戰次數 <span class="badge badge-secondary">${myKirito.profile.challengeCount}</span></div>
+                        </div>
+                    `;
+            }
 
             switchOnlyDuelWithRed.checked = myKirito.onlyDuelWithRed;
             switchDoNotStopSchedule.checked = myKirito.doNotStopSchedule;

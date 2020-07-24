@@ -37,6 +37,8 @@ export class MyKirito {
     onlyDuelWithRed = false;
 
     profile = null;
+    competitorProfile = null;
+    userList = null;
     setFoundUserAsPrey = false;
 
     localStoragePrefix = 'your';
@@ -283,13 +285,13 @@ export class MyKirito {
         }
     }
 
-    async syncProfile() {
-        this.loadToken();
-        if (!!this.token) {
-            const profile = await getProfile(this.token);
-            this.profile = profile;
-            return true;
-        }
-        throw 'Missing token';
-    }
+    // async syncProfile() {
+    //     this.loadToken();
+    //     if (!!this.token) {
+    //         const profile = await getProfile(this.token);
+    //         this.profile = profile;
+    //         return true;
+    //     }
+    //     throw 'Missing token';
+    // }
 }

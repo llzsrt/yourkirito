@@ -63,7 +63,12 @@ export class DuelTools {
         this.peepButton.addEventListener('click', async () => {
             self.myKirito.loadToken();
             if (!!self.myKirito.token) {
-                const data = await getProfile(self.myKirito.token, id);
+                let data;
+                if (this.myKirito.competitorProfile && this.myKirito.competitorProfile._id === id) {
+                    data = { profile: this.myKirito.competitorProfile };
+                } else {
+                    data = await getProfile(self.myKirito.token, id);
+                }
                 this.showProfilePopup(data);
             }
         });
